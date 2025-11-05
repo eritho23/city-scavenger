@@ -12,7 +12,12 @@
   {
     devShells.x86_64-linux.default = pkgsx86_64.mkShell {
       packages = with pkgsx86_64; [
+	curl
+	helix
+	jq
         nodejs
+	pdpmake
+	python3
       ];
     };
   };
