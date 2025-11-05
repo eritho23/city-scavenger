@@ -40,6 +40,7 @@
             ncurses
             nodejs
             npm-check-updates
+            openssh
             pdpmake
             prefetch-npm-deps
             python3
