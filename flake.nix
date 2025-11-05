@@ -27,14 +27,17 @@
         formatting = treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.check self;
       });
       devShells = eachSystem (pkgs: {
-        default = pkgs.mkShell {
+        default = pkgs.mkShellNoCC {
           packages = with pkgs; [
             curl
             git
             getent
             groff
             helix
+            less
             jq
+            man
+            ncurses
             nodejs
             pdpmake
             python3
@@ -42,12 +45,36 @@
           ];
           # Hack to make treefmt faster.
           shellHook = ''
-                  # ${treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper}
-            	    export TERM="linux"
-                  export HOME=$(getent passwd $(id -u) | cut -d: -f6)
+            # ${treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper}
+            export TERM="linux"
+            export HOME=$(getent passwd $(id -u) | cut -d: -f6)
+            export PS1='[\[\e[38;5;92m\]scavenger-dev\[\e[0m\]:\[\e[38;5;202m\]\w\[\e[0m\]]\\$ '
           '';
         };
       });
       formatter = eachSystem (pkgs: treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper);
+      packages = eachSystem (
+        pkgs: with pkgs; rec {
+          frontend = buildNpmPackage {
+            pname = "city-scavenger-frontend";
+            version = if (self ? rev) then self.rev else "dirty";
+
+            src = lib.cleanSource ./.;
+
+            npmDepsHash = lib.fakeHash;
+
+            buildPhase = ''
+              NODE_ENV=production npm run build --offline  
+            '';
+
+            installPhase = ''
+              mkdir -p "$out"  
+              cp -r ./build/* "$out"
+              cp -r ./node_modules "$out"
+            '';
+          };
+          default = frontend;
+        }
+      );
     };
 }
