@@ -30,16 +30,17 @@
         default = pkgs.mkShellNoCC {
           packages = with pkgs; [
             curl
-            git
             getent
+            git
             groff
             helix
-            less
             jq
+            less
             man
             ncurses
             nodejs
             pdpmake
+            prefetch-npm-deps
             python3
             uutils-coreutils-noprefix
           ];
