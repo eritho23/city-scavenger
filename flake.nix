@@ -21,9 +21,12 @@
       treefmtEval = eachSystem (pkgs: treefmt-nix.lib.evalModule pkgs ./nix/treefmt.nix);
     in
     {
-      checks = eachSystem (pkgs: {
-        formatting = treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.check self;
-      });
+      checks = eachSystem (
+        pkgs: with pkgs; {
+          formatting = treefmtEval.${stdenv.hostPlatform.system}.config.build.check self;
+          svelte = self.outputs.packages.${stdenv.hostPlatform.system}.frontend;
+        }
+      );
       devShells = eachSystem (pkgs: {
         default = pkgs.mkShellNoCC {
           packages = with pkgs; [

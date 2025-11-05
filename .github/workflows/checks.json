@@ -1,0 +1,48 @@
+{
+  "name": "run all checks",
+  "on": {
+    "pull_request": null,
+    "push": {
+      "branches": "main"
+    }
+  },
+  "jobs": {
+    "formatter": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "name": "Check out source code",
+          "uses": "actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8"
+        },
+        {
+          "name": "Install Nix",
+          "uses": "cachix/install-nix-action@456688f15bc354bef6d396e4a35f4f89d40bf2b7",
+          "with": {
+            "extra_nix_config": "keep-outputs = true\nkeep-env-derivations = true\n"
+          }
+        },
+        {
+          "name": "Look up and restore cached Nix store",
+          "uses": "nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a",
+          "with": {
+            "primary-key": "nix-${{ runner.os}}-${{ runner.arch }}-${{ hashFiles('flake.lock', 'package-lock.json') }}"
+          }
+        },
+        {
+          "name": "Run Nix flake checks",
+          "run": "nix flake check"
+        },
+        {
+          "name": "Save Nix store to cache",
+          "uses": "nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a",
+          "with": {
+            "primary-key": "nix-${{ runner.os}}-${{ runner.arch }}-${{ hashFiles('flake.lock', 'package-lock.json') }}",
+            "restore-prefixes-first-match": "nix-${{ runner.os }}-",
+            "purge": true,
+            "purge-last-accessed": 2592000
+          }
+        }
+      ]
+    }
+  }
+}
