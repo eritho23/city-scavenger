@@ -61,7 +61,7 @@
 
             src = lib.cleanSource ./.;
 
-            npmDepsHash = lib.fakeHash;
+            npmDepsHash = "sha256-IFmBg7Qx6Ja0aOKDy36HDMAnNvsTJhDC2o3GSeQvfyY=";
 
             buildPhase = ''
               NODE_ENV=production npm run build --offline  
