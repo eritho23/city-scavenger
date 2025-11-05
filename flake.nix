@@ -24,26 +24,30 @@
     in
     {
       checks = eachSystem (pkgs: {
-        formatting = treefmtEval.${pkgs.system}.config.build.check self;
+        formatting = treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.check self;
       });
       devShells = eachSystem (pkgs: {
         default = pkgs.mkShell {
           packages = with pkgs; [
-            busybox
             curl
+            git
+            getent
+            groff
             helix
             jq
             nodejs
             pdpmake
             python3
+            uutils-coreutils-noprefix
           ];
           # Hack to make treefmt faster.
           shellHook = ''
-            # ${treefmtEval.${pkgs.system}.config.build.wrapper}
+                  # ${treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper}
+            	    export TERM="linux"
+                  export HOME=$(getent passwd $(id -u) | cut -d: -f6)
           '';
         };
       });
-
-      formatter = eachSystem (pkgs: treefmtEval.${pkgs.system}.config.build.wrapper);
+      formatter = eachSystem (pkgs: treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper);
     };
 }

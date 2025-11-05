@@ -58,11 +58,6 @@ for name, stops in by_name.items():
             }
         )
 
-
-if not os.path.exists(argv[2]):
-    print("Output path does not exist: {}".format(argv[2]))
-    exit(1)
-
 with open(argv[1], "w") as f:
     json.dump({"elements": grouped}, f, indent=2)
 
