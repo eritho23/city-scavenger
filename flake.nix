@@ -5,19 +5,20 @@
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
   };
 
-  outputs = { self, nixpkgs }: 
-  let
+  outputs = {
+    self,
+    nixpkgs,
+  }: let
     pkgsx86_64 = import nixpkgs {system = "x86_64-linux";};
-    in
-  {
+  in {
     devShells.x86_64-linux.default = pkgsx86_64.mkShell {
       packages = with pkgsx86_64; [
-	curl
-	helix
-	jq
+        curl
+        helix
+        jq
         nodejs
-	pdpmake
-	python3
+        pdpmake
+        python3
       ];
     };
   };
