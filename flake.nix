@@ -39,6 +39,7 @@
             man
             ncurses
             nodejs
+            npm-check-updates
             pdpmake
             prefetch-npm-deps
             python3
@@ -62,7 +63,7 @@
 
             src = lib.cleanSource ./.;
 
-            npmDepsHash = "sha256-IFmBg7Qx6Ja0aOKDy36HDMAnNvsTJhDC2o3GSeQvfyY=";
+            npmDepsHash = "sha256-NvM/hlfoMBv7EXv7uhkR8aTku+SuMVhl6y6GTgnh//0=";
 
             buildPhase = ''
               NODE_ENV=production npm run build --offline  
