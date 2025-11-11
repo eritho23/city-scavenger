@@ -1,0 +1,9 @@
+[out:json];
+(
+  node["amenity"="pharmacy"](59.585804,16.466103,59.644673,16.624718);
+  way["amenity"="pharmacy"](59.585804,16.466103,59.644673,16.624718);
+  relation["amenity"="pharmacy"](59.585804,16.466103,59.644673,16.624718);
+);
+out body;
+>;
+out skel qt;
