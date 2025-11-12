@@ -1,8 +1,9 @@
 .POSIX:
 
 .PHONY: \
-	geodata \
-	clean
+	clean \
+	dev \
+	geodata
 
 OVERPASS_API_ENDPOINT = https://overpass-api.de/api/interpreter
 
@@ -49,3 +50,6 @@ geodata: \
 
 clean:
 	rm -rf ./generated ./build ./node_modules
+
+dev:
+	bun --bun run dev

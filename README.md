@@ -21,8 +21,21 @@ nix develop
 
 to enter a complete developer environment.
 
+> [!IMPORTANT]
+> If you see a message about Sops keys, you need to obtain a Sops-compatible key. Contact @eritho23 for further instructions.
+
 > [!NOTE]
 > The first time, entering the development environment may take a little while, since the software needed will need to be downloaded and compiled.
+
+### Running a development server
+
+Run
+
+```
+make dev
+```
+
+to start a development server with necessary options.
 
 ### Building a bundle for production
 
