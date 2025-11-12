@@ -48,4 +48,4 @@ geodata: \
 	generated/pizzerias.geojson
 
 clean:
-	rm -rf ./generated
+	rm -rf ./generated ./build ./node_modules
