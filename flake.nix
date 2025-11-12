@@ -36,7 +36,7 @@
         default = pkgs.mkShellNoCC {
           packages = with pkgs; [
             bun
-            bun2nix.packages.${pkgs.system}.default
+            bun2nix.packages.${stdenv.hostPlatform.system}.default
             curl
             getent
             git
@@ -66,23 +66,11 @@
       formatter = eachSystem (pkgs: treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper);
       packages = eachSystem (
         pkgs: with pkgs; rec {
-          frontend = buildNpmPackage {
+          frontend = bun2nix.lib.${pkgs.stdenv.hostPlatform.system}.mkBunDerivation {
             pname = "city-scavenger-frontend";
             version = if (self ? rev) then self.rev else "dirty";
-
             src = lib.cleanSource ./.;
-
-            npmDepsHash = "sha256-Nzm3zOOlT6RSrAq+cIr0gejdLkn7c1KZP6N0+CQz0kk=";
-
-            buildPhase = ''
-              NODE_ENV=production npm run build --offline  
-            '';
-
-            installPhase = ''
-              mkdir -p "$out"  
-              cp -r ./build/* "$out"
-              cp -r ./node_modules "$out"
-            '';
+            bunNix = ./bun.nix;
           };
           default = frontend;
         }
