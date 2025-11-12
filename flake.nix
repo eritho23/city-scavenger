@@ -2,6 +2,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     systems.url = "github:nix-systems/default";
+    bun2nix = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:baileyluTCD/bun2nix";
+    };
     treefmt-nix = {
       inputs.nixpkgs.follows = "nixpkgs";
       url = "github:numtide/treefmt-nix";
@@ -11,6 +15,7 @@
   outputs =
     {
       self,
+      bun2nix,
       nixpkgs,
       systems,
       treefmt-nix,
@@ -30,6 +35,8 @@
       devShells = eachSystem (pkgs: {
         default = pkgs.mkShellNoCC {
           packages = with pkgs; [
+            bun
+            bun2nix.packages.${pkgs.system}.default
             curl
             getent
             git
