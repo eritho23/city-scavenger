@@ -1023,15 +1023,6 @@
     url = "https://registry.npmjs.org/eslint/-/eslint-9.39.1.tgz";
     hash = "sha512-BhHmn2yNOFA9H9JmmIVKJmd288g9hrVRDkdoIgRCRuSySRUHH7r/DI6aAXW9T1WwUuY3DFgrcaqB+deURBLR5g==";
   };
-  "eslint-config-prettier" = {
-    out_path = "eslint-config-prettier";
-    binaries = {
-      "eslint-config-prettier" = "../eslint-config-prettier/bin/cli.js";
-    };
-    name = "eslint-config-prettier@10.1.8";
-    url = "https://registry.npmjs.org/eslint-config-prettier/-/eslint-config-prettier-10.1.8.tgz";
-    hash = "sha512-82GZUjRS0p/jganf6q1rEO25VSoHH0hKPCTrgillPjdI/3bgBhAE1QzHrHTizjpRvy6pGAvKjDJtk2pF9NDq8w==";
-  };
   "eslint-plugin-svelte" = {
     out_path = "eslint-plugin-svelte";
     name = "eslint-plugin-svelte@3.13.0";
@@ -1592,27 +1583,6 @@
     name = "prelude-ls@1.2.1";
     url = "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.2.1.tgz";
     hash = "sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==";
-  };
-  "prettier" = {
-    out_path = "prettier";
-    binaries = {
-      "prettier" = "../prettier/bin/prettier.cjs";
-    };
-    name = "prettier@3.6.2";
-    url = "https://registry.npmjs.org/prettier/-/prettier-3.6.2.tgz";
-    hash = "sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==";
-  };
-  "prettier-plugin-svelte" = {
-    out_path = "prettier-plugin-svelte";
-    name = "prettier-plugin-svelte@3.4.0";
-    url = "https://registry.npmjs.org/prettier-plugin-svelte/-/prettier-plugin-svelte-3.4.0.tgz";
-    hash = "sha512-pn1ra/0mPObzqoIQn/vUTR3ZZI6UuZ0sHqMK5x2jMLGrs53h0sXhkVuDcrlssHwIMk7FYrMjHBPoUSyyEEDlBQ==";
-  };
-  "prettier-plugin-tailwindcss" = {
-    out_path = "prettier-plugin-tailwindcss";
-    name = "prettier-plugin-tailwindcss@0.7.1";
-    url = "https://registry.npmjs.org/prettier-plugin-tailwindcss/-/prettier-plugin-tailwindcss-0.7.1.tgz";
-    hash = "sha512-Bzv1LZcuiR1Sk02iJTS1QzlFNp/o5l2p3xkopwOrbPmtMeh3fK9rVW5M3neBQzHq+kGKj/4LGQMTNcTH4NGPtQ==";
   };
   "punycode" = {
     out_path = "punycode";

@@ -46,21 +46,33 @@
             less
             man
             ncurses
+            neovim-unwrapped
             nodejs
             npm-check-updates
             openssh
             pdpmake
             prefetch-npm-deps
             python3
+            sops
             tokei
             uutils-coreutils-noprefix
           ];
-          # Hack to make treefmt faster.
           shellHook = ''
+            # Hack to make treefmt faster.
             # ${treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper}
             export TERM="linux"
             export HOME=$(getent passwd $(id -u) | cut -d: -f6)
             export PS1='[\[\e[38;5;92m\]scavenger-dev\[\e[0m\]:\[\e[38;5;202m\]\w\[\e[0m\]]\\$ '
+            export SOPS_EDITOR=nvim
+
+            # Source all secret environment variables.
+            if ! source <(sops -d --output-type dotenv secrets/secrets.env 2>/dev/null | awk '{print "export " $0}') 2>/dev/null; then
+              echo ""
+              echo "Note: Secrets could not be loaded."
+              echo "You need to generate a SOPS key and get access to the secrets."
+              echo "See the README for setup instructions."
+              echo ""
+            fi
           '';
         };
       });
