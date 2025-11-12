@@ -69,8 +69,19 @@
           frontend = bun2nix.lib.${pkgs.stdenv.hostPlatform.system}.mkBunDerivation {
             pname = "city-scavenger-frontend";
             version = if (self ? rev) then self.rev else "dirty";
-            src = lib.cleanSource ./.;
             bunNix = ./bun.nix;
+            src = lib.cleanSource ./.;
+
+            buildPhase = ''
+              bun --bun run build
+            '';
+
+            installPhase = ''
+              mkdir -p "$out"
+              cp -r ./build/* "$out"
+              # Re-enable if external modules are required.
+              # cp -r node_modules "$out"
+            '';
           };
           default = frontend;
         }
