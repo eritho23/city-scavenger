@@ -1,38 +1,38 @@
-# sv
+# CityScavenger
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+This repository contains the SvelteKit application for the CityScavenger game.
+It integrates RAG-based LLM prompting to obtain place data for the game.
 
-## Creating a project
+## Development environment
 
-If you're seeing this, you've probably already done this step. Congrats!
+For the development environment, we **strongly** recommend using
+[Nix](https://nixos.org/download). By using Nix, we can ensure a consistent
+development environment as well as reproducible builds. Since we use
+[flakes](https://wiki.nixos.org/wiki/Flakes), you need to enable
+`nix-command` and `flakes` in your Nix configuration.
 
-```sh
-# create a new project in the current directory
-npx sv create
+### Entering a development shell
 
-# create a new project in my-app
-npx sv create my-app
+Simply run
+
+```
+nix develop
 ```
 
-## Developing
+to enter a complete developer environment.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+> [!NOTE]
+> The first time, entering the development environment may take a little while, since the software needed will need to be downloaded and compiled.
 
-```sh
-npm run dev
+### Building a bundle for production
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+Simply run
+
+```
+nix build
 ```
 
-## Building
+to build the production bundle.
 
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+> [!IMPORTANT]
+> If the build fails due to missing files, and said files are not tracked in git, you need to stage or commit them in order for them to appear during the build.
