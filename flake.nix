@@ -59,11 +59,14 @@
           ];
           # Hack to make treefmt faster.
           shellHook = ''
-                  # ${treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper}
-                  export TERM="linux"
-                  export HOME=$(getent passwd $(id -u) | cut -d: -f6)
-                  export PS1='[\[\e[38;5;92m\]scavenger-dev\[\e[0m\]:\[\e[38;5;202m\]\w\[\e[0m\]]\\$ '
-            	    export SOPS_EDITOR=nvim
+                    # ${treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper}
+                    export TERM="linux"
+                    export HOME=$(getent passwd $(id -u) | cut -d: -f6)
+                    export PS1='[\[\e[38;5;92m\]scavenger-dev\[\e[0m\]:\[\e[38;5;202m\]\w\[\e[0m\]]\\$ '
+              	    export SOPS_EDITOR=nvim
+
+              	    # Source all secret environment variables.
+            	      source <(sops -d --output-type dotenv secrets/secrets.env | awk '{print "export " $0}')
           '';
         };
       });
