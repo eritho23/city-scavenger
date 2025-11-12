@@ -1,0 +1,9 @@
+[out:json];
+(
+  node["amenity"="restaurant"]["cuisine"="pizza"](59.585804,16.466103,59.644673,16.624718);
+  way["amenity"="restaurant"]["cuisine"="pizza"](59.585804,16.466103,59.644673,16.624718);
+  relation["amenity"="restaurant"]["cuisine"="pizza"](59.585804,16.466103,59.644673,16.624718);
+);
+out body;
+>;
+out skel qt;

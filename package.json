@@ -4,14 +4,15 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"dev": "vite dev",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint ."
+		"lint": "prettier --check . && eslint .",
+		"postinstall": "bun2nix -o bun.nix; echo '' >> bun.nix",
+		"prepare": "svelte-kit sync || echo ''",
+		"preview": "vite preview"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.1",
@@ -29,6 +30,7 @@
 		"prettier-plugin-svelte": "^3.4.0",
 		"prettier-plugin-tailwindcss": "^0.7.1",
 		"svelte": "^5.43.3",
+		"svelte-adapter-bun": "^1.0.1",
 		"svelte-check": "^4.3.3",
 		"tailwindcss": "^4.1.16",
 		"typescript": "^5.9.3",

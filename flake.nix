@@ -2,6 +2,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     systems.url = "github:nix-systems/default";
+    bun2nix = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:baileyluTCD/bun2nix";
+    };
     treefmt-nix = {
       inputs.nixpkgs.follows = "nixpkgs";
       url = "github:numtide/treefmt-nix";
@@ -11,6 +15,7 @@
   outputs =
     {
       self,
+      bun2nix,
       nixpkgs,
       systems,
       treefmt-nix,
@@ -30,6 +35,8 @@
       devShells = eachSystem (pkgs: {
         default = pkgs.mkShellNoCC {
           packages = with pkgs; [
+            bun
+            bun2nix.packages.${stdenv.hostPlatform.system}.default
             curl
             getent
             git
@@ -45,6 +52,7 @@
             pdpmake
             prefetch-npm-deps
             python3
+            tokei
             uutils-coreutils-noprefix
           ];
           # Hack to make treefmt faster.
@@ -59,22 +67,21 @@
       formatter = eachSystem (pkgs: treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper);
       packages = eachSystem (
         pkgs: with pkgs; rec {
-          frontend = buildNpmPackage {
+          frontend = bun2nix.lib.${pkgs.stdenv.hostPlatform.system}.mkBunDerivation {
             pname = "city-scavenger-frontend";
             version = if (self ? rev) then self.rev else "dirty";
-
+            bunNix = ./bun.nix;
             src = lib.cleanSource ./.;
 
-            npmDepsHash = "sha256-Nzm3zOOlT6RSrAq+cIr0gejdLkn7c1KZP6N0+CQz0kk=";
-
             buildPhase = ''
-              NODE_ENV=production npm run build --offline  
+              bun --bun run build
             '';
 
             installPhase = ''
-              mkdir -p "$out"  
+              mkdir -p "$out"
               cp -r ./build/* "$out"
-              cp -r ./node_modules "$out"
+              # Re-enable if external modules are required.
+              # cp -r node_modules "$out"
             '';
           };
           default = frontend;
