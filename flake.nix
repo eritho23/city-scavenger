@@ -52,6 +52,7 @@
             pdpmake
             prefetch-npm-deps
             python3
+            tokei
             uutils-coreutils-noprefix
           ];
           # Hack to make treefmt faster.
