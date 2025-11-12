@@ -1,8 +1,7 @@
 keys:
   - &eritho23 age1za4x2kz9kuus40c5tfznckcy9vfrqzt6m0kclpr5q52lcx6fxywq2t9str
-
 creation_rules:
   - path_regex: secrets/secrets.yaml$
     key_groups:
       - age:
-        - *eritho23
+          - *eritho23
