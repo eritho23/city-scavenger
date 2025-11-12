@@ -46,12 +46,14 @@
             less
             man
             ncurses
+            neovim-unwrapped
             nodejs
             npm-check-updates
             openssh
             pdpmake
             prefetch-npm-deps
             python3
+            sops
             tokei
             uutils-coreutils-noprefix
           ];
@@ -61,6 +63,7 @@
             export TERM="linux"
             export HOME=$(getent passwd $(id -u) | cut -d: -f6)
             export PS1='[\[\e[38;5;92m\]scavenger-dev\[\e[0m\]:\[\e[38;5;202m\]\w\[\e[0m\]]\\$ '
+	    export SOPS_EDITOR=nvim
           '';
         };
       });
