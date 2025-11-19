@@ -49,11 +49,13 @@
             curl
             getent
             git
+            go-migrate
             groff
             helix
             jq
             less
             man
+            mbake
             ncurses
             neovim-unwrapped
             nodejs
@@ -62,6 +64,7 @@
             pdpmake
             postgresql.out
             prefetch-npm-deps
+            procps
             python3
             sops
             tokei
