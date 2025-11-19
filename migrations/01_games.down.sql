@@ -1,8 +1,9 @@
-begin
-drop table game;
+begin;
 
-drop type question_kind;
+drop table if exists question;
 
-drop table question;
+drop type if exists question_kind;
+
+drop table if exists game;
 
 commit;

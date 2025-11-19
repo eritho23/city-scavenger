@@ -1,7 +1,7 @@
 begin;
 
 create table game (
-  uid uuid primary key default uuidv4 (),
+  uid uuid primary key default gen_random_uuid(),
   -- Data may be any shape.
   place_profile jsonb,
   started_at timestamptz not null default now(),
@@ -18,7 +18,7 @@ create type question_kind as enum(
 );
 
 create table question (
-  uid uuid primary key default uuidv4 (),
+  uid uuid primary key default gen_random_uuid(),
   kind question_kind not null,
   -- Schemas are defined in TS code (zod).
   parameters jsonb,

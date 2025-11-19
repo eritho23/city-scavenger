@@ -13,10 +13,10 @@ psql:
 	psql -U cityscav postgresql:///cityscav?host=$$(readlink ./tmp)
 
 migrate-up:
-	migrate -path ./migrations -database postgresql:///cityscav?host=$$(readlink ./tmp) up
+	migrate -path ./migrations -database postgresql://cityscav@/cityscav?host=$$(readlink ./tmp) up
 
 migrate-down:
-	migrate -path ./migrations -database postgresql:///cityscav?host=$$(readlink ./tmp) down
+	migrate -path ./migrations -database postgresql://cityscav@/cityscav?host=$$(readlink ./tmp) down
 
 ./tmp/.pgdata: ./tmp
 	initdb \
