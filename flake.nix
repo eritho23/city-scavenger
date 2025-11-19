@@ -49,13 +49,12 @@
             curl
             getent
             git
-            go-migrate
+            (pkgs.callPackage ./nix/go-migrate.nix { })
             groff
             helix
             jq
             less
             man
-            mbake
             ncurses
             neovim-unwrapped
             nodejs

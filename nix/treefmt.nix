@@ -17,5 +17,9 @@ _: {
     nixfmt.enable = true;
     statix.enable = true;
     yamlfmt.enable = true;
+    sql-formatter = {
+      enable = true;
+      dialect = "postgresql";
+    };
   };
 }
