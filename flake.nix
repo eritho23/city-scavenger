@@ -44,12 +44,13 @@
       devShells = eachSystem (pkgs: {
         default = pkgs.mkShellNoCC {
           packages = with pkgs; [
+            (pkgs.callPackage ./nix/go-migrate.nix { })
+            (pkgs.callPackage ./nix/kysely-codegen.nix { })
             bun
             bun2nix.packages.${stdenv.hostPlatform.system}.default
             curl
             getent
             git
-            (pkgs.callPackage ./nix/go-migrate.nix { })
             groff
             helix
             jq
@@ -66,8 +67,12 @@
             procps
             python3
             sops
+            svelte-language-server
+            tmux
             tokei
+            typescript-language-server
             uutils-coreutils-noprefix
+            vscode-langservers-extracted
           ];
           shellHook = ''
             # Hack to make treefmt faster.
@@ -76,6 +81,10 @@
             export HOME=$(getent passwd $(id -u) | cut -d: -f6)
             export PS1='[\[\e[38;5;92m\]scavenger-dev\[\e[0m\]:\[\e[38;5;202m\]\w\[\e[0m\]]\\$ '
             export SOPS_EDITOR=nvim
+
+            export PGHOST=$(pwd)/tmp
+            export PGDATABASE=cityscav
+            export PGUSERNAME=cityscav
 
             # Source all secret environment variables.
             if ! source <(sops -d --output-type dotenv secrets/secrets.env 2>/dev/null | awk '{print "export " $0}') 2>/dev/null; then

@@ -11,7 +11,7 @@ clean: dev-clean
 install-deps:
 	bun install
 
-dev: install-deps
+dev: install-deps postgres
 	bun --bun run dev
 
 dev-clean:

@@ -717,6 +717,12 @@
     url = "https://registry.npmjs.org/@tybys/wasm-util/-/wasm-util-0.10.1.tgz";
     hash = "sha512-9tTaPJLSiejZKx+Bmog4uSubteqTvFrVrURwkmHixBo0G4seD0zUxp98E1DzUBJxLQ3NPwXrGKDiVjwx/DpPsg==";
   };
+  "@types/bun" = {
+    out_path = "@types/bun";
+    name = "@types/bun@1.3.2";
+    url = "https://registry.npmjs.org/@types/bun/-/bun-1.3.2.tgz";
+    hash = "sha512-t15P7k5UIgHKkxwnMNkJbWlh/617rkDGEdSsDbu+qNHTaz9SKf7aC8fiIlUdD5RPpH6GEkP0cK7WlvmrEBRtWg==";
+  };
   "@types/cookie" = {
     out_path = "@types/cookie";
     name = "@types/cookie@0.6.0";
@@ -740,6 +746,12 @@
     name = "@types/node@24.10.0";
     url = "https://registry.npmjs.org/@types/node/-/node-24.10.0.tgz";
     hash = "sha512-qzQZRBqkFsYyaSWXuEHc2WR9c0a0CXwiE5FWUvn7ZM+vdy1uZLfCunD38UzhuB7YN/J11ndbDBcTmOdxJo9Q7A==";
+  };
+  "@types/react" = {
+    out_path = "@types/react";
+    name = "@types/react@19.2.6";
+    url = "https://registry.npmjs.org/@types/react/-/react-19.2.6.tgz";
+    hash = "sha512-p/jUvulfgU7oKtj6Xpk8cA2Y1xKTtICGpJYeJXz2YVO2UcvjQgeRMLDGfDeqeRW2Ta+0QNFwcc8X3GH8SxZz6w==";
   };
   "@types/resolve" = {
     out_path = "@types/resolve";
@@ -894,6 +906,12 @@
     url = "https://registry.npmjs.org/braces/-/braces-3.0.3.tgz";
     hash = "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==";
   };
+  "bun-types" = {
+    out_path = "bun-types";
+    name = "bun-types@1.3.2";
+    url = "https://registry.npmjs.org/bun-types/-/bun-types-1.3.2.tgz";
+    hash = "sha512-i/Gln4tbzKNuxP70OWhJRZz1MRfvqExowP7U6JKoI8cntFrtxg7RJK3jvz7wQW54UuvNC8tbKHHri5fy74FVqg==";
+  };
   "callsites" = {
     out_path = "callsites";
     name = "callsites@3.1.0";
@@ -962,6 +980,12 @@
     name = "cssesc@3.0.0";
     url = "https://registry.npmjs.org/cssesc/-/cssesc-3.0.0.tgz";
     hash = "sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==";
+  };
+  "csstype" = {
+    out_path = "csstype";
+    name = "csstype@3.2.3";
+    url = "https://registry.npmjs.org/csstype/-/csstype-3.2.3.tgz";
+    hash = "sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==";
   };
   "debug" = {
     out_path = "debug";

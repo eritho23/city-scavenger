@@ -1,3 +1,4 @@
+# mk/postgres.mk
 .POSIX:
 .PHONY: \
 	migrate-down \
@@ -9,13 +10,13 @@
 
 clean: postgres-clean
 
-psql:
+psql: postgres
 	psql -U cityscav postgresql:///cityscav?host=$$(readlink ./tmp)
 
-migrate-up:
+migrate-up: postgres
 	migrate -path ./migrations -database postgresql://cityscav@/cityscav?host=$$(readlink ./tmp) up
 
-migrate-down:
+migrate-down: postgres
 	migrate -path ./migrations -database postgresql://cityscav@/cityscav?host=$$(readlink ./tmp) down
 
 ./tmp/.pgdata: ./tmp
@@ -25,10 +26,12 @@ migrate-down:
 		--auth-local=trust
 
 postgres: ./tmp/.pgdata
-	pg_ctl -D ./tmp/.pgdata start -o "-c unix_socket_directories=$$(pwd)/tmp -c listen_addresses=''"
-	createdb -h $$(readlink ./tmp) -U cityscav cityscav 2>/dev/null || true
+	if [ ! -f ./tmp/.pgdata/postmaster.pid ]; then \
+		pg_ctl -D ./tmp/.pgdata start -o "-c unix_socket_directories=$$(pwd)/tmp -c listen_addresses=''"; \
+		psql -h $$(readlink ./tmp) -U cityscav postgres -c "CREATE DATABASE cityscav;" 2>/dev/null || true; \
+	fi
 
-postgres-kill:
+postgres-kill: postgres
 	if [ -f ./tmp/.pgdata/postmaster.pid ]; then \
 		kill $$(head -n1 ./tmp/.pgdata/postmaster.pid); \
 	fi
