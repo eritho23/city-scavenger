@@ -26,6 +26,15 @@
       treefmtEval = eachSystem (pkgs: treefmt-nix.lib.evalModule pkgs ./nix/treefmt.nix);
     in
     {
+      apps = eachSystem (pkgs: {
+        makefile-format = with pkgs; {
+          type = "app";
+          program =
+            (writeShellScript "makefile-format" ''
+              ${lib.getBin findutils}/bin/find . -name '*.mk' -or -name 'Makefile' | xargs ${lib.getBin mbake}/bin/mbake format
+            '').outPath;
+        };
+      });
       checks = eachSystem (
         pkgs: with pkgs; {
           formatting = treefmtEval.${stdenv.hostPlatform.system}.config.build.check self;
@@ -40,6 +49,7 @@
             curl
             getent
             git
+            (pkgs.callPackage ./nix/go-migrate.nix { })
             groff
             helix
             jq
@@ -51,7 +61,9 @@
             npm-check-updates
             openssh
             pdpmake
+            postgresql.out
             prefetch-npm-deps
+            procps
             python3
             sops
             tokei
