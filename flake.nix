@@ -100,11 +100,11 @@
       formatter = eachSystem (pkgs: treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper);
       packages = eachSystem (
         pkgs: with pkgs; rec {
-          frontend = bun2nix.packages.${pkgs.system}.default.mkDerivation {
+          frontend = bun2nix.packages.${pkgs.stdenv.hostPlatform.system}.default.mkDerivation {
             pname = "city-scavenger-frontend";
             version = if (self ? rev) then self.rev else "dirty";
             src = lib.cleanSource ./.;
-            bunDeps = bun2nix.packages.${pkgs.system}.default.fetchBunDeps {
+            bunDeps = bun2nix.packages.${pkgs.stdenv.hostPlatform.system}.default.fetchBunDeps {
               bunNix = ./bun.nix;
             };
 
