@@ -1,4 +1,5 @@
-_: {
+{ pkgs, lib, ... }:
+{
   projectRootFile = "flake.nix";
 
   programs = {
@@ -20,6 +21,25 @@ _: {
     sql-formatter = {
       enable = true;
       dialect = "postgresql";
+    };
+  };
+
+  settings.formatter = {
+    "mbake" = {
+      command = "${lib.getBin pkgs.bash}/bin/bash";
+      options = [
+        "-euc"
+        ''
+          for file in "$@"; do
+            ${lib.getBin pkgs.mbake}/bin/mbake format $file
+          done
+        ''
+        "--"
+      ];
+      includes = [
+        "*.mk"
+        "Makefile"
+      ];
     };
   };
 }
