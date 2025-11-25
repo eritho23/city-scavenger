@@ -1,1 +1,28 @@
-<h1>Welcome to CityScavenger</h1>
+<script lang="ts">
+  import type { PageProps } from './$types';
+  let {form, data}: PageProps = $props();
+</script>
+
+<form method="POST">
+  <input type="text" name="bus_stop" placeholder="Bus stop" />
+  <input type="submit" value="Create game">
+</form>
+
+<span>
+  {#if form?.success}
+    Submitted successfully
+  {:else if form?.message}
+    {form?.message}
+  {/if}
+</span>
+
+<h1>Games</h1>
+
+<ul>
+  {#each data.games as game}
+    <li>
+      <a href={"/game/" + game.uid.toString()}>{game.uid}</a>
+    </li>
+  {/each}
+</ul>
+

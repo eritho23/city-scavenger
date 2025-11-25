@@ -5,10 +5,9 @@
 	clean \
 	clean-tmp
 
-clean: \
-	clean-tmp
+clean: postgres-kill postgres-clean dev-clean geodata-clean clean-tmp
 
-clean-tmp:
+clean-tmp: postgres-clean
 	rm -rf $$(readlink ./tmp)
 	unlink ./tmp
 
