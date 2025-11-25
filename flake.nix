@@ -4,7 +4,7 @@
     systems.url = "github:nix-systems/default";
     bun2nix = {
       inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:baileyluTCD/bun2nix";
+      url = "github:nix-community/bun2nix";
     };
     treefmt-nix = {
       inputs.nixpkgs.follows = "nixpkgs";
@@ -100,11 +100,13 @@
       formatter = eachSystem (pkgs: treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper);
       packages = eachSystem (
         pkgs: with pkgs; rec {
-          frontend = bun2nix.lib.${pkgs.stdenv.hostPlatform.system}.mkBunDerivation {
+          frontend = bun2nix.mkDerivation {
             pname = "city-scavenger-frontend";
             version = if (self ? rev) then self.rev else "dirty";
-            bunNix = ./bun.nix;
             src = lib.cleanSource ./.;
+            bunDeps = bun2nix.fetchBunDeps {
+              bunNix = ./bun.nix;
+            };
 
             buildPhase = ''
               bun --bun run build
