@@ -35,8 +35,11 @@
       devShells = eachSystem (pkgs: rec {
         ci = pkgs.mkShellNoCC {
           packages = with pkgs; [
+            (pkgs.callPackage ./nix/go-migrate.nix { })
             bun
             bun2nix.packages.${stdenv.hostPlatform.system}.default
+            pdpmake
+            postgresql.out
           ];
         };
         default = development;

@@ -2,12 +2,11 @@
 
 ERR=0
 
-# GH Actions ;-;.
-mv svelte.config.ts svelte.config.js
-
 bun install || ERR=1
 
-bun run prepare
+bun run prepare || ERR=1
+
+make gen-types || ERR=1
 
 echo "::add-matcher::ci/matchers/svelte.json"
 bunx sv check --output machine-verbose || ERR=1
