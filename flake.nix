@@ -113,7 +113,8 @@
             installPhase = ''
               mkdir -p "$out"
               cp -r ./build/* "$out"
-              # Re-enable if external modules are required.
+
+              # bun install --production
               # cp -r node_modules "$out"
             '';
           };
