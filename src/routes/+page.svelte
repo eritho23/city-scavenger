@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
-import type { PageProps } from './$types';
+  import type { PageProps } from './$types';
   let {form, data}: PageProps = $props();
 </script>
 

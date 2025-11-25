@@ -32,8 +32,18 @@
           svelte = self.outputs.packages.${stdenv.hostPlatform.system}.frontend;
         }
       );
-      devShells = eachSystem (pkgs: {
-        default = pkgs.mkShellNoCC {
+      devShells = eachSystem (pkgs: rec {
+        ci = pkgs.mkShellNoCC {
+          packages = with pkgs; [
+            (pkgs.callPackage ./nix/go-migrate.nix { })
+            bun
+            bun2nix.packages.${stdenv.hostPlatform.system}.default
+            pdpmake
+            postgresql.out
+          ];
+        };
+        default = development;
+        development = pkgs.mkShellNoCC {
           packages = with pkgs; [
             (pkgs.callPackage ./nix/go-migrate.nix { })
             bun
@@ -48,7 +58,6 @@
             man
             ncurses
             neovim-unwrapped
-            nodejs
             npm-check-updates
             openssh
             pdpmake
