@@ -22,7 +22,7 @@ import type { PageProps } from './$types';
 <ul>
   {#each data.games as game, index (index)}
     <li>
-      <a href={resolve(`/game/${game.uid.toString()}`)}>{index} - {game.uid}</a>
+      <a href={`/game/${game.uid.toString()}`}>{index} - {game.uid}</a>
     </li>
   {/each}
 </ul>
