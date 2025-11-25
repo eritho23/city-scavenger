@@ -105,31 +105,14 @@
             system = vmSystem;
             modules = [
               self.nixosModules.${vmSystem}.city-scav
-              (
-                { modulesPath, ... }:
-                {
-                  imports = [
-                    "${modulesPath}/virtualisation/qemu-vm.nix"
-                  ];
-                  virtualisation.vmVariant = {
-                    memorySize = 2048;
-                    cores = 2;
-                    qemu.options = [
-                      "-accel kvm"
-                    ];
-                  };
-                  services.city-scav = {
-                    enable = true;
-                    postgres.configureLocal = true;
-                  };
-                  system.stateVersion = "25.05";
-                }
-              )
+              ./nix/nixos-configuration.nix
             ];
           };
         };
       nixosModules = eachSystem (pkgs: {
-        city-scav = pkgs.callPackage ./nix/nixos-module.nix { };
+        city-scav = pkgs.callPackage ./nix/nixos-module.nix {
+          city-scav-bundle = self.packages.${pkgs.stdenv.hostPlatform.system}.frontend;
+        };
       });
       packages = eachSystem (
         pkgs: with pkgs; rec {
