@@ -15,9 +15,11 @@ in
     publicUrl = mkOption {
       description = "The full public URL of the instance, including protocol and port, used for the ORIGIN environment variable.";
       type = types.str;
+      default = "http://localhost:8080";
     };
     postgres = {
       connectionStringFile = mkOption {
+        default = "";
         type = types.str;
       };
       configureLocal = mkEnableOption "Whether or not to configure Postgres locally on the node.";
@@ -27,8 +29,9 @@ in
       acmeProvisioning = {
         enable = mkEnableOption "Whether or not to provision an ACME certificate.";
         domain = mkOption {
+          default = "";
           description = "The domain name that will be used for ACME Let's Encrypt provisioning.";
-          type = types.bool;
+          type = types.str;
         };
       };
     };
