@@ -29,6 +29,7 @@
       apps = eachSystem (pkgs: {
         makefile-format = with pkgs; {
           type = "app";
+          meta.description = "Format all Make-related files with Bake.";
           program =
             (writeShellScript "makefile-format" ''
               ${lib.getBin findutils}/bin/find . -name '*.mk' -or -name 'Makefile' | xargs ${lib.getBin mbake}/bin/mbake format
