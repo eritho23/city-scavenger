@@ -58,6 +58,7 @@
             man
             ncurses
             neovim-unwrapped
+            nixd
             npm-check-updates
             openssh
             pdpmake
@@ -81,9 +82,6 @@
             export PS1='[\[\e[38;5;92m\]scavenger-dev\[\e[0m\]:\[\e[38;5;202m\]\w\[\e[0m\]]\\$ '
             export SOPS_EDITOR=nvim
 
-            export PGHOST=$(pwd)/tmp
-            export PGDATABASE=cityscav
-            export PGUSERNAME=cityscav
             export DATABASE_URL=postgresql://cityscav@/cityscav?host=$(readlink ./tmp)
 
             # Source all secret environment variables.

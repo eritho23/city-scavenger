@@ -5,9 +5,7 @@ import type { DB } from "./generated/db";
 
 const dialect = new PostgresDialect({
 	pool: new Pool({
-		database: env.PGDATABASE,
-		host: env.PGHOST,
-		user: env.PGUSERNAME,
+		connectionString: env.DATABASE_URL,
 		port: 5432,
 		max: 5,
 	}),
