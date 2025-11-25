@@ -5,13 +5,11 @@
 	"type": "module",
 	"scripts": {
 		"build": "vite build",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && eslint",
 		"db:generate": "kysely-codegen --out-file ./src/lib/generated/db.d.ts",
 		"dev": "vite dev",
 		"postinstall": "bun2nix -o bun.nix; echo '' >> bun.nix",
-		"prepare": "svelte-kit sync || echo ''",
-		"preview": "vite preview"
+		"prepare": "svelte-kit sync || echo ''"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.1",
@@ -36,6 +34,7 @@
 		"vite": "^7.2.0"
 	},
 	"dependencies": {
+		"eslint-config-prettier": "^10.1.8",
 		"kysely": "^0.28.8",
 		"pg": "^8.16.3",
 		"valibot": "^1.2.0"

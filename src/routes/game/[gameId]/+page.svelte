@@ -2,7 +2,6 @@
   import { parse } from 'valibot';
   import { PlaceProfile } from '$lib/schemas';
   let { data } = $props()
-  $inspect(data.game)
 
   let parsedPlaceProfile = $derived(parse(PlaceProfile, data.game.place_profile))
 

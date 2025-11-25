@@ -734,6 +734,10 @@
     url = "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-4.0.0.tgz";
     hash = "sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==";
   };
+  "eslint-config-prettier@10.1.8" = fetchurl {
+    url = "https://registry.npmjs.org/eslint-config-prettier/-/eslint-config-prettier-10.1.8.tgz";
+    hash = "sha512-82GZUjRS0p/jganf6q1rEO25VSoHH0hKPCTrgillPjdI/3bgBhAE1QzHrHTizjpRvy6pGAvKjDJtk2pF9NDq8w==";
+  };
   "eslint-plugin-svelte@3.13.0" = fetchurl {
     url = "https://registry.npmjs.org/eslint-plugin-svelte/-/eslint-plugin-svelte-3.13.0.tgz";
     hash = "sha512-2ohCCQJJTNbIpQCSDSTWj+FN0OVfPmSO03lmSNT7ytqMaWF6kpT86LdzDqtm4sh7TVPl/OEWJ/d7R87bXP2Vjg==";

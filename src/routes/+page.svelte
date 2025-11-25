@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { PageProps } from './$types';
+  import { resolve } from '$app/paths';
+import type { PageProps } from './$types';
   let {form, data}: PageProps = $props();
 </script>
 
@@ -19,9 +20,9 @@
 <h1>Games</h1>
 
 <ul>
-  {#each data.games as game}
+  {#each data.games as game, index (index)}
     <li>
-      <a href={"/game/" + game.uid.toString()}>{game.uid}</a>
+      <a href={resolve(`/game/${game.uid.toString()}`)}>{index} - {game.uid}</a>
     </li>
   {/each}
 </ul>

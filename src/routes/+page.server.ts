@@ -2,7 +2,7 @@ import { type Actions, fail } from "@sveltejs/kit";
 import { db } from "$lib/database";
 import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async (_) => {
+export const load: PageServerLoad = async () => {
 	const games = await db.selectFrom("game").select(["uid", "place_profile"]).execute();
 
 	return {
