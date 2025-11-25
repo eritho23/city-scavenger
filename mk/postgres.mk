@@ -31,7 +31,7 @@ postgres: ./tmp/.pgdata
 		psql -h $$(readlink ./tmp) -U cityscav postgres -c "CREATE DATABASE cityscav;" 2>/dev/null || true; \
 	fi
 
-postgres-kill: postgres
+postgres-kill:
 	if [ -f ./tmp/.pgdata/postmaster.pid ]; then \
 		kill $$(head -n1 ./tmp/.pgdata/postmaster.pid); \
 	fi

@@ -45,7 +45,6 @@
         default = pkgs.mkShellNoCC {
           packages = with pkgs; [
             (pkgs.callPackage ./nix/go-migrate.nix { })
-            (pkgs.callPackage ./nix/kysely-codegen.nix { })
             bun
             bun2nix.packages.${stdenv.hostPlatform.system}.default
             curl
@@ -85,6 +84,7 @@
             export PGHOST=$(pwd)/tmp
             export PGDATABASE=cityscav
             export PGUSERNAME=cityscav
+            export DATABASE_URL=postgresql://cityscav@/cityscav?host=$(readlink ./tmp)
 
             # Source all secret environment variables.
             if ! source <(sops -d --output-type dotenv secrets/secrets.env 2>/dev/null | awk '{print "export " $0}') 2>/dev/null; then
