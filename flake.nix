@@ -96,6 +96,9 @@
         };
       });
       formatter = eachSystem (pkgs: treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper);
+      nixosModules = eachSystem (pkgs: {
+        city-scav = pkgs.callPackage ./nix/nixos-module.nix { };
+      });
       packages = eachSystem (
         pkgs: with pkgs; rec {
           frontend = bun2nix.packages.${pkgs.stdenv.hostPlatform.system}.default.mkDerivation {
