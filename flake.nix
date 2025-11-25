@@ -96,34 +96,38 @@
         };
       });
       formatter = eachSystem (pkgs: treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper);
-      nixosConfigurations = {
-        test-module = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            self.nixosModules.city-scav
-            (
-              { modulesPath, ... }:
-              {
-                imports = [
-                  "${modulesPath}/virtualisation/qemu-vm.nix"
-                ];
-                virtualisation.vmVariant = {
-                  memorySize = 2048;
-                  cores = 2;
-                  qemu.options = [
-                    "-accel kvm"
+      nixosConfigurations =
+        let
+          vmSystem = "x86_64-linux";
+        in
+        {
+          test-module = nixpkgs.lib.nixosSystem {
+            system = vmSystem;
+            modules = [
+              self.nixosModules.${vmSystem}.city-scav
+              (
+                { modulesPath, ... }:
+                {
+                  imports = [
+                    "${modulesPath}/virtualisation/qemu-vm.nix"
                   ];
-                };
-                services.city-scav = {
-                  enable = true;
-                  postgres.configureLocal = true;
-                };
-                system.stateVersion = "25.05";
-              }
-            )
-          ];
+                  virtualisation.vmVariant = {
+                    memorySize = 2048;
+                    cores = 2;
+                    qemu.options = [
+                      "-accel kvm"
+                    ];
+                  };
+                  services.city-scav = {
+                    enable = true;
+                    postgres.configureLocal = true;
+                  };
+                  system.stateVersion = "25.05";
+                }
+              )
+            ];
+          };
         };
-      };
       nixosModules = eachSystem (pkgs: {
         city-scav = pkgs.callPackage ./nix/nixos-module.nix { };
       });
