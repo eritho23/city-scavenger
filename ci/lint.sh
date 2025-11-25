@@ -4,6 +4,8 @@ ERR=0
 
 bun install || ERR=1
 
+bun run prepare
+
 echo "::add-matcher::ci/matchers/svelte.json"
 bunx sv check --output machine-verbose || ERR=1
 echo "::remove-matcher owner=svelte::"

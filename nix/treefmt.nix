@@ -16,6 +16,7 @@
     dos2unix.enable = true;
     mdformat.enable = true;
     nixfmt.enable = true;
+    shfmt.enable = true;
     statix.enable = true;
     yamlfmt.enable = true;
     sql-formatter = {
