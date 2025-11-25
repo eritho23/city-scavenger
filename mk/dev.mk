@@ -22,5 +22,5 @@ dev: install-deps postgres ./src/lib/generated/db.d.ts
 	bun --bun run dev
 
 dev-clean:
-	rm -rf ./build ./node_modules
+	rm -rf ./build ./node_modules ./.svelte-kit
 	rm -rf ./src/lib/generated

@@ -2,9 +2,8 @@ import { type Actions, fail } from "@sveltejs/kit";
 import { db } from "$lib/database";
 import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({ depends }) => {
-	depends("data:games");
-	const games = await db.selectFrom("game").select(["uid"]).execute();
+export const load: PageServerLoad = async (_) => {
+	const games = await db.selectFrom("game").select(["uid", "place_profile"]).execute();
 
 	return {
 		games,

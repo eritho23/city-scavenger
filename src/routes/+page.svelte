@@ -1,11 +1,6 @@
 <script lang="ts">
   import type { PageProps } from './$types';
-  import { invalidate } from '$app/navigation';
   let {form, data}: PageProps = $props();
-  
-  if (form?.success) {
-    invalidate('data:success')
-  }
 </script>
 
 <form method="POST">
@@ -13,12 +8,21 @@
   <input type="submit" value="Create game">
 </form>
 
+<span>
+  {#if form?.success}
+    Submitted successfully
+  {:else if form?.message}
+    {form?.message}
+  {/if}
+</span>
+
+<h1>Games</h1>
+
 <ul>
   {#each data.games as game}
     <li>
-      {game.uid}
+      <a href={"/game/" + game.uid.toString()}>{game.uid}</a>
     </li>
   {/each}
 </ul>
 
-<h1>Games</h1>

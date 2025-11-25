@@ -2155,6 +2155,12 @@
     url = "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz";
     hash = "sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==";
   };
+  "valibot" = {
+    out_path = "valibot";
+    name = "valibot@1.2.0";
+    url = "https://registry.npmjs.org/valibot/-/valibot-1.2.0.tgz";
+    hash = "sha512-mm1rxUsmOxzrwnX5arGS+U4T25RdvpPjPN4yR0u9pUBov9+zGVtO84tif1eY4r6zWxVxu3KzIyknJy3rxfRZZg==";
+  };
   "vite" = {
     out_path = "vite";
     binaries = {
