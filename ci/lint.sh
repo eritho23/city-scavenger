@@ -2,6 +2,9 @@
 
 ERR=0
 
+# GH Actions ;-;.
+mv svelte.config.ts svelte.config.js
+
 bun install || ERR=1
 
 bun run prepare
