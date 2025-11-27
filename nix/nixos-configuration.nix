@@ -5,6 +5,7 @@
 {
   imports = [
     "${modulesPath}/virtualisation/qemu-vm.nix"
+    "${modulesPath}/profiles/minimal.nix"
   ];
   virtualisation.vmVariant = {
     memorySize = 2048;
@@ -13,6 +14,7 @@
       "-accel kvm"
     ];
   };
+  users.users.root.password = "toor";
   services.city-scav = {
     enable = true;
     postgres.configureLocal = true;
