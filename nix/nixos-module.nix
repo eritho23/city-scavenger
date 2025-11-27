@@ -1,13 +1,15 @@
+{ self }:
 {
   config,
   pkgs,
   lib,
-  city-scav-bundle,
   ...
 }:
+with lib;
 let
   cfg = config.services.city-scav;
   goMigrate = pkgs.callPackage ./go-migrate.nix { };
+  cityScavBundle = self.packages.${pkgs.stdenv.hostPlatform.system}.frontend;
   postgresConnectionStringFile =
     if !cfg.postgres.configureLocal then
       cfg.postgres.connectionStringFile
@@ -15,7 +17,7 @@ let
       pkgs.writeText "database-url" "postgresql://city-scav@/city-scav?host=/run/postgresql";
 in
 {
-  options.services.city-scav = with lib; {
+  options.services.city-scav = {
     enable = mkEnableOption "Whether to enable the CityScav service.";
     publicUrl = mkOption {
       description = "The full public URL of the instance, including protocol and port, used for the ORIGIN environment variable.";
@@ -42,8 +44,8 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    services.postgresql = lib.mkIf cfg.postgres.configureLocal {
+  config = mkIf cfg.enable {
+    services.postgresql = mkIf cfg.postgres.configureLocal {
       enable = true;
       ensureDatabases = [ "city-scav" ];
       ensureUsers = [
@@ -55,7 +57,7 @@ in
       ];
     };
 
-    services.nginx.virtualHosts."city-scav" = lib.mkIf cfg.nginxConfiguration.enable {
+    services.nginx.virtualHosts."city-scav" = mkIf cfg.nginxConfiguration.enable {
       locations."/" = {
         proxyPass = "http://unix:/run/city-scav/http.sock";
       };
@@ -72,14 +74,14 @@ in
       description = "The CityScavenger Bun HTTP server.";
       serviceConfig = {
         # Execute the main process only after migrations are applied.
-        ExecStartPre = lib.writeShellScript "city-scav-exec-start-pre" ''
+        ExecStartPre = pkgs.writeShellScript "city-scav-exec-start-pre" ''
           export DATABASE_URL="$(cat ${postgresConnectionStringFile})"
-          ${goMigrate} -path ${lib.cleanSource ../migrations} -database $DATABASE_URL up
+          ${goMigrate} -path ${cleanSource ../migrations} -database $DATABASE_URL up
         '';
 
-        ExecStart = lib.writeShellScript "city-scav-exec-start" ''
+        ExecStart = pkgs.writeShellScript "city-scav-exec-start" ''
           export DATABASE_URL="$(cat ${postgresConnectionStringFile})"
-          ${lib.getBin pkgs.bun}/bin/bun --bun run ${city-scav-bundle}/index.js
+          ${getBin pkgs.bun}/bin/bun --bun run ${cityScavBundle}/index.js
         '';
 
         Type = "simple";
@@ -132,7 +134,7 @@ in
       };
       unitConfig = {
         After = if !cfg.postgres.configureLocal then [ "postgresql.service" ] else [ "network.target" ];
-        Requires = lib.optionals cfg.postgres.configureLocal [ "postgresql.service" ];
+        Requires = optionals cfg.postgres.configureLocal [ "postgresql.service" ];
         WantedBy = [ "multi-user.target" ];
       };
     };

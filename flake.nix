@@ -103,17 +103,19 @@
         {
           test-module = nixpkgs.lib.nixosSystem {
             system = vmSystem;
+            # specialArgs = {};
             modules = [
-              self.nixosModules.${vmSystem}.city-scav
               ./nix/nixos-configuration.nix
+              self.nixosModules.city-scav
             ];
           };
         };
-      nixosModules = eachSystem (pkgs: {
-        city-scav = pkgs.callPackage ./nix/nixos-module.nix {
-          city-scav-bundle = self.packages.${pkgs.stdenv.hostPlatform.system}.frontend;
+      nixosModules = {
+        city-scav = import ./nix/nixos-module.nix {
+          inherit self;
+          # city-scav-bundle = self.packages.${pkgs.stdenv.hostPlatform.system}.frontend;
         };
-      });
+      };
       packages = eachSystem (
         pkgs: with pkgs; rec {
           frontend = bun2nix.packages.${pkgs.stdenv.hostPlatform.system}.default.mkDerivation {
