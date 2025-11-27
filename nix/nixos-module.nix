@@ -72,8 +72,18 @@ in
 
     systemd.services."city-scav" = {
       description = "The CityScavenger Bun HTTP server.";
-      after = if !cfg.postgres.configureLocal then [ "postgresql.service" ] else [ "network.target" ];
-      requires = optionals cfg.postgres.configureLocal [ "postgresql.service" ];
+      after =
+        if !cfg.postgres.configureLocal then
+          [
+            "postgresql.service"
+            "postgresql-setup.service"
+          ]
+        else
+          [ "network.target" ];
+      requires = optionals cfg.postgres.configureLocal [
+        "postgresql.service"
+        "postgresql-setup.service"
+      ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         # Execute the main process only after migrations are applied.
