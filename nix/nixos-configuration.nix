@@ -14,12 +14,11 @@
       "-accel kvm"
       # Do not use GTK.
       "-nographic"
-      "-serial stdout"
     ];
   };
   # Use serial instead.
   boot.kernelParams = [
-    "console=ttyS0"    
+    "console=ttyS0,115200n8"
   ];
   users.users.root.password = "toor";
   services.city-scav = {

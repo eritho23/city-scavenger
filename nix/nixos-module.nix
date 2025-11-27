@@ -72,14 +72,19 @@ in
 
     systemd.services."city-scav" = {
       description = "The CityScavenger Bun HTTP server.";
+      after = if !cfg.postgres.configureLocal then [ "postgresql.service" ] else [ "network.target" ];
+      requires = optionals cfg.postgres.configureLocal [ "postgresql.service" ];
+      wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         # Execute the main process only after migrations are applied.
         ExecStartPre = pkgs.writeShellScript "city-scav-exec-start-pre" ''
+          # mkdir -p $RUNTIME_DIRECTORY
           export DATABASE_URL="$(cat ${postgresConnectionStringFile})"
-          ${goMigrate} -path ${cleanSource ../migrations} -database $DATABASE_URL up
+          ${getExe goMigrate} -path ${cleanSource ../migrations} -database $DATABASE_URL up
         '';
 
         ExecStart = pkgs.writeShellScript "city-scav-exec-start" ''
+          export SOCKET_PATH=$RUNTIME_DIRECTORY/http.sock
           export DATABASE_URL="$(cat ${postgresConnectionStringFile})"
           ${getBin pkgs.bun}/bin/bun --bun run ${cityScavBundle}/index.js
         '';
@@ -88,14 +93,12 @@ in
 
         Environment = [
           "ORIGIN=${cfg.publicUrl}"
-          "SOCKET_PATH=%t/http.sock"
         ];
 
         # Execution and restart policies.
-        DynamicUser = true;
+        DynamicUser = false;
         RestartSec = "10s";
         RuntimeDirectory = "city-scav";
-        StartLimitIntervalSec = 30;
         StateDirectory = "city-scav";
         WorkingDirectory = "%S";
 
@@ -131,11 +134,6 @@ in
           "~@privileged"
         ];
         UMask = "0007";
-      };
-      unitConfig = {
-        After = if !cfg.postgres.configureLocal then [ "postgresql.service" ] else [ "network.target" ];
-        Requires = optionals cfg.postgres.configureLocal [ "postgresql.service" ];
-        WantedBy = [ "multi-user.target" ];
       };
     };
   };
