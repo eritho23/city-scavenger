@@ -78,8 +78,12 @@ in
       serviceConfig = {
         # Execute the main process only after migrations are applied.
         ExecStartPre = pkgs.writeShellScript "city-scav-exec-start-pre" ''
-          # mkdir -p $RUNTIME_DIRECTORY
           export DATABASE_URL="$(cat ${postgresConnectionStringFile})"
+
+          ${optionalString cfg.postgres.configureLocal ''
+            while [ ! -S /run/postgresql/.s.PGSQL.5432 ]; do sleep 0.5; done
+          ''}
+
           ${getExe goMigrate} -path ${cleanSource ../migrations} -database $DATABASE_URL up
         '';
 
