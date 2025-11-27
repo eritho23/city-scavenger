@@ -57,9 +57,12 @@ in
       ];
     };
 
-    services.nginx.virtualHosts."city-scav" = mkIf cfg.nginxConfiguration.enable {
-      locations."/" = {
-        proxyPass = "http://unix:/run/city-scav/http.sock";
+    services.nginx = {
+      enable = true;
+      virtualHosts."city-scav" = mkIf cfg.nginxConfiguration.enable {
+        locations."/" = {
+          proxyPass = "http://unix:/run/city-scav/http.sock";
+        };
       };
     };
 
