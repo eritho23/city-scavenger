@@ -82,7 +82,9 @@
             export PS1='[\[\e[38;5;92m\]scavenger-dev\[\e[0m\]:\[\e[38;5;202m\]\w\[\e[0m\]]\\$ '
             export SOPS_EDITOR=nvim
 
-            export DATABASE_URL=postgresql://cityscav@/cityscav?host=$(readlink ./tmp)
+            export DATABASE_URL=postgresql://cityscav@/cityscav?host=$(pwd)/tmp
+
+            alias make='pdpmake'
 
             # Source all secret environment variables.
             if ! source <(sops -d --output-type dotenv secrets/secrets.env 2>/dev/null | awk '{print "export " $0}') 2>/dev/null; then
@@ -103,7 +105,6 @@
         {
           test-module = nixpkgs.lib.nixosSystem {
             system = vmSystem;
-            # specialArgs = {};
             modules = [
               ./nix/nixos-configuration.nix
               self.nixosModules.city-scav
@@ -113,7 +114,6 @@
       nixosModules = {
         city-scav = import ./nix/nixos-module.nix {
           inherit self;
-          # city-scav-bundle = self.packages.${pkgs.stdenv.hostPlatform.system}.frontend;
         };
       };
       packages = eachSystem (

@@ -14,7 +14,8 @@ install-deps:
 
 gen-types: ./src/lib/generated/db.d.ts
 
-./src/lib/generated/db.d.ts: migrate-up ./migrations/*.sql
+MIGRATIONS ::= $(shell ls ./migrations/*.sql 2>/dev/null)
+./src/lib/generated/db.d.ts: migrate-up $(MIGRATIONS)
 	mkdir -p $$(dirname "$@")
 	bun --bun run db:generate
 
