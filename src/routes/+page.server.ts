@@ -1,5 +1,7 @@
 import { type Actions, fail } from "@sveltejs/kit";
+import { parse } from "valibot";
 import { db } from "$lib/database";
+import { PlaceProfile } from "$lib/schemas";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async () => {
@@ -14,20 +16,18 @@ export const actions = {
 	default: async ({ request }) => {
 		const formData = await request.formData();
 
-		const busStop = formData.get("bus_stop");
-		if (typeof busStop !== "string") {
-			return fail(400, {
+		const formDataParsed = parse(PlaceProfile, formData);
+		if (!formDataParsed) {
+			return fail(500, {
 				success: false,
-				message: "Bus stop not provided",
+				message: "Schema parsing failed",
 			});
 		}
 
 		await db
 			.insertInto("game")
 			.values({
-				place_profile: {
-					busStop,
-				},
+				place_profile: formDataParsed,
 			})
 			.execute();
 

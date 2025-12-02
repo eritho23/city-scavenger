@@ -9,4 +9,7 @@
 
 <h1>Game {data.game.uid}</h1>
 
-Final bus stop: {parsedPlaceProfile.busStop}
+Place profile
+<pre><code>
+  {JSON.stringify(parsedPlaceProfile)}
+</code></pre>

@@ -5,7 +5,10 @@
 </script>
 
 <form method="POST">
-  <input type="text" name="bus_stop" placeholder="Bus stop" />
+  <input type="text" name="busStop" placeholder="Bus stop" />
+  <input type="number" step="0.01" name="lat" />
+  <input type="number" step="0.01" name="lon" />
+  <input type="number" name="elevation" />
   <input type="submit" value="Create game">
 </form>
 
