@@ -93,7 +93,7 @@
               echo ""
             fi
 
-            alias make='pdpmake'
+            alias make='pdpmake --posix'
           '';
         };
       });
