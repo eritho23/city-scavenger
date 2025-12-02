@@ -3,13 +3,17 @@
 
 .PHONY: \
 	clean \
-	clean-tmp
+	clean-disk-images \
+	clean-tmp \
+	vm
 
-clean: postgres-kill postgres-clean dev-clean geodata-clean clean-tmp
+clean: postgres-kill postgres-clean dev-clean geodata-clean clean-tmp clean-disk-images
+
+clean-disk-images:
+	rm -f *.qcow2
 
 clean-tmp: postgres-clean
-	rm -rf $$(readlink ./tmp)
-	unlink ./tmp
+	if [ -L ./tmp ]; then rm -rf $$(readlink ./tmp); unlink ./tmp; fi
 
 ./tmp:
 	ln -sf $$(mktemp -d) ./tmp

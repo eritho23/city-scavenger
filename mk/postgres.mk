@@ -34,7 +34,8 @@ postgres: ./tmp/.pgdata
 postgres-kill:
 	if [ -f ./tmp/.pgdata/postmaster.pid ]; then \
 		kill $$(head -n1 ./tmp/.pgdata/postmaster.pid); \
-	fi
+		while [ -f ./tmp/.pgdata/postmaster.pid ]; do sleep 0.5; done \
+		fi
 
 postgres-clean: postgres-kill
 	rm -rf ./tmp/postgres ./tmp/.pgdata
