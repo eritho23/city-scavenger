@@ -84,8 +84,6 @@
 
             export DATABASE_URL=postgresql://cityscav@/cityscav?host=$(pwd)/tmp
 
-            alias make='pdpmake'
-
             # Source all secret environment variables.
             if ! source <(sops -d --output-type dotenv secrets/secrets.env 2>/dev/null | awk '{print "export " $0}') 2>/dev/null; then
               echo ""
@@ -94,6 +92,8 @@
               echo "See the README for setup instructions."
               echo ""
             fi
+
+            alias make='pdpmake'
           '';
         };
       });

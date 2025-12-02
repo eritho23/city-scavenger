@@ -8,15 +8,14 @@
     "${modulesPath}/profiles/perlless.nix"
     "${modulesPath}/virtualisation/qemu-vm.nix"
   ];
-  virtualisation.vmVariant = {
+
+  virtualisation = {
     memorySize = 2048;
-    cores = 2;
-    qemu.options = [
-      "-accel kvm"
-      # Do not use GTK.
-      "-nographic"
-    ];
+    msize = 32768;
+    cores = 4;
+    graphics = false;
   };
+
   # Use serial instead.
   boot.kernelParams = [
     "console=ttyS0,115200n8"
