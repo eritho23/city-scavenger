@@ -4,7 +4,7 @@
     systems.url = "github:nix-systems/default";
     bun2nix = {
       inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:baileyluTCD/bun2nix";
+      url = "github:nix-community/bun2nix";
     };
     treefmt-nix = {
       inputs.nixpkgs.follows = "nixpkgs";
@@ -32,9 +32,20 @@
           svelte = self.outputs.packages.${stdenv.hostPlatform.system}.frontend;
         }
       );
-      devShells = eachSystem (pkgs: {
-        default = pkgs.mkShellNoCC {
+      devShells = eachSystem (pkgs: rec {
+        ci = pkgs.mkShellNoCC {
           packages = with pkgs; [
+            (pkgs.callPackage ./nix/go-migrate.nix { })
+            bun
+            bun2nix.packages.${stdenv.hostPlatform.system}.default
+            pdpmake
+            postgresql.out
+          ];
+        };
+        default = development;
+        development = pkgs.mkShellNoCC {
+          packages = with pkgs; [
+            (pkgs.callPackage ./nix/go-migrate.nix { })
             bun
             bun2nix.packages.${stdenv.hostPlatform.system}.default
             curl
@@ -47,15 +58,21 @@
             man
             ncurses
             neovim-unwrapped
-            nodejs
+            nixd
             npm-check-updates
             openssh
             pdpmake
+            postgresql.out
             prefetch-npm-deps
+            procps
             python3
             sops
+            svelte-language-server
+            tmux
             tokei
+            typescript-language-server
             uutils-coreutils-noprefix
+            vscode-langservers-extracted
           ];
           shellHook = ''
             # Hack to make treefmt faster.
@@ -65,6 +82,8 @@
             export PS1='[\[\e[38;5;92m\]scavenger-dev\[\e[0m\]:\[\e[38;5;202m\]\w\[\e[0m\]]\\$ '
             export SOPS_EDITOR=nvim
 
+            export DATABASE_URL=postgresql://cityscav@/cityscav?host=$(pwd)/tmp
+
             # Source all secret environment variables.
             if ! source <(sops -d --output-type dotenv secrets/secrets.env 2>/dev/null | awk '{print "export " $0}') 2>/dev/null; then
               echo ""
@@ -73,17 +92,39 @@
               echo "See the README for setup instructions."
               echo ""
             fi
+
+            alias make='pdpmake'
           '';
         };
       });
       formatter = eachSystem (pkgs: treefmtEval.${pkgs.stdenv.hostPlatform.system}.config.build.wrapper);
+      nixosConfigurations =
+        let
+          vmSystem = "x86_64-linux";
+        in
+        {
+          test-module = nixpkgs.lib.nixosSystem {
+            system = vmSystem;
+            modules = [
+              ./nix/nixos-configuration.nix
+              self.nixosModules.city-scav
+            ];
+          };
+        };
+      nixosModules = {
+        city-scav = import ./nix/nixos-module.nix {
+          inherit self;
+        };
+      };
       packages = eachSystem (
         pkgs: with pkgs; rec {
-          frontend = bun2nix.lib.${pkgs.stdenv.hostPlatform.system}.mkBunDerivation {
+          frontend = bun2nix.packages.${pkgs.stdenv.hostPlatform.system}.default.mkDerivation {
             pname = "city-scavenger-frontend";
             version = if (self ? rev) then self.rev else "dirty";
-            bunNix = ./bun.nix;
             src = lib.cleanSource ./.;
+            bunDeps = bun2nix.packages.${pkgs.stdenv.hostPlatform.system}.default.fetchBunDeps {
+              bunNix = ./bun.nix;
+            };
 
             buildPhase = ''
               bun --bun run build
@@ -92,8 +133,6 @@
             installPhase = ''
               mkdir -p "$out"
               cp -r ./build/* "$out"
-              # Re-enable if external modules are required.
-              # cp -r node_modules "$out"
             '';
           };
           default = frontend;

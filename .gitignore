@@ -24,3 +24,6 @@ vite.config.ts.timestamp-*
 
 generated
 result*
+tmp
+
+*.qcow2
