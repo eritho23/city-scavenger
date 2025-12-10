@@ -1,1 +1,5 @@
-<h1>Welcome to CityScavenger</h1>
+<script>
+  import GameScreen from '$lib/GameScreen.svelte';
+</script>
+
+<GameScreen />
