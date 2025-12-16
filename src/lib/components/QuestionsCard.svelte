@@ -239,7 +239,7 @@
 		</div>
 
 		<div class="grid grid-cols-6 gap-2 mb-4">
-			{#each current.questions as question, i (i)}
+			{#each current.questions as _, i (i)}
 				<button
 					on:click={() => selectQuestion(i)}
 					class="aspect-square {answeredQuestions[currentType].has(i)
@@ -284,4 +284,3 @@
 		</button>
 	</div>
 </div>
-

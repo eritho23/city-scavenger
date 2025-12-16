@@ -3,6 +3,8 @@
 	export let time: string = "00:00:00";
 	export let onMenuClick: (isOpen: boolean) => void = () => {};
 
+	import { goto } from "$app/navigation";
+
 	let showMenu = false;
 
 	function toggleMenu() {
@@ -64,4 +66,3 @@
 		}
 	}
 </style>
-
