@@ -15,9 +15,8 @@
 	});
 
 	function handleQuestionAnswered(
-		event: CustomEvent<{ type: number; questionIndex: number }>,
+		type: number, questionIndex: number 
 	) {
-		const { type, questionIndex } = event.detail;
 		answeredQuestions[type].add(questionIndex);
 		answeredQuestions = answeredQuestions;
 
@@ -48,7 +47,7 @@
 </script>
 
 <div class="min-h-screen bg-white">
-	<Header {score} {time} />
+	<Header {score} {time} onMenuClick={() => {}}/>
 	<div class="w-full">
 		<MapPlaceholder />
 	</div>
@@ -56,7 +55,8 @@
 		<QuestionsCard
 			bind:currentType
 			bind:answeredQuestions
-			on:questionAnswered={handleQuestionAnswered}
+			questionAnswerCallback={handleQuestionAnswered}
+			scoreChange=""
 		/>
 	</div>
 </div>

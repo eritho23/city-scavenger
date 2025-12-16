@@ -15,7 +15,7 @@
 </script>
 
 <div class="min-h-screen bg-linear-to-b from-blue-50 to-white">
-	<Header {score} {time} />
+	<Header {score} {time} onMenuClick={() => {}} />
 
 	<div class="px-5 py-6">
 		<div class="mb-8">

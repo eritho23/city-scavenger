@@ -1,4 +1,6 @@
 <script lang="ts">
+	import {Camera, CircleQuestionMark, Radar, Dice5, Target, type Icon as IconType } from "@lucide/svelte";
+	
 	interface Props {
 		scoreChange: string,
 		currentType: number,
@@ -6,18 +8,33 @@
 		questionAnswerCallback: (type: number, questionIndex: number) => void
 	}
 
-	let {scoreChange = "+ 30 poäng", currentType = 0, answeredQuestions = {
+	let {scoreChange = "+ 30 poäng", currentType = $bindable(0), answeredQuestions = $bindable({
 		0: new Set(),
 		1: new Set(),
 		2: new Set(),
 		3: new Set(),
 		4: new Set(),
-	}, questionAnswerCallback}: Props = $props();
+	}), questionAnswerCallback}: Props = $props();
 
-	const questionTypes = [
+	type Question = {
+		q: string,
+		a: string,
+	};
+
+	type QuestionType = {
+		name: string,
+		icon: typeof IconType,
+		color: string,
+		buttonColor: string,
+		accentColor: string,
+		lightButtonColor: string,
+		questions: Question[],
+	};
+
+	const questionTypes: QuestionType[] = [
 		{
 			name: "Relativa frågor",
-			icon: "❓",
+			icon: CircleQuestionMark,
 			color: "bg-blue-100",
 			buttonColor: "bg-blue-300",
 			accentColor: "text-blue-900",
@@ -42,7 +59,7 @@
 		},
 		{
 			name: "Foton",
-			icon: "📸",
+			icon: Camera,
 			color: "bg-yellow-100",
 			buttonColor: "bg-yellow-300",
 			accentColor: "text-yellow-900",
@@ -73,7 +90,7 @@
 		},
 		{
 			name: "Radar",
-			icon: "📡",
+			icon: Radar,
 			color: "bg-green-100",
 			buttonColor: "bg-green-300",
 			accentColor: "text-green-900",
@@ -95,7 +112,7 @@
 		},
 		{
 			name: "Oddball",
-			icon: "🎲",
+			icon: Dice5,
 			color: "bg-purple-100",
 			buttonColor: "bg-purple-300",
 			accentColor: "text-purple-900",
@@ -135,7 +152,7 @@
 		},
 		{
 			name: "Precision",
-			icon: "🎯",
+			icon: Target,
 			color: "bg-pink-100",
 			buttonColor: "bg-pink-300",
 			accentColor: "text-pink-900",
@@ -241,6 +258,7 @@
 
 		<div class="grid grid-cols-6 gap-2 mb-4">
 			{#each Array.from({ length: current.questions.length }, (_, i) => i) as i (i)}
+				{@const Icon = current.icon}
 				<button
 					onclick={() => selectQuestion(i)}
 					class="aspect-square {answeredQuestions[currentType].has(i)
@@ -250,7 +268,7 @@
 						? current.accentColor + ' border-current'
 						: 'border-transparent'}"
 				>
-					{current.icon}
+					<Icon />
 				</button>
 			{/each}
 		</div>

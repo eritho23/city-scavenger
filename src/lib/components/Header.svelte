@@ -1,8 +1,10 @@
 <script lang="ts">
+	import {resolve} from "$app/paths";
+
 	interface Props {
-		score: number,
-		time: string,
-		onMenuClick: (isOpen: boolean) => void
+		score: number;
+		time: string;
+		onMenuClick: (isOpen: boolean) => void | undefined;
 	};
 
 	let {score, time = "00:00:00", onMenuClick = () => {}}: Props = $props();
@@ -37,14 +39,14 @@
 					style="animation: slideInFromTop 200ms ease-out;"
 				>
 					<a
-						href="/"
+						href={resolve("/")}
 						onclick={closeMenu}
 						class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left transition-colors"
 					>
 						Hem
 					</a>
 					<a
-						href="/history"
+						href={resolve("/history")}
 						onclick={closeMenu}
 						class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left transition-colors"
 					>
