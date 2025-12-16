@@ -1470,4 +1470,8 @@
     url = "https://registry.npmjs.org/zod/-/zod-4.1.12.tgz";
     hash = "sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==";
   };
+  "zod@4.2.1" = fetchurl {
+    url = "https://registry.npmjs.org/zod/-/zod-4.2.1.tgz";
+    hash = "sha512-0wZ1IRqGGhMP76gLqz8EyfBXKk0J2qo2+H3fi4mcUP/KtTocoX08nmIAHl1Z2kJIZbZee8KOpBCSNPRgauucjw==";
+  };
 }
