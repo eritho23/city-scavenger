@@ -99,9 +99,9 @@ bun run db:generate
 
 - Local PostgreSQL instance runs in `./tmp/.pgdata` with Unix socket in `./tmp`
 - Migrations live in `migrations/` directory (numbered SQL files)
-- Database types auto-generated to [src/lib/generated/db.d.ts](src/lib/generated/db.d.ts) via `kysely-codegen`
-- Database connection configured in [src/lib/database.ts](src/lib/database.ts) using Kysely
-- Schema validation uses Valibot (see [src/lib/schemas.ts](src/lib/schemas.ts))
+- Database types auto-generated to [src/lib/generated/db.d.ts](../src/lib/generated/db.d.ts) via `kysely-codegen`
+- Database connection configured in [src/lib/database.ts](../src/lib/database.ts) using Kysely
+- Schema validation uses Valibot (see [src/lib/schemas.ts](../src/lib/schemas.ts))
 
 ### GeoData Generation
 
@@ -118,7 +118,7 @@ make geodata
 1. Results saved to `generated/*.geojson`
 1. Python script merges bus stops (`scripts/merge_busstops.py`)
 
-Note: This command may fail due to Overpass API rate limiting. If this occurs, wait and retry later, or modify `OVERPASS_API_ENDPOINT` in [mk/geodata.mk](mk/geodata.mk) to use an alternative API endpoint.
+Note: This command may fail due to Overpass API rate limiting. If this occurs, wait and retry later, or modify `OVERPASS_API_ENDPOINT` in [mk/geodata.mk](../mk/geodata.mk) to use an alternative API endpoint.
 
 ## Project-Specific Considerations
 
