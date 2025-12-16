@@ -6,7 +6,7 @@
 	let score = 0;
 	let time = "--:--:--";
 
-	const fmt = (iso: string) => {
+	function fmt(iso: string) {
 		const d = new Date(iso);
 		const date = d.toLocaleDateString(undefined, {
 			year: "numeric",
@@ -48,7 +48,7 @@
 									<div>
 										<p class="font-semibold text-gray-900">Game {game.uid}</p>
 										{#if game.started_at}
-											{@const f = fmt(game.started_at as unknown as string)}
+											{@const f = fmt(game.started_at.toISOString())}
 											<p class="text-xs text-gray-500">{f.date} • {f.time}</p>
 										{/if}
 									</div>

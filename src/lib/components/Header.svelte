@@ -1,13 +1,14 @@
 <script lang="ts">
-	import {resolve} from "$app/paths";
+	import { Menu } from "@lucide/svelte";
+	import { resolve } from "$app/paths";
 
 	interface Props {
 		score: number;
 		time: string;
-		onMenuClick: (isOpen: boolean) => void | undefined;
+		onMenuClick: (isOpen: boolean) => undefined | undefined;
 	};
 
-	let {score, time = "00:00:00", onMenuClick = () => {}}: Props = $props();
+	let {score, time, onMenuClick = () => {}}: Props = $props();
 
 	let showMenu = $state(false);
 
@@ -31,7 +32,8 @@
 			<button
 				onclick={toggleMenu}
 				class="text-xl text-gray-700 hover:opacity-70 transition-opacity"
-				>☰</button
+				>
+				<Menu /></button
 			>
 			{#if showMenu}
 				<div

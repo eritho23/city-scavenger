@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
 	import {resolve} from "$app/paths";
+    import { Loader } from "@lucide/svelte";
 
 
 	let isLoading = $state(false);
@@ -18,7 +19,14 @@
 				disabled={isLoading}
 				class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
 			>
-				{isLoading ? "Creating..." : "New Game"}
+			<div class="flex flex-row">
+				{#if isLoading}
+					<Loader class="animate-spin" />	
+					<span>Laddar</span>
+				{:else}
+					<span>Nytt spel</span>
+				{/if}
+			</div>
 			</button>
 		</form>
 
@@ -26,7 +34,7 @@
 			href={resolve("/history")}
 			class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 inline-block"
 		>
-			History
+			Historik
 		</a>
 	</nav>
 </div>
