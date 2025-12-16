@@ -19,18 +19,17 @@ enum BusLine {
 }
 
 export const PlaceProfile = z.object({
+	busLines: z.set(z.enum(BusLine)),
 	busStop: z.string(),
-	stopId: z.string().optional(),
+	distanceFromBlackRiver: z.number().optional(),
+	elevation: z.number(),
 	lat: z.number(),
 	lon: z.number(),
-	elevation: z.number(),
-	postCode: z.string().regex(/[\d]{5}/),
-	busLines: z.set(z.enum(BusLine)),
-	nearestSchool: z.string(),
 	nearestHealthCentre: z.string(),
-	// Kb-badet, Lögarängsbadet, Kokpunkten.
+	nearestSchool: z.string(),
 	nearestWaterFacility: z.string(),
-	distanceFromBlackRiver: z.number().optional(),
+	postCode: z.string().regex(/[\d]{5}/),
+	stopId: z.string().optional(),
 });
 
 export type PlaceProfile = z.infer<typeof PlaceProfile>;

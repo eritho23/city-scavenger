@@ -1,38 +1,29 @@
-import { type Actions, fail } from "@sveltejs/kit";
-import { parse } from "valibot";
+import { type Actions, fail, redirect } from "@sveltejs/kit";
+import { resolve } from "$app/paths";
 import { db } from "$lib/database";
 import { PlaceProfile } from "$lib/schemas";
-import type { PageServerLoad } from "./$types";
-
-export const load: PageServerLoad = async () => {
-	const games = await db.selectFrom("game").select(["uid", "place_profile"]).execute();
-
-	return {
-		games,
-	};
-};
 
 export const actions = {
-	default: async ({ request }) => {
-		const formData = await request.formData();
+	createGame: async () => {
+		const dummyPlaceProfile = PlaceProfile.parse({
+			busStop: "Central Station",
+		});
 
-		const formDataParsed = parse(PlaceProfile, formData);
-		if (!formDataParsed) {
+		const result = await db
+			.insertInto("game")
+			.values({
+				place_profile: dummyPlaceProfile,
+			})
+			.returning("uid")
+			.executeTakeFirst();
+
+		if (!result) {
 			return fail(500, {
 				success: false,
-				message: "Schema parsing failed",
+				message: "Failed to create game",
 			});
 		}
 
-		await db
-			.insertInto("game")
-			.values({
-				place_profile: formDataParsed,
-			})
-			.execute();
-
-		return {
-			success: true,
-		};
+		redirect(303, resolve("/game/[gameId]", { gameId: result.uid }));
 	},
 } satisfies Actions;
