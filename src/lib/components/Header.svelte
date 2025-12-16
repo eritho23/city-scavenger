@@ -34,24 +34,20 @@
 					class="absolute right-0 top-full mt-2 bg-white border border-gray-300 rounded shadow-lg z-50"
 					style="animation: slideInFromTop 200ms ease-out;"
 				>
-					<button
-						onclick={() => {
-							closeMenu();
-							goto("/");
-						}}
+					<a
+						href="/"
+						onclick={closeMenu}
 						class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left transition-colors"
 					>
 						Hem
-					</button>
-					<button
-						onclick={() => {
-							closeMenu();
-							goto("/history");
-						}}
+					</a>
+					<a
+						href="/history"
+						onclick={closeMenu}
 						class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left transition-colors"
 					>
 						Historik
-					</button>
+					</a>
 				</div>
 			{/if}
 		</div>
