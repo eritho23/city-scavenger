@@ -59,6 +59,7 @@
             ncurses
             neovim-unwrapped
             nixd
+            nixfmt
             npm-check-updates
             openssh
             pdpmake

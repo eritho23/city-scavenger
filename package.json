@@ -8,7 +8,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && eslint",
 		"db:generate": "kysely-codegen --out-file ./src/lib/generated/db.d.ts",
 		"dev": "vite dev",
-		"postinstall": "bun2nix -o bun.nix; echo '' >> bun.nix",
+		"postinstall": "bun2nix -o bun.nix; echo '' >> bun.nix && nixfmt bun.nix",
 		"prepare": "svelte-kit sync || echo ''"
 	},
 	"devDependencies": {
