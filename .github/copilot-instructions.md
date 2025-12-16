@@ -29,7 +29,7 @@ If you find yourself suggesting npm, STOP and use bun instead.
 
 ## Technology Stack
 
-- **SvelteKit** - Application framework
+- **SvelteKit** - Application framework (using **Svelte 5**)
 - **Vite** - Build tool and dev server
 - **Tailwind CSS** - Styling framework
 - **Bun** - Package manager and JavaScript runtime
@@ -106,11 +106,20 @@ Note: This command may fail due to Overpass API rate limiting. If this occurs, w
 
 When generating code for this project:
 
+- **Use Svelte 5 syntax exclusively** - This includes runes (`$state`, `$derived`, `$effect`, `$props`), snippets, and the new event handling syntax
 - Follow SvelteKit best practices and file structure conventions
 - Use Tailwind CSS utility classes for styling (avoid custom CSS when possible)
 - Ensure all code is compatible with the Bun runtime
 - Write code that will pass `nix fmt` formatting checks
 - Consider suggesting `nix fmt` after generating significant code changes
+
+### Svelte 5 Specifics
+
+- Use runes for reactivity: `$state()`, `$derived()`, `$effect()`
+- Use `$props()` for component props instead of `export let`
+- Use snippets (`{#snippet name()}...{/snippet}`) instead of slots where appropriate
+- Event handlers use `onclick` instead of `on:click` (lowercase, no colon)
+- No stores are needed for local component state - use `$state()` instead
 
 ## Common Commands Reference
 
