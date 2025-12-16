@@ -1,5 +1,6 @@
 import { type Actions, fail } from "@sveltejs/kit";
 import { db } from "$lib/database";
+import { PlaceProfile } from "$lib/schemas";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async () => {
@@ -11,28 +12,29 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions = {
-	default: async ({ request }) => {
-		const formData = await request.formData();
+	createGame: async () => {
+		const dummyPlaceProfile = PlaceProfile.parse({
+			busStop: "Central Station",
+		});
 
-		const busStop = formData.get("bus_stop");
-		if (typeof busStop !== "string") {
-			return fail(400, {
+		const result = await db
+			.insertInto("game")
+			.values({
+				place_profile: dummyPlaceProfile,
+			})
+			.returning("uid")
+			.executeTakeFirst();
+
+		if (!result) {
+			return fail(500, {
 				success: false,
-				message: "Bus stop not provided",
+				message: "Failed to create game",
 			});
 		}
 
-		await db
-			.insertInto("game")
-			.values({
-				place_profile: {
-					busStop,
-				},
-			})
-			.execute();
-
 		return {
 			success: true,
+			gameId: result.uid,
 		};
 	},
 } satisfies Actions;

@@ -1,6 +1,7 @@
-import * as v from "valibot";
+import { z } from "zod";
 
-type PlaceProfile = v.InferOutput<typeof PlaceProfile>;
-export const PlaceProfile = v.object({
-	busStop: v.string(),
+export const PlaceProfile = z.object({
+	busStop: z.string(),
 });
+
+export type PlaceProfile = z.infer<typeof PlaceProfile>;
