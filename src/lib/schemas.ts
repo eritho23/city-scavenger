@@ -19,16 +19,19 @@ enum BusLine {
 }
 
 export const PlaceProfile = z.object({
-	busLines: z.set(z.enum(BusLine)),
-	busStop: z.string(),
+	busLines: z.array(z.enum(BusLine)).default([]),
+	busStop: z.string().default("Unknown Stop"),
 	distanceFromBlackRiver: z.number().optional(),
-	elevation: z.number(),
-	lat: z.number(),
-	lon: z.number(),
-	nearestHealthCentre: z.string(),
-	nearestSchool: z.string(),
-	nearestWaterFacility: z.string(),
-	postCode: z.string().regex(/[\d]{5}/),
+	elevation: z.number().default(0),
+	lat: z.number().default(0),
+	lon: z.number().default(0),
+	nearestHealthCentre: z.string().default("Unknown"),
+	nearestSchool: z.string().default("Unknown"),
+	nearestWaterFacility: z.string().default("Unknown"),
+	postCode: z
+		.string()
+		.regex(/[\d]{5}/)
+		.default("00000"),
 	stopId: z.string().optional(),
 });
 

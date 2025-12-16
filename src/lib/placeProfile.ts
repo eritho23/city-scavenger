@@ -30,7 +30,7 @@ export async function generatePlaceProfile(busStopName: string): Promise<PlacePr
 	}
 
 	if (completion.choices[0].message.content === null) {
-		return null
+		return null;
 	}
 
 	const placeProfile = JSON.parse(completion.choices[0].message.content);
