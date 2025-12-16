@@ -1,4 +1,4 @@
-import { error } from "@sveltejs/kit";
+import { type Actions, error } from "@sveltejs/kit";
 import { db } from "$lib/database";
 import { PlaceProfile } from "$lib/schemas";
 import type { PageServerLoad } from "./$types";
@@ -19,12 +19,18 @@ export const load: PageServerLoad = async ({ params }) => {
 		error(500, { message: "Inconsistent place profile data in database." });
 	}
 
-	const parsedPlaceProfile = parsedPlaceProfileParseResult.data;
+	// Do not send the place profile to the client.
+	const { place_profile: _, ...gameWithoutPlaceProfile } = game;
 
 	return {
-		game: {
-			...game,
-			place_profile: parsedPlaceProfile,
-		},
+		game,
 	};
 };
+
+export const actions = {
+	askQuestion: async () => {
+		return {
+			answer: true,
+		};
+	},
+} satisfies Actions;
