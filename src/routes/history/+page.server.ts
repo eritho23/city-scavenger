@@ -1,5 +1,5 @@
-import type { PageServerLoad } from "./$types";
 import { db } from "$lib/database";
+import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async () => {
 	const games = await db

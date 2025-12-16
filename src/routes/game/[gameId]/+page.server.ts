@@ -21,9 +21,10 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	// Do not send the place profile to the client.
 	const { place_profile: _, ...gameWithoutPlaceProfile } = game;
+	void _;
 
 	return {
-		game,
+		game: gameWithoutPlaceProfile,
 	};
 };
 

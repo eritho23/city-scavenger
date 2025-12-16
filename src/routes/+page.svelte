@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
-	import { resolve } from "$app/paths";
+	import {resolve} from "$app/paths";
+
 
 	let isLoading = $state(false);
 </script>
@@ -22,7 +23,7 @@
 		</form>
 
 		<a
-			href="/history"
+			href={resolve("/history")}
 			class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 inline-block"
 		>
 			History
