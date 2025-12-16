@@ -31,10 +31,14 @@ If you find yourself suggesting npm, STOP and use bun instead.
 
 - **SvelteKit** - Application framework (using **Svelte 5**)
 - **Vite** - Build tool and dev server
-- **Tailwind CSS** - Styling framework
+- **Tailwind CSS 4** - Styling framework (using Vite plugin)
 - **Bun** - Package manager and JavaScript runtime
+- **Kysely** - Type-safe SQL query builder for TypeScript
+- **PostgreSQL** - Database (local instance in dev)
+- **Valibot** - Schema validation library
 - **Nix** - Development environments, reproducible builds, and CI/CD (with flakes enabled)
 - **Sops** - Secrets management
+- **svelte-adapter-bun** - SvelteKit adapter for Bun runtime
 - **RAG-based LLM** - Place data generation for game content
 
 ## Development Workflow
@@ -57,6 +61,12 @@ nix fmt
 nix flake check
 ```
 
+**Important Notes:**
+
+- The dev shell sets `DATABASE_URL` automatically to use a local PostgreSQL instance in `./tmp`
+- An alias `make='pdpmake'` is configured (POSIX-compliant make)
+- The shell tries to load secrets via Sops; missing keys trigger a warning but don't block development
+
 ### Building
 
 ```bash
@@ -64,18 +74,51 @@ nix flake check
 nix build
 ```
 
-**Important**: Nix builds only include Git-tracked files. Unstaged or uncommitted files will NOT be included in the build. If a build fails due to missing files that exist locally, they need to be staged or committed.
+**Critical**: Nix builds only include Git-tracked files. Unstaged or uncommitted files will NOT be included in the build. If a build fails due to missing files that exist locally, they need to be staged or committed.
+
+### Database Management
+
+The project uses PostgreSQL with Kysely query builder and type-safe database access.
+
+```bash
+# Start PostgreSQL (auto-started by `make dev`)
+make postgres
+
+# Access database shell
+make psql
+
+# Run migrations
+make migrate-up
+make migrate-down
+
+# Regenerate TypeScript types from database schema
+bun run db:generate
+```
+
+**Database Architecture:**
+
+- Local PostgreSQL instance runs in `./tmp/.pgdata` with Unix socket in `./tmp`
+- Migrations live in `migrations/` directory (numbered SQL files)
+- Database types auto-generated to [src/lib/generated/db.d.ts](src/lib/generated/db.d.ts) via `kysely-codegen`
+- Database connection configured in [src/lib/database.ts](src/lib/database.ts) using Kysely
+- Schema validation uses Valibot (see [src/lib/schemas.ts](src/lib/schemas.ts))
 
 ### GeoData Generation
 
-The application uses `.geojson` files for game location data:
+The application uses `.geojson` files for game location data from Overpass API:
 
 ```bash
 # Generate GeoData files
 make geodata
 ```
 
-Note: This command may fail due to Overpass API rate limiting. If this occurs, wait and retry later, or modify `OVERPASS_API_ENDPOINT` in the Makefile to use an alternative API endpoint.
+**Process:**
+
+1. Queries in `queries/*.query` sent to Overpass API
+1. Results saved to `generated/*.geojson`
+1. Python script merges bus stops (`scripts/merge_busstops.py`)
+
+Note: This command may fail due to Overpass API rate limiting. If this occurs, wait and retry later, or modify `OVERPASS_API_ENDPOINT` in [mk/geodata.mk](mk/geodata.mk) to use an alternative API endpoint.
 
 ## Project-Specific Considerations
 
@@ -126,8 +169,15 @@ When generating code for this project:
 ```bash
 # Development
 nix develop              # Enter development shell
-make dev                 # Start dev server
+make dev                 # Start dev server (installs deps, starts postgres, runs migrations, generates types)
 make geodata            # Generate GeoData files
+
+# Database
+make postgres            # Start PostgreSQL instance
+make psql                # Access database shell
+make migrate-up          # Run migrations
+make migrate-down        # Rollback migrations
+bun run db:generate      # Generate TypeScript types from schema
 
 # Building & Testing
 nix build               # Build production bundle
@@ -135,6 +185,7 @@ nix flake check         # Run CI checks locally
 
 # Code Quality
 nix fmt                 # Format all files in tree
+bun run check           # Run svelte-check and eslint
 ```
 
 ## File Tracking Reminder
