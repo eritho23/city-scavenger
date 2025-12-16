@@ -1,9 +1,9 @@
+import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import { client } from "./openaiClient";
-import { PlaceProfile } from "./schemas"; 
-import { zodResponseFormat } from "openai/helpers/zod.mjs"; 
+import { PlaceProfile } from "./schemas";
 
 export async function generatePlaceProfile(busStopName: string): Promise<PlaceProfile | null> {
-  const context = `
+	const context = `
     Stop name: Strandbron
 
   `;
@@ -26,7 +26,7 @@ export async function generatePlaceProfile(busStopName: string): Promise<PlacePr
 	});
 
 	if (completion === null) {
-	  return null
+		return null;
 	}
 
 	const placeProfile = JSON.parse(completion.choices[0].message.content);
