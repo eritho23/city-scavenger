@@ -1,4 +1,5 @@
-import { type Actions, fail } from "@sveltejs/kit";
+import { type Actions, fail, redirect } from "@sveltejs/kit";
+import { resolve } from "$app/paths";
 import { db } from "$lib/database";
 import { PlaceProfile } from "$lib/schemas";
 import type { PageServerLoad } from "./$types";
@@ -32,9 +33,6 @@ export const actions = {
 			});
 		}
 
-		return {
-			success: true,
-			gameId: result.uid,
-		};
+		redirect(303, resolve("/game/[gameId]", { gameId: result.uid }));
 	},
 } satisfies Actions;

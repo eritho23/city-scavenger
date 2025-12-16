@@ -1,26 +1,18 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
-	import { goto } from "$app/navigation";
+	import { resolve } from "$app/paths";
 
-	export let data;
-	let isLoading = false;
-
-	const handleCreateGame = () => {
-		isLoading = true;
-		return async ({ result }) => {
-			if (result.type === "success" && result.data.gameId) {
-				await goto(`/game/${result.data.gameId}`);
-			}
-			isLoading = false;
-		};
-	};
+	let { data } = $props();
+	let isLoading = $state(false);
 </script>
 
 <div class="container mx-auto p-8">
 	<h1 class="text-4xl font-bold mb-8">City Scavenger</h1>
 
 	<nav class="flex gap-4 mb-12">
-		<form method="POST" action="?/createGame" use:enhance={handleCreateGame}>
+		<form method="POST" action="?/createGame" use:enhance={() => {
+			isLoading = true;
+		}}>
 			<button
 				type="submit"
 				disabled={isLoading}
@@ -44,7 +36,9 @@
 			<ul class="space-y-2">
 				{#each data.games as game (game.uid)}
 					<li class="p-4 border rounded">
-						<a href="/game/{game.uid}" class="text-blue-500 hover:underline">
+						<a href={resolve(`/game/[gameId]`, {
+							gameId: game.uid 
+						})} class="text-blue-500 hover:underline">
 							Game {game.uid}
 						</a>
 					</li>

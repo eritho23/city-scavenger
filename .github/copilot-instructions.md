@@ -163,6 +163,7 @@ When generating code for this project:
 - Use snippets (`{#snippet name()}...{/snippet}`) instead of slots where appropriate
 - Event handlers use `onclick` instead of `on:click` (lowercase, no colon)
 - No stores are needed for local component state - use `$state()` instead
+- Use `resolve()` for any navigation element - for example, do `<a href={resolve("/")}>...</a>` instead of `<a href="/">...</a>`, since the resolve function is typed, avoiding 404 errors
 
 ## Common Commands Reference
 
