@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Camera, CircleQuestionMark, Radar, Dice5, Target, type Icon as IconType } from "@lucide/svelte";
+	import {Camera, CircleQuestionMark, Radar, Dice5, Target, ArrowLeft, ArrowRight, type Icon as IconType } from "@lucide/svelte";
 	
 	interface Props {
 		scoreChange: string,
@@ -234,21 +234,21 @@
 			: 0}; transform: translateX({slideDirection * 50}px);"
 	>
 		<div class="flex justify-between items-center mb-4">
-			<div class="flex items-center gap-3">
+			<div class="flex flex-row items-center gap-3">
 				<button
 					onclick={prevType}
 					disabled={isTransitioning}
-					class="text-2xl font-bold {current.accentColor} hover:opacity-70 transition-opacity disabled:opacity-50"
-					>‹</button
+					class="text-2xl font-bold {current.accentColor} hover:opacity-70 hover:cursor-pointer transition-opacity disabled:opacity-50"
+					><ArrowLeft /></button
 				>
-				<span class="text-sm font-semibold {current.accentColor} min-w-32"
+				<span class="text-sm font-semibold {current.accentColor} min-w-32 grow text-center"
 					>{current.name}</span
 				>
 				<button
 					onclick={nextType}
 					disabled={isTransitioning}
-					class="text-2xl font-bold {current.accentColor} hover:opacity-70 transition-opacity disabled:opacity-50"
-					>›</button
+					class="text-2xl font-bold {current.accentColor} hover:opacity-70 hover:cursor-pointer transition-opacity disabled:opacity-50"
+					><ArrowRight /></button
 				>
 			</div>
 			<span class="text-sm font-semibold {current.accentColor}"
