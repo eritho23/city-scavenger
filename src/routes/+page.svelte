@@ -3,16 +3,16 @@
 	import MapPlaceholder from "$lib/components/MapPlaceholder.svelte";
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
 
-	let score = 0;
+	let score = $state(0);
 	let time = "00:12:24";
-	let currentType = 0;
-	let answeredQuestions: Record<number, Set<number>> = {
+	let currentType = $state(0);
+	let answeredQuestions: Record<number, Set<number>> = $state({
 		0: new Set(),
 		1: new Set(),
 		2: new Set(),
 		3: new Set(),
 		4: new Set(),
-	};
+	});
 
 	function handleQuestionAnswered(
 		event: CustomEvent<{ type: number; questionIndex: number }>,
