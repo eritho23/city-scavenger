@@ -14,10 +14,6 @@
 		4: new Set(),
 	};
 
-	function handleDotClick(index: number) {
-		currentType = index;
-	}
-
 	function handleQuestionAnswered(
 		event: CustomEvent<{ type: number; questionIndex: number }>,
 	) {
@@ -54,7 +50,6 @@
 <div class="min-h-screen bg-white">
 	<Header {score} {time} />
 	<div class="w-full">
-		<!-- <MapPlaceholder {currentType} onDotClick={handleDotClick} /> -->
 		<MapPlaceholder />
 	</div>
 	<div class="px-5 py-5">

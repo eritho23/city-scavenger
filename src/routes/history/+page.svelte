@@ -1,66 +1,90 @@
 <script lang="ts">
-	export let score: number = 0;
-	export let time: string = "00:00:00";
-	export let onMenuClick: (isOpen: boolean) => void = () => {};
+	import Header from "$lib/components/Header.svelte";
 
-	let showMenu = false;
+	let score = 245;
 
-	function toggleMenu() {
-		showMenu = !showMenu;
-		onMenuClick(showMenu);
-	}
+	let time = "12:34:56";
 
-	function closeMenu() {
-		showMenu = false;
-	}
+	const rounds = [
+		{ id: 0, round: 1, score: 150, date: "2025-11-26", time: "12:34" },
+
+		{ id: 1, round: 2, score: 95, date: "2025-11-25", time: "08:45" },
+
+		{ id: 2, round: 3, score: 120, date: "2025-11-24", time: "15:20" },
+	];
 </script>
 
-<div class="bg-white px-4 py-2 border-b border-gray-200 relative">
-	<div class="flex justify-between items-center">
-		<span class="text-sm font-semibold text-gray-800">{score} poäng</span>
+<div class="min-h-screen bg-linear-to-b from-blue-50 to-white">
+	<Header {score} {time} />
 
-		<span class="text-sm font-semibold text-gray-800">{time}</span>
+	<div class="px-5 py-6">
+		<div class="mb-8">
+			<h1 class="text-3xl font-bold text-gray-900 mb-2">Historik</h1>
 
-		<div class="relative">
-			<button
-				onclick={toggleMenu}
-				class="text-xl text-gray-700 hover:opacity-70 transition-opacity"
-				>☰</button
-			>
-			{#if showMenu}
+			<p class="text-sm text-gray-600">Din tidigare spelomgångar</p>
+		</div>
+
+		<div class="space-y-3">
+			{#each rounds as round, i (round.id)}
 				<div
-					class="absolute right-0 top-full mt-2 bg-white border border-gray-300 rounded shadow-lg z-50"
-					style="animation: slideInFromTop 200ms ease-out;"
+					class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow animate-in fade-in slide-in-from-bottom-2 duration-300"
+					style="animation-delay: {i * 50}ms"
 				>
-					<a
-						href="/"
-						onclick={closeMenu}
-						class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left transition-colors"
-					>
-						Hem
-					</a>
-					<a
-						href="/history"
-						onclick={closeMenu}
-						class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left transition-colors"
-					>
-						Historik
-					</a>
+					<div class="flex items-center justify-between">
+						<div class="flex items-center gap-4">
+							<div
+								class="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center font-bold text-blue-900"
+							>
+								{round.round}
+							</div>
+
+							<div>
+								<p class="font-semibold text-gray-900">Omgång {round.round}</p>
+
+								<p class="text-xs text-gray-500">{round.date} • {round.time}</p>
+							</div>
+						</div>
+
+						<div class="text-right">
+							<p class="text-2xl font-bold text-blue-600">{round.score}</p>
+
+							<p class="text-xs text-gray-500">poäng</p>
+						</div>
+					</div>
 				</div>
-			{/if}
+			{/each}
+		</div>
+
+		<div class="mt-8 bg-blue-50 rounded-2xl p-6 border border-blue-200">
+			<p class="text-sm text-gray-700 mb-2">Totalt samlat</p>
+
+			<p class="text-4xl font-bold text-blue-900">
+				{rounds.reduce((sum, r) => sum + r.score, 0)} poäng
+			</p>
 		</div>
 	</div>
 </div>
 
 <style>
-	@keyframes slideInFromTop {
+	@keyframes slideInFromBottom {
 		from {
 			opacity: 0;
-			transform: translateY(-8px);
+
+			transform: translateY(8px);
 		}
+
 		to {
 			opacity: 1;
+
 			transform: translateY(0);
 		}
+	}
+
+	:global(.animate-in) {
+		animation: slideInFromBottom 300ms ease-out forwards;
+	}
+
+	:global(.fade-in) {
+		opacity: 0;
 	}
 </style>
