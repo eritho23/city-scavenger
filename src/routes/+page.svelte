@@ -2,7 +2,6 @@
 	import { enhance } from "$app/forms";
 	import { resolve } from "$app/paths";
 
-	let { data } = $props();
 	let isLoading = $state(false);
 </script>
 
@@ -29,21 +28,4 @@
 			History
 		</a>
 	</nav>
-
-	{#if data.games && data.games.length > 0}
-		<div>
-			<h2 class="text-2xl font-semibold mb-4">Your Games</h2>
-			<ul class="space-y-2">
-				{#each data.games as game (game.uid)}
-					<li class="p-4 border rounded">
-						<a href={resolve(`/game/[gameId]`, {
-							gameId: game.uid 
-						})} class="text-blue-500 hover:underline">
-							Game {game.uid}
-						</a>
-					</li>
-				{/each}
-			</ul>
-		</div>
-	{/if}
 </div>
