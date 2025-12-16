@@ -1,17 +1,18 @@
 <script lang="ts">
-	import { createEventDispatcher } from "svelte";
+	interface Props {
+		scoreChange: string,
+		currentType: number,
+		answeredQuestions: Record<number, Set<number>>,
+		questionAnswerCallback: (type: number, questionIndex: number) => void
+	}
 
-	export let scoreChange: string = "+ 30 poäng";
-	export let currentType: number = 0;
-	export let answeredQuestions: Record<number, Set<number>> = {
+	let {scoreChange = "+ 30 poäng", currentType = 0, answeredQuestions = {
 		0: new Set(),
 		1: new Set(),
 		2: new Set(),
 		3: new Set(),
 		4: new Set(),
-	};
-
-	const dispatch = createEventDispatcher();
+	}, questionAnswerCallback}: Props = $props();
 
 	const questionTypes = [
 		{
@@ -159,9 +160,9 @@
 		},
 	];
 
-	let isTransitioning = false;
-	let slideDirection = 0;
-	let selectedQuestion = 0;
+	let isTransitioning = $state(false);
+	let slideDirection = $state(0);
+	let selectedQuestion = $state(0);
 
 	function nextType() {
 		if (isTransitioning) return;
@@ -196,16 +197,16 @@
 		if (!isAnswered) {
 			answeredQuestions[currentType].add(selectedQuestion);
 			answeredQuestions = answeredQuestions;
-			dispatch("questionAnswered", {
-				type: currentType,
-				questionIndex: selectedQuestion,
-			});
+			questionAnswerCallback(
+				currentType,
+				selectedQuestion,
+			)
 		}
 	}
 
-	$: current = questionTypes[currentType];
-	$: currentQuestion = current.questions[selectedQuestion];
-	$: isAnswered = answeredQuestions[currentType].has(selectedQuestion);
+	let current = $derived(questionTypes[currentType]);
+	let currentQuestion = $derived(current.questions[selectedQuestion]);
+	let isAnswered = $derived(answeredQuestions[currentType].has(selectedQuestion));
 </script>
 
 <div class="relative overflow-hidden rounded-3xl">
@@ -218,7 +219,7 @@
 		<div class="flex justify-between items-center mb-4">
 			<div class="flex items-center gap-3">
 				<button
-					on:click={prevType}
+					onclick={prevType}
 					disabled={isTransitioning}
 					class="text-2xl font-bold {current.accentColor} hover:opacity-70 transition-opacity disabled:opacity-50"
 					>‹</button
@@ -227,7 +228,7 @@
 					>{current.name}</span
 				>
 				<button
-					on:click={nextType}
+					onclick={nextType}
 					disabled={isTransitioning}
 					class="text-2xl font-bold {current.accentColor} hover:opacity-70 transition-opacity disabled:opacity-50"
 					>›</button
@@ -241,7 +242,7 @@
 		<div class="grid grid-cols-6 gap-2 mb-4">
 			{#each Array.from({ length: current.questions.length }, (_, i) => i) as i (i)}
 				<button
-					on:click={() => selectQuestion(i)}
+					onclick={() => selectQuestion(i)}
 					class="aspect-square {answeredQuestions[currentType].has(i)
 						? current.lightButtonColor
 						: current.buttonColor} rounded-xl hover:opacity-80 flex items-center justify-center text-lg transition-all duration-200 cursor-pointer border-2 {selectedQuestion ===
@@ -276,7 +277,7 @@
 		</div>
 
 		<button
-			on:click={submitAnswer}
+			onclick={submitAnswer}
 			disabled={isAnswered}
 			class="w-full {current.buttonColor} {current.accentColor} py-3 px-4 rounded-2xl font-medium hover:opacity-80 transition-colors duration-300 text-sm disabled:opacity-50 border-2 border-transparent"
 		>

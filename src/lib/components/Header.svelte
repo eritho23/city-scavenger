@@ -1,9 +1,13 @@
 <script lang="ts">
-	export let score: number = 0;
-	export let time: string = "00:00:00";
-	export let onMenuClick: (isOpen: boolean) => void = () => {};
+	interface Props {
+		score: number,
+		time: string,
+		onMenuClick: (isOpen: boolean) => void
+	};
 
-	let showMenu = false;
+	let {score, time = "00:00:00", onMenuClick = () => {}}: Props = $props();
+
+	let showMenu = $state(false);
 
 	function toggleMenu() {
 		showMenu = !showMenu;
