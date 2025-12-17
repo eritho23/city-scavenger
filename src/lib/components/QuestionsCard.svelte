@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Camera, CircleQuestionMark, Radar, Dice5, Target, ArrowLeft, ArrowRight, type Icon as IconType } from "@lucide/svelte";
+	import { Camera, CircleQuestionMark, Radar, Dice5, Target, ArrowLeft, ArrowRight, type Icon as IconType } from "@lucide/svelte";
 	
 	interface Props {
 		scoreChange: string,
@@ -241,9 +241,9 @@
 					class="text-2xl font-bold {current.accentColor} hover:opacity-70 hover:cursor-pointer transition-opacity disabled:opacity-50"
 					><ArrowLeft /></button
 				>
-				<span class="text-sm font-semibold {current.accentColor} min-w-32 grow text-center"
-					>{current.name}</span
-				>
+				<span class="text-sm font-semibold {current.accentColor} min-w-32 grow text-center">
+					{current.name}
+				</span>
 				<button
 					onclick={nextType}
 					disabled={isTransitioning}
