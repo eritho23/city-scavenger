@@ -118,20 +118,14 @@
         };
       };
       packages = eachSystem (
-        pkgs:
-        with pkgs;
-        let
-          bunDeps = bun2nix.packages.${pkgs.stdenv.hostPlatform.system}.default.fetchBunDeps {
-            bunNix = ./bun.nix;
-          };
-        in
-
-        rec {
+        pkgs: with pkgs; rec {
           frontend = bun2nix.packages.${pkgs.stdenv.hostPlatform.system}.default.mkDerivation {
             pname = "city-scavenger-frontend";
             version = if (self ? rev) then self.rev else "dirty";
             src = lib.cleanSource ./.;
-            inherit bunDeps;
+            bunDeps = bun2nix.packages.${pkgs.stdenv.hostPlatform.system}.default.fetchBunDeps {
+              bunNix = ./bun.nix;
+            };
 
             buildPhase = ''
               bun --bun run build
@@ -143,7 +137,6 @@
             '';
           };
           default = frontend;
-          deps = bunDeps;
         }
       );
     };

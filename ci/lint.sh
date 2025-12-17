@@ -2,9 +2,6 @@
 
 ERR=0
 
-cp -R "$(nix build '.#deps' --print-out-paths | head -n1)" ./bun-cache
-export BUN_INSTALL_CACHE_DIR="$(pwd)/bun-cache"
-
 bun install || ERR=1
 
 bun run prepare || ERR=1
