@@ -2,6 +2,9 @@
 
 ERR=0
 
+nix build '.#deps' --out-link ./bun-cache || ERR=1
+export BUN_INSTALL_CACHE_DIR="$(pwd)/bun-cache"
+
 bun install || ERR=1
 
 bun run prepare || ERR=1
