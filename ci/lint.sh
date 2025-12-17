@@ -2,7 +2,7 @@
 
 ERR=0
 
-cp -al "$(nix build '.#deps' --print-out-path)" ./bun-cache
+cp -al "$(nix build '.#deps' --print-out-paths | head -n1)" ./bun-cache
 export BUN_INSTALL_CACHE_DIR="$(pwd)/bun-cache"
 
 bun install || ERR=1
