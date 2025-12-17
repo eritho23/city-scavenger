@@ -3,9 +3,9 @@
 
 .PHONY: \
 	clean \
+	clean-bun-cache \
 	clean-disk-images \
-	clean-tmp \
-	vm
+	clean-tmp
 
 clean: postgres-kill postgres-clean dev-clean geodata-clean clean-tmp clean-disk-images
 
@@ -14,6 +14,9 @@ clean-disk-images:
 
 clean-tmp: postgres-clean
 	if [ -L ./tmp ]; then rm -rf $$(readlink ./tmp); unlink ./tmp; fi
+
+clean-bun-cache:
+	rm -rf ./bun-cache
 
 ./tmp:
 	ln -sf $$(mktemp -d) ./tmp
