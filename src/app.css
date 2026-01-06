@@ -1,1 +1,80 @@
 @import "tailwindcss";
+
+@font-face {
+  font-display: swap;
+  font-family: "Figtree";
+  font-style: normal;
+  font-weight: 500;
+  src: url("../font/figtree-v9-latin_latin-ext-500.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Figtree";
+  font-style: italic;
+  font-weight: 500;
+  src: url("../font/figtree-v9-latin_latin-ext-500italic.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Figtree";
+  font-style: normal;
+  font-weight: 600;
+  src: url("../font/figtree-v9-latin_latin-ext-600.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Figtree";
+  font-style: italic;
+  font-weight: 600;
+  src: url("../font/figtree-v9-latin_latin-ext-600italic.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Figtree";
+  font-style: normal;
+  font-weight: 700;
+  src: url("../font/figtree-v9-latin_latin-ext-700.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+@font-face {
+  font-display: swap;
+  font-family: "Figtree";
+  font-style: italic;
+  font-weight: 700;
+  src: url("../font/figtree-v9-latin_latin-ext-700italic.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+
+@theme {
+	--font-sans: "Figtree", sans-serif;
+
+	--color-bg-900: #FBFAF9;
+	--color-bg-800: #F2F0EE;
+
+	--color-bg-300: #383838;
+	--color-bg-100: #0F0F0F;
+
+	--color-text-100: #1A1A1A;
+	--color-text-150: #BDBAB5;
+	--color-text-200: #7C7A77;
+	--color-text-300: #BDBAB5;
+
+	--color-primary: #FF3733;
+}
+
+body {
+	@apply overflow-x-hidden font-sans font-medium text-text-100 bg-bg-900 selection:bg-bg-100 selection:text-bg-900 m-0 p-3 antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+img {
+	@apply select-none;
+}
+
+button {
+	@apply cursor-pointer;
+}

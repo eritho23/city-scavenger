@@ -18,7 +18,7 @@
 			minute: "2-digit",
 		});
 		return { date, time };
-	};
+	}
 </script>
 
 <div class="min-h-screen bg-linear-to-b from-blue-50 to-white">
@@ -42,7 +42,9 @@
 						>
 							<div class="flex items-center justify-between">
 								<div class="flex items-center gap-4">
-									<div class="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center font-bold text-blue-900">
+									<div
+										class="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center font-bold text-blue-900"
+									>
 										{i + 1}
 									</div>
 									<div>
@@ -54,7 +56,9 @@
 									</div>
 								</div>
 								<div class="text-right">
-									<p class="text-xs text-gray-500">{game.ended_at ? "Finished" : "Active"}</p>
+									<p class="text-xs text-gray-500">
+										{game.ended_at ? "Finished" : "Active"}
+									</p>
 								</div>
 							</div>
 						</a>
@@ -64,8 +68,6 @@
 				<p class="text-gray-600">Inga tidigare spel hittades.</p>
 			{/if}
 		</div>
-
-        
 	</div>
 </div>
 
