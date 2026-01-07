@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Header from "$lib/components/Header.svelte";
 	import { resolve } from "$app/paths";
 
 	let { data } = $props();
@@ -21,54 +20,44 @@
 	}
 </script>
 
-<div class="min-h-screen bg-linear-to-b from-blue-50 to-white">
-	<Header {score} {time} onMenuClick={() => {}} />
+<div class="overflow-x-hidden pt-32 mx-auto">
+	<p class="mb-4 px-3">Tidigare rundor</p>
 
-	<div class="px-5 py-6">
-		<div class="mb-8">
-			<h1 class="text-3xl font-bold text-gray-900 mb-2">Historik</h1>
-
-			<p class="text-sm text-gray-600">Dina tidigare spelomgångar</p>
-		</div>
-
-		<div class="space-y-3">
-			{#if data?.games?.length}
-				{#each data.games as game, i (game.uid)}
-					{#key game.uid}
-						<a
-							href={resolve("/game/[gameId]", { gameId: game.uid })}
-							class="block bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow animate-in fade-in slide-in-from-bottom-2 duration-300"
-							style="animation-delay: {i * 50}ms"
-						>
-							<div class="flex items-center justify-between">
-								<div class="flex items-center gap-4">
-									<div
-										class="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center font-bold text-blue-900"
-									>
-										{i + 1}
-									</div>
-									<div>
-										<p class="font-semibold text-gray-900">Game {game.uid}</p>
-										{#if game.started_at}
-											{@const f = fmt(game.started_at.toISOString())}
-											<p class="text-xs text-gray-500">{f.date} • {f.time}</p>
-										{/if}
-									</div>
-								</div>
-								<div class="text-right">
-									<p class="text-xs text-gray-500">
-										{game.ended_at ? "Finished" : "Active"}
+	{#if data?.games?.length}
+		{#each data.games as game, i (game.uid)}
+			{#key game.uid}
+				<a
+					href={resolve("/game/[gameId]", { gameId: game.uid })}
+					class={`block ${game.ended_at ? "bg-bg-800" : "bg-bg-100 text-bg-900"} rounded-3xl p-8 animate-in fade-in duration-300`}
+					style="animation-delay: {i * 50}ms"
+				>
+					<div class="flex items-center justify-between">
+						<span class="font-semibold text-2xl">+90</span>
+						<!-- ADD SCORE HERE, if active: current score, ended? final score -->
+						<div class="pr-2">
+							<div>
+								<!-- <p>{game.uid}</p> -->
+								{#if game.started_at}
+									{@const f = fmt(game.started_at.toISOString())}
+									<p>
+										{f.date} <span class="text-text-200">•</span>
+										{f.time}
 									</p>
-								</div>
+								{:else}
+									well well well
+								{/if}
 							</div>
-						</a>
-					{/key}
-				{/each}
-			{:else}
-				<p class="text-gray-600">Inga tidigare spel hittades.</p>
-			{/if}
-		</div>
-	</div>
+							<p class="text-sm text-text-200">
+								{game.ended_at ? "Vunnen" : "Aktiv"}
+							</p>
+						</div>
+					</div>
+				</a>
+			{/key}
+		{/each}
+	{:else}
+		<p class="text-gray-600">Inga tidigare spel hittades.</p>
+	{/if}
 </div>
 
 <style>
