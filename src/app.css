@@ -1,51 +1,58 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet";
 
 @font-face {
-  font-display: swap;
-  font-family: "Figtree";
-  font-style: normal;
-  font-weight: 500;
-  src: url("../font/figtree-v9-latin_latin-ext-500.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+	font-display: swap;
+	font-family: "Figtree";
+	font-style: normal;
+	font-weight: 500;
+	src: url("../font/figtree-v9-latin_latin-ext-500.woff2") format("woff2");
+	src: url("../font/figtree-v9-latin_latin-ext-500.woff2") format("woff2");
 }
 
 @font-face {
-  font-display: swap;
-  font-family: "Figtree";
-  font-style: italic;
-  font-weight: 500;
-  src: url("../font/figtree-v9-latin_latin-ext-500italic.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+	font-display: swap;
+	font-family: "Figtree";
+	font-style: italic;
+	font-weight: 500;
+	src: url("../font/figtree-v9-latin_latin-ext-500italic.woff2") format("woff2");
+	src: url("../font/figtree-v9-latin_latin-ext-500italic.woff2") format("woff2");
 }
 
 @font-face {
-  font-display: swap;
-  font-family: "Figtree";
-  font-style: normal;
-  font-weight: 600;
-  src: url("../font/figtree-v9-latin_latin-ext-600.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+	font-display: swap;
+	font-family: "Figtree";
+	font-style: normal;
+	font-weight: 600;
+	src: url("../font/figtree-v9-latin_latin-ext-600.woff2") format("woff2");
+	src: url("../font/figtree-v9-latin_latin-ext-600.woff2") format("woff2");
 }
 
 @font-face {
-  font-display: swap;
-  font-family: "Figtree";
-  font-style: italic;
-  font-weight: 600;
-  src: url("../font/figtree-v9-latin_latin-ext-600italic.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+	font-display: swap;
+	font-family: "Figtree";
+	font-style: italic;
+	font-weight: 600;
+	src: url("../font/figtree-v9-latin_latin-ext-600italic.woff2") format("woff2");
+	src: url("../font/figtree-v9-latin_latin-ext-600italic.woff2") format("woff2");
 }
 
 @font-face {
-  font-display: swap;
-  font-family: "Figtree";
-  font-style: normal;
-  font-weight: 700;
-  src: url("../font/figtree-v9-latin_latin-ext-700.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+	font-display: swap;
+	font-family: "Figtree";
+	font-style: normal;
+	font-weight: 700;
+	src: url("../font/figtree-v9-latin_latin-ext-700.woff2") format("woff2");
+	src: url("../font/figtree-v9-latin_latin-ext-700.woff2") format("woff2");
 }
 
 @font-face {
-  font-display: swap;
-  font-family: "Figtree";
-  font-style: italic;
-  font-weight: 700;
-  src: url("../font/figtree-v9-latin_latin-ext-700italic.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+	font-display: swap;
+	font-family: "Figtree";
+	font-style: italic;
+	font-weight: 700;
+	src: url("../font/figtree-v9-latin_latin-ext-700italic.woff2") format("woff2");
+	src: url("../font/figtree-v9-latin_latin-ext-700italic.woff2") format("woff2");
 }
 
 
@@ -64,6 +71,13 @@
 	--color-text-300: #BDBAB5;
 
 	--color-primary: #FF3733;
+
+	--color-card-blue-100: #203664;
+	--color-card-blue-200: #4C6393;
+	--color-card-blue-300: #8595B4;
+	--color-card-blue-700: #A9BEE9;
+	--color-card-blue-800: #CCD7EE;
+	--color-card-blue-900: #E6EBF6;
 }
 
 body {

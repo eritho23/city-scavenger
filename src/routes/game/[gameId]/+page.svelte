@@ -1,7 +1,8 @@
 <script lang="ts">
-	import Header from "$lib/components/Header.svelte";
-	import MapPlaceholder from "$lib/components/MapPlaceholder.svelte";
+	import Map from "$lib/components/map.svelte";
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
+
+	import { currentGame } from "$lib/stores/game.svelte.js";
 
 	import { onMount } from "svelte";
 
@@ -9,6 +10,11 @@
 
 	let score = $state(0);
 	let time = $state("00:00:00");
+
+	$effect(() => {
+		currentGame.score = score;
+		currentGame.time = time;
+	});
 
 	onMount(() => {
 		const updateTime = () => {
@@ -68,17 +74,17 @@
 	}
 </script>
 
-<div class="min-h-screen bg-white">
-	<Header {score} {time} onMenuClick={() => {}} />
-	<div class="w-full">
-		<MapPlaceholder />
-	</div>
-	<div class="px-5 py-5">
-		<QuestionsCard
-			bind:currentType
-			bind:answeredQuestions
-			questionAnswerCallback={handleQuestionAnswered}
-			scoreChange=""
-		/>
-	</div>
+<div
+	class="absolute w-full h-[20%] bottom-0 left-0 bg-linear-to-t from-40% from-bg-900 to-transparent"
+></div>
+<div class="w-full h-full absolute top-0 left-0 -z-10">
+	<Map />
+</div>
+<div class="fixed bottom-3 left-0 px-3 w-full">
+	<QuestionsCard
+		bind:currentType
+		bind:answeredQuestions
+		questionAnswerCallback={handleQuestionAnswered}
+		scoreChange=""
+	/>
 </div>

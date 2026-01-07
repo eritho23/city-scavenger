@@ -3,12 +3,9 @@
 	import { slide } from "svelte/transition";
 	import { resolve } from "$app/paths";
 	import { afterNavigate } from "$app/navigation";
-
-	interface Props {
-		left?: HTMLElement;
-	}
-
-	let props: Props = $props();
+	import HDivider from "./h-divider.svelte";
+	import { currentGame } from "$lib/stores/game.svelte";
+	import { page } from "$app/state";
 
 	let isMenuOpen = $state(false);
 
@@ -26,15 +23,17 @@
 		class="w-full overflow-hidden bg-bg-800 rounded-3xl px-6 py-2 transition-[height] duration-300 ease-in-out"
 	>
 		<div class="flex justify-between items-center">
-			<div>
-				{#if props.left}
-					{@html props.left}
-				{:else}
-					<a href={resolve("/")}>
-						<img src={logo} alt="city scav" class="h-4.5" />
-					</a>
-				{/if}
-			</div>
+			{#if page.url.pathname.includes("/game")}
+				<div class="flex items-center gap-3">
+					<span>{currentGame.score}</span>
+					<HDivider class="w-4!" />
+					<span>{currentGame.time}</span>
+				</div>
+			{:else}
+				<a href={resolve("/")}>
+					<img src={logo} alt="city scav" class="h-4.5" />
+				</a>
+			{/if}
 			<div>
 				<button
 					onclick={() => toggleNav()}

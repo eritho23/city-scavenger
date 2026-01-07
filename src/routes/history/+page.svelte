@@ -56,7 +56,12 @@
 			{/key}
 		{/each}
 	{:else}
-		<p class="text-gray-600">Inga tidigare spel hittades.</p>
+		<p class="text-text-200 px-3">
+			Inga tidigare spel hittades. Skapa en ny runda <a
+				href={resolve("/")}
+				class="underline">här</a
+			>
+		</p>
 	{/if}
 </div>
 
