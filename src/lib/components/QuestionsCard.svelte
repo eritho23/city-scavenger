@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { ChevronLeft, ChevronRight } from "@lucide/svelte";
+
 	interface Props {
 		scoreChange: string;
 		currentType: number;
@@ -27,7 +29,7 @@
 	type QuestionType = {
 		name: string;
 		bg: string;
-		button: string;
+		// button: string;
 		secondButton: string;
 		mainText: string;
 		secondText: string;
@@ -39,7 +41,7 @@
 		{
 			name: "Relativ",
 			bg: "bg-card-blue-900",
-			button: "bg-card-blue-700",
+			// button: "bg-card-blue-700",
 			secondButton: "bg-card-blue-800",
 			mainText: "text-card-blue-100",
 			secondText: "text-card-blue-200",
@@ -62,157 +64,194 @@
 				{ q: "Närmaste eller längsta punkt?", a: "Närmaste" },
 			],
 		},
-		// {
-		// 	name: "Foton",
-		// 	icon: Camera,
-		// 	color: "bg-yellow-100",
-		// 	buttonColor: "bg-yellow-300",
-		// 	accentColor: "text-yellow-900",
-		// 	lightButtonColor: "bg-yellow-200",
-		// 	questions: [
-		// 		{
-		// 			q: "Vilket foto är från detta område?",
-		// 			a: "Det första fotot (överst till vänster)",
-		// 		},
-		// 		{
-		// 			q: "Identifiera byggnaden på bilden",
-		// 			a: "Gamla postkontoret från 1920",
-		// 		},
-		// 		{ q: "Var togs detta foto?", a: "Från Västra Torggatan" },
-		// 		{
-		// 			q: "Vilken fasad tillhör denna byggnad?",
-		// 			a: "Huvudfasaden mot väster",
-		// 		},
-		// 		{ q: "Från vilket håll togs bilden?", a: "Från söder" },
-		// 		{ q: "Vilken tid på dagen?", a: "Förmiddag (solljus från öster)" },
-		// 		{ q: "Vilken säsong var det?", a: "Sommaren" },
-		// 		{ q: "Vem byggde detta?", a: "Arkitekt Erik Ahlström" },
-		// 		{ q: "Vilket material är använt?", a: "Röd tegelsten" },
-		// 		{ q: "Hur gammalt är byggnaden?", a: "Cirka 100 år" },
-		// 		{ q: "Vilket arkitektur stil?", a: "Nationalromantik" },
-		// 		{ q: "Vad är syftet med byggnaden?", a: "Kontorsbyggnad" },
-		// 	],
-		// },
-		// {
-		// 	name: "Radar",
-		// 	icon: Radar,
-		// 	color: "bg-green-100",
-		// 	buttonColor: "bg-green-300",
-		// 	accentColor: "text-green-900",
-		// 	lightButtonColor: "bg-green-200",
-		// 	questions: [
-		// 		{ q: "Hur långt bort är målpunkten?", a: "Ungefär 800 meter" },
-		// 		{ q: "I vilken riktning ligger objektet?", a: "Nordväst" },
-		// 		{ q: "Estimera avståndet", a: "Ca 600-700 meter" },
-		// 		{ q: "Är det inom 100m?", a: "Nej" },
-		// 		{ q: "Ungefär hur många meter?", a: "750 meter" },
-		// 		{ q: "Är signalen stark eller svag?", a: "Medel styrka" },
-		// 		{ q: "I vilken sektor är målpunkten?", a: "Nordvästlig sektor" },
-		// 		{ q: "Närmare eller längre än 500m?", a: "Längre än 500m" },
-		// 		{ q: "Vilken kompassriktning?", a: "315 grader (NW)" },
-		// 		{ q: "Är målet synligt?", a: "Delvis synligt" },
-		// 		{ q: "Hur många grader från norr?", a: "45 grader väst" },
-		// 		{ q: "Är det rakt fram eller åt sidan?", a: "Åt vänster och bakåt" },
-		// 	],
-		// },
-		// {
-		// 	name: "Oddball",
-		// 	icon: Dice5,
-		// 	color: "bg-purple-100",
-		// 	buttonColor: "bg-purple-300",
-		// 	accentColor: "text-purple-900",
-		// 	lightButtonColor: "bg-purple-200",
-		// 	questions: [
-		// 		{ q: "Hitta det udda objektet", a: "Det röda huset (övriga är blå)" },
-		// 		{ q: "Vilket passar inte in?", a: "Bilen (övriga är människor)" },
-		// 		{
-		// 			q: "Vilken är annorlunda?",
-		// 			a: "Cykeln (övriga är fordon med motor)",
-		// 		},
-		// 		{
-		// 			q: "Vilket tillhör inte gruppen?",
-		// 			a: "Trädet (övriga är byggnader)",
-		// 		},
-		// 		{
-		// 			q: "Vilket är det felaktigaste?",
-		// 			a: "Det gula skylten (övriga är vita)",
-		// 		},
-		// 		{
-		// 			q: "Vad bryter mönstret?",
-		// 			a: "Den moderna byggnaden (övriga är gamla)",
-		// 		},
-		// 		{ q: "Vilket är från en annan tid?", a: "Bilen från 1960-talet" },
-		// 		{
-		// 			q: "Vad är överflödigt?",
-		// 			a: "Affischen (den är inte originalbyggnaden)",
-		// 		},
-		// 		{ q: "Vilket material sticker ut?", a: "Glasfasaden (övriga är sten)" },
-		// 		{ q: "Vilken färg passar inte?", a: "Grön (övriga är i varma färger)" },
-		// 		{
-		// 			q: "Vilket är från annan byggnad?",
-		// 			a: "Dörren från andra sidan vägen",
-		// 		},
-		// 		{ q: "Vad är det främmande objektet?", a: "Graffitit på väggen" },
-		// 	],
-		// },
-		// {
-		// 	name: "Precision",
-		// 	icon: Target,
-		// 	color: "bg-pink-100",
-		// 	buttonColor: "bg-pink-300",
-		// 	accentColor: "text-pink-900",
-		// 	lightButtonColor: "bg-pink-200",
-		// 	questions: [
-		// 		{ q: "Peka på exakt plats på kartan", a: "59.3293°N, 16.5411°E" },
-		// 		{
-		// 			q: "Markera den exakta positionen",
-		// 			a: "Vid huvudingången på västra sidan",
-		// 		},
-		// 		{ q: "Var är du med säkerhet?", a: "Västra Torggatan 12" },
-		// 		{ q: "Närmsta punkt på denna väg?", a: "Vid trafikljusen" },
-		// 		{ q: "Vilken adress är detta?", a: "Västra Torggatan 12, Västerås" },
-		// 		{ q: "Exakta GPS-koordinater?", a: "59°19'45.4\"N 16°32'27.9\"E" },
-		// 		{ q: "Vilken intersection?", a: "Västra Torggatan & Slottsvägen" },
-		// 		{ q: "Vilken byggnad är detta?", a: "Gamla Stadsbiblioteket" },
-		// 		{ q: "Närmare precisering krävs", a: "Framför huvuddörren" },
-		// 		{ q: "Vad är det exakta stället?", a: "Torgplatsen mittemot fontänen" },
-		// 		{ q: "Vilket husnummer?", a: "Nummer 15" },
-		// 		{ q: "Vilken gata är detta på?", a: "Västra Torggatan" },
-		// 	],
-		// },
+		{
+			name: "Foton",
+			bg: "bg-card-green-900",
+			secondButton: "bg-card-green-800",
+			mainText: "text-card-green-100",
+			secondText: "text-card-green-200",
+			thirdText: "text-card-green-300",
+			questions: [
+				{
+					q: "Vilket foto är från detta område?",
+					a: "Det första fotot (överst till vänster)",
+				},
+				{
+					q: "Identifiera byggnaden på bilden",
+					a: "Gamla postkontoret från 1920",
+				},
+				{ q: "Var togs detta foto?", a: "Från Västra Torggatan" },
+				{
+					q: "Vilken fasad tillhör denna byggnad?",
+					a: "Huvudfasaden mot väster",
+				},
+				{ q: "Från vilket håll togs bilden?", a: "Från söder" },
+				{ q: "Vilken tid på dagen?", a: "Förmiddag (solljus från öster)" },
+				{ q: "Vilken säsong var det?", a: "Sommaren" },
+				{ q: "Vem byggde detta?", a: "Arkitekt Erik Ahlström" },
+				{ q: "Vilket material är använt?", a: "Röd tegelsten" },
+				{ q: "Hur gammalt är byggnaden?", a: "Cirka 100 år" },
+				{ q: "Vilket arkitektur stil?", a: "Nationalromantik" },
+				{ q: "Vad är syftet med byggnaden?", a: "Kontorsbyggnad" },
+			],
+		},
+		{
+			name: "Radar",
+			bg: "bg-card-red-900",
+			secondButton: "bg-card-red-800",
+			mainText: "text-card-red-100",
+			secondText: "text-card-red-200",
+			thirdText: "text-card-red-300",
+			questions: [
+				{ q: "Hur långt bort är målpunkten?", a: "Ungefär 800 meter" },
+				{ q: "I vilken riktning ligger objektet?", a: "Nordväst" },
+				{ q: "Estimera avståndet", a: "Ca 600-700 meter" },
+				{ q: "Är det inom 100m?", a: "Nej" },
+				{ q: "Ungefär hur många meter?", a: "750 meter" },
+				{ q: "Är signalen stark eller svag?", a: "Medel styrka" },
+				{ q: "I vilken sektor är målpunkten?", a: "Nordvästlig sektor" },
+				{ q: "Närmare eller längre än 500m?", a: "Längre än 500m" },
+				{ q: "Vilken kompassriktning?", a: "315 grader (NW)" },
+				{ q: "Är målet synligt?", a: "Delvis synligt" },
+				{ q: "Hur många grader från norr?", a: "45 grader väst" },
+				{ q: "Är det rakt fram eller åt sidan?", a: "Åt vänster och bakåt" },
+			],
+		},
+		{
+			name: "Oddball",
+			bg: "bg-card-purple-900",
+			secondButton: "bg-card-purple-800",
+			mainText: "text-card-purple-100",
+			secondText: "text-card-purple-200",
+			thirdText: "text-card-purple-300",
+			questions: [
+				{ q: "Hitta det udda objektet", a: "Det röda huset (övriga är blå)" },
+				{ q: "Vilket passar inte in?", a: "Bilen (övriga är människor)" },
+				{
+					q: "Vilken är annorlunda?",
+					a: "Cykeln (övriga är fordon med motor)",
+				},
+				{
+					q: "Vilket tillhör inte gruppen?",
+					a: "Trädet (övriga är byggnader)",
+				},
+				{
+					q: "Vilket är det felaktigaste?",
+					a: "Det gula skylten (övriga är vita)",
+				},
+				{
+					q: "Vad bryter mönstret?",
+					a: "Den moderna byggnaden (övriga är gamla)",
+				},
+				{ q: "Vilket är från en annan tid?", a: "Bilen från 1960-talet" },
+				{
+					q: "Vad är överflödigt?",
+					a: "Affischen (den är inte originalbyggnaden)",
+				},
+				{ q: "Vilket material sticker ut?", a: "Glasfasaden (övriga är sten)" },
+				{ q: "Vilken färg passar inte?", a: "Grön (övriga är i varma färger)" },
+				{
+					q: "Vilket är från annan byggnad?",
+					a: "Dörren från andra sidan vägen",
+				},
+				{ q: "Vad är det främmande objektet?", a: "Graffitit på väggen" },
+			],
+		},
+		{
+			name: "Precision",
+			bg: "bg-card-yellow-900",
+			secondButton: "bg-card-yellow-800",
+			mainText: "text-card-yellow-100",
+			secondText: "text-card-yellow-200",
+			thirdText: "text-card-yellow-300",
+			questions: [
+				{ q: "Peka på exakt plats på kartan", a: "59.3293°N, 16.5411°E" },
+				{
+					q: "Markera den exakta positionen",
+					a: "Vid huvudingången på västra sidan",
+				},
+				{ q: "Var är du med säkerhet?", a: "Västra Torggatan 12" },
+				{ q: "Närmsta punkt på denna väg?", a: "Vid trafikljusen" },
+				{ q: "Vilken adress är detta?", a: "Västra Torggatan 12, Västerås" },
+				{ q: "Exakta GPS-koordinater?", a: "59°19'45.4\"N 16°32'27.9\"E" },
+				{ q: "Vilken intersection?", a: "Västra Torggatan & Slottsvägen" },
+				{ q: "Vilken byggnad är detta?", a: "Gamla Stadsbiblioteket" },
+				{ q: "Närmare precisering krävs", a: "Framför huvuddörren" },
+				{ q: "Vad är det exakta stället?", a: "Torgplatsen mittemot fontänen" },
+				{ q: "Vilket husnummer?", a: "Nummer 15" },
+				{ q: "Vilken gata är detta på?", a: "Västra Torggatan" },
+			],
+		},
 	];
 
-	let isTransitioning = $state(false);
-	let slideDirection = $state(0);
 	let selectedQuestion = $state(0);
 
+	// Swipe handling
+	let touchStartX = $state(0);
+	let touchStartY = $state(0);
+	let touchEndX = $state(0);
+	let touchEndY = $state(0);
+	let containerEl: HTMLElement;
+
+	function handleTouchStart(e: TouchEvent) {
+		touchStartX = e.changedTouches[0].screenX;
+		touchStartY = e.changedTouches[0].screenY;
+	}
+
+	function handleTouchEnd(e: TouchEvent) {
+		touchEndX = e.changedTouches[0].screenX;
+		touchEndY = e.changedTouches[0].screenY;
+		handleSwipe();
+	}
+
+	function handleSwipe() {
+		const diffX = touchStartX - touchEndX;
+		const diffY = touchStartY - touchEndY;
+		const minSwipeDistance = 50;
+
+		// Determine if swipe is more horizontal or vertical
+		if (Math.abs(diffX) > Math.abs(diffY)) {
+			// Horizontal swipe (between questions)
+			if (Math.abs(diffX) > minSwipeDistance) {
+				if (diffX > 0) {
+					nextQuestion();
+				} else {
+					prevQuestion();
+				}
+			}
+		} else {
+			// Vertical swipe (between sections)
+			if (Math.abs(diffY) > minSwipeDistance) {
+				if (diffY > 0) {
+					nextType();
+				} else {
+					prevType();
+				}
+			}
+		}
+	}
+
+	function nextQuestion() {
+		if (selectedQuestion < current.questions.length - 1) {
+			selectedQuestion++;
+		}
+	}
+
+	function prevQuestion() {
+		if (selectedQuestion > 0) {
+			selectedQuestion--;
+		}
+	}
+
 	function nextType() {
-		if (isTransitioning) return;
-		isTransitioning = true;
-		slideDirection = 1;
 		selectedQuestion = 0;
-		setTimeout(() => {
-			currentType = (currentType + 1) % questionTypes.length;
-			slideDirection = 0;
-			isTransitioning = false;
-		}, 300);
+		currentType = (currentType + 1) % questionTypes.length;
 	}
 
 	function prevType() {
-		if (isTransitioning) return;
-		isTransitioning = true;
-		slideDirection = -1;
 		selectedQuestion = 0;
-		setTimeout(() => {
-			currentType =
-				(currentType - 1 + questionTypes.length) % questionTypes.length;
-			slideDirection = 0;
-			isTransitioning = false;
-		}, 300);
-	}
-
-	function selectQuestion(index: number) {
-		selectedQuestion = index;
+		currentType =
+			(currentType - 1 + questionTypes.length) % questionTypes.length;
 	}
 
 	function submitAnswer() {
@@ -228,11 +267,16 @@
 	let isAnswered = $derived(
 		answeredQuestions[currentType].has(selectedQuestion),
 	);
+	let nextType1 = $derived(
+		questionTypes[(currentType + 1) % questionTypes.length],
+	);
+	let nextType2 = $derived(
+		questionTypes[(currentType + 2) % questionTypes.length],
+	);
 
 	// Hold animation
 	let isHolding = $state(false);
 	let buttonEl: HTMLElement;
-
 	let animationCompleted = $state(false);
 
 	function startHold() {
@@ -261,74 +305,87 @@
 	}
 </script>
 
-<div
-	class="transition-all rounded-3xl duration-300 ease-in-out {current.bg} {current.mainText} rounded-3xl px-8 py-4"
-	style="opacity: {slideDirection === 0
-		? 1
-		: 0}; transform: translateX({slideDirection * 50}px);"
->
-	<div class="flex justify-between items-center mb-3">
-		<div class="text-sm flex gap-2">
-			<span class={current.secondText}>{current.name}</span>
-			<span class={current.thirdText}>1/6</span>
-		</div>
-		<span class="text-sm {current.secondText}">{scoreChange}</span>
-	</div>
-
-	{#if !isAnswered}
-		<button
-			bind:this={buttonEl}
-			class="mb-6 relative overflow-hidden"
-			onmousedown={startHold}
-			onmouseup={endHold}
-			onmouseleave={endHold}
-			ontouchstart={startHold}
-			ontouchend={endHold}
-			ontouchcancel={endHold}
-			disabled={isAnswered}
-		>
-			<div
-				class="absolute inset-0 origin-left rounded-l-3xl rounded-r-sm {current.secondButton} z-0"
-				style="width: {isHolding
-					? '100%'
-					: '0.5rem'}; transition: width {isHolding
-					? '1.6s'
-					: '0.3s'} {isHolding ? 'linear' : 'ease-out'};"
-				ontransitionend={handleTransitionEnd}
-			></div>
-
-			<div class="py-3 px-6 relative">
-				<p class="mb-2 text-left leading-tight">
-					<span>{currentQuestion.q}</span>
-				</p>
+<div class="relative mb-3">
+	<div
+		bind:this={containerEl}
+		ontouchstart={handleTouchStart}
+		ontouchend={handleTouchEnd}
+		class="transition-colors rounded-3xl duration-300 ease-out {current.bg} {current.mainText} px-8 py-4 transform relative z-30 bg-clip-padding"
+	>
+		<div class="flex justify-between items-center mb-4">
+			<div class="text-sm flex gap-2">
+				<span class={current.secondText}>{current.name}</span>
+				<span class={current.thirdText}
+					>{currentType + 1}/{questionTypes.length}</span
+				>
 			</div>
-		</button>
-	{:else}
-		<div class="pt-1 mb-6 *:leading-tight px-3">
-			<p class="mb-3">{currentQuestion.a}</p>
-			<p class="text-sm {current.secondText}">{currentQuestion.q}</p>
+			<span class="text-sm {current.secondText}">{scoreChange}</span>
 		</div>
-	{/if}
 
-	<!-- <div class="grid grid-cols-6 gap-2 mb-4"> -->
-	<!-- 	{#each Array.from({ length: current.questions.length }, (_, i) => i) as i (i)} -->
-	<!-- 		<button -->
-	<!-- 			aria-label="question" -->
-	<!-- 			onclick={() => selectQuestion(i)} -->
-	<!-- 			class="{answeredQuestions[currentType].has(i) -->
-	<!-- 				? current.lightButtonColor -->
-	<!-- 				: current.buttonColor} rounded-xl hover:opacity-80 flex items-center justify-center text-lg transition-all duration-200 cursor-pointer border-2 {selectedQuestion === -->
-	<!-- 			i -->
-	<!-- 				? current.accentColor + ' border-current' -->
-	<!-- 				: 'border-transparent'}" -->
-	<!-- 		> -->
-	<!-- 		</button> -->
-	<!-- 	{/each} -->
-	<!-- </div> -->
+		<div class="h-26">
+			{#if !isAnswered}
+				<button
+					bind:this={buttonEl}
+					class="relative overflow-hidden w-full"
+					onmousedown={startHold}
+					onmouseup={endHold}
+					onmouseleave={endHold}
+					ontouchstart={startHold}
+					ontouchend={endHold}
+					ontouchcancel={endHold}
+					disabled={isAnswered}
+				>
+					<div
+						class="absolute inset-0 origin-left rounded-l-3xl rounded-r-sm {current.secondButton} z-0"
+						style="width: {isHolding
+							? '100%'
+							: '0.5rem'}; transition: width {isHolding
+							? '1.6s'
+							: '0.3s'} {isHolding ? 'linear' : 'ease-out'};"
+						ontransitionend={handleTransitionEnd}
+					></div>
 
-	<!-- <button -->
-	<!-- 	class="w-full {current.buttonColor} {current.accentColor} py-3 px-4 rounded-2xl font-medium hover:opacity-80 transition-colors duration-300 text-sm disabled:opacity-50 border-2 border-transparent" -->
-	<!-- > -->
-	<!-- 	{isAnswered ? "Besvarat ✓" : "Ställ fråga →"} -->
-	<!-- </button> -->
+					<div class="py-3 px-6 relative">
+						<p class="mb-2 text-left leading-tight">
+							<span>{currentQuestion.q}</span>
+						</p>
+					</div>
+				</button>
+			{:else}
+				<div class="pt-1 *:leading-tight px-3">
+					<p class="mb-3">{currentQuestion.a}</p>
+					<p class="text-sm {current.secondText}">{currentQuestion.q}</p>
+				</div>
+			{/if}
+		</div>
+
+		<div class="flex justify-between items-center mb-1">
+			<div></div>
+			<div class="flex gap-1 items-center">
+				<button
+					onclick={prevQuestion}
+					disabled={selectedQuestion === 0}
+					class="disabled:opacity-30"
+				>
+					<ChevronLeft size={14} class={current.thirdText} />
+				</button>
+				<span class="text-sm {current.thirdText}"
+					>{selectedQuestion + 1}/{current.questions.length}</span
+				>
+				<button
+					onclick={nextQuestion}
+					disabled={selectedQuestion === current.questions.length - 1}
+					class="disabled:opacity-30"
+				>
+					<ChevronRight size={14} class={current.thirdText} />
+				</button>
+			</div>
+		</div>
+	</div>
+	<div
+		class="absolute inset-x-1 top-4 h-[calc(100%-0.5rem)] z-20 rounded-3xl transition-all duration-500 ease-out {nextType1.bg}"
+	></div>
+	<div
+		class="absolute inset-x-2 top-8 h-[calc(100%-1rem)] z-10 rounded-3xl transition-all duration-500 ease-out {nextType2.bg}"
+	></div>
 </div>

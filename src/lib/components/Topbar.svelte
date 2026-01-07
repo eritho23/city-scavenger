@@ -25,7 +25,7 @@
 		<div class="flex justify-between items-center">
 			{#if page.url.pathname.includes("/game")}
 				<div class="flex items-center gap-3">
-					<span>{currentGame.score}</span>
+					<span>{currentGame.score > 0 ? "+" : ""}{currentGame.score}</span>
 					<HDivider class="w-4!" />
 					<span>{currentGame.time}</span>
 				</div>
