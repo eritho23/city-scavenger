@@ -10,6 +10,8 @@
 		Target,
 	} from "@lucide/svelte";
 
+	import { RadarQuestions } from "$lib/questions/radars";
+
 	interface Props {
 		scoreChange: string;
 		currentType: number;
@@ -34,6 +36,11 @@
 		q: string;
 		a: string;
 	};
+
+	const radarQuestionsFromConfig: Question[] = Object.values(RadarQuestions).map((rq) => ({
+		q: `Är målpunkten inom ${rq.displayName}?`,
+		a: `Radargräns: ${rq.range} km`,
+	}));
 
 	type QuestionType = {
 		name: string;
@@ -109,20 +116,7 @@
 			buttonColor: "bg-green-300",
 			accentColor: "text-green-900",
 			lightButtonColor: "bg-green-200",
-			questions: [
-				{ q: "Hur långt bort är målpunkten?", a: "Ungefär 800 meter" },
-				{ q: "I vilken riktning ligger objektet?", a: "Nordväst" },
-				{ q: "Estimera avståndet", a: "Ca 600-700 meter" },
-				{ q: "Är det inom 100m?", a: "Nej" },
-				{ q: "Ungefär hur många meter?", a: "750 meter" },
-				{ q: "Är signalen stark eller svag?", a: "Medel styrka" },
-				{ q: "I vilken sektor är målpunkten?", a: "Nordvästlig sektor" },
-				{ q: "Närmare eller längre än 500m?", a: "Längre än 500m" },
-				{ q: "Vilken kompassriktning?", a: "315 grader (NW)" },
-				{ q: "Är målet synligt?", a: "Delvis synligt" },
-				{ q: "Hur många grader från norr?", a: "45 grader väst" },
-				{ q: "Är det rakt fram eller åt sidan?", a: "Åt vänster och bakåt" },
-			],
+			questions: radarQuestionsFromConfig,
 		},
 		{
 			name: "Oddball",
