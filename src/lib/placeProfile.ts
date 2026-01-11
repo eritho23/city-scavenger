@@ -2,9 +2,18 @@ import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import { client } from "$lib/server/openaiClient";
 import { PlaceProfile } from "./schemas";
 
-export async function generatePlaceProfile(busStopName: string): Promise<PlaceProfile | null> {
+export interface BusStopData {
+	name: string;
+	lat: number;
+	lon: number;
+	id: number;
+}
+
+export async function generatePlaceProfile(stop: BusStopData): Promise<PlaceProfile | null> {
 	const context = `
-    Stop name: ${busStopName}
+    Stop name: ${stop.name}
+    Coordinates: ${stop.lat}, ${stop.lon}
+	Stop ID: ${stop.id}
   `;
 	const completion = await client.chat.completions.create({
 		model: "gemma3:12b",
@@ -12,11 +21,12 @@ export async function generatePlaceProfile(busStopName: string): Promise<PlacePr
 			{
 				role: "system",
 				content: `You are generating place profiles for a geography game in Västerås, Sweden. 
-				Provide accurate information about bus stops including nearby landmarks and facilities.`,
+				Provide accurate information about bus stops including nearby landmarks and facilities.
+				IMPORTANT: The latitude must be exactly ${stop.lat} and the longitude must be exactly ${stop.lon}.`,
 			},
 			{
 				role: "user",
-				content: `Generate a complete place profile for the bus stop: ${busStopName}
+				content: `Generate a complete place profile for the bus stop: ${stop.name}
 				
         Additional context: ${context}`,
 			},

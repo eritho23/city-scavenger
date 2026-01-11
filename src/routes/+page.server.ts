@@ -2,10 +2,12 @@ import { type Actions, error, fail, redirect } from "@sveltejs/kit";
 import { resolve } from "$app/paths";
 import { db } from "$lib/database";
 import { generatePlaceProfile } from "$lib/placeProfile";
+import { getRandomBusStop } from "$lib/server/busStops";
 
 export const actions = {
 	createGame: async () => {
-		const newPlaceProfile = await generatePlaceProfile("Strandbron");
+		const stop = getRandomBusStop();
+		const newPlaceProfile = await generatePlaceProfile(stop);
 
 		if (newPlaceProfile === null) {
 			error(500, { message: "Failed to generate place profile." });

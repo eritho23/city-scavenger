@@ -4,7 +4,10 @@
 
   programs = {
     biome = {
-      includes = [ "*.svelte" ];
+      includes = [
+        "*.svelte"
+        "*.geojson"
+      ];
       enable = true;
       settings = {
         formatter = {
