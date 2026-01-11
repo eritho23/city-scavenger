@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import { Loader, Plus, ChevronDown, Minus } from "@lucide/svelte";
-	import { onMount, onDestroy } from "svelte";
+	import { ChevronDown, Loader, Minus, Plus } from "@lucide/svelte";
+	import { onDestroy, onMount } from "svelte";
 	import { flip } from "svelte/animate";
 	import { cubicOut } from "svelte/easing";
+	import { enhance } from "$app/forms";
 
 	import iconBg from "$lib/assets/bg-scav-icon.svg";
 
@@ -64,10 +64,7 @@
 	onMount(() => {
 		statInterval = setInterval(() => {
 			// move last to first (this triggers flip animation)
-			mockstats = [
-				mockstats[mockstats.length - 1],
-				...mockstats.slice(0, mockstats.length - 1),
-			];
+			mockstats = [mockstats[mockstats.length - 1], ...mockstats.slice(0, mockstats.length - 1)];
 		}, ROTATE_MS);
 	});
 

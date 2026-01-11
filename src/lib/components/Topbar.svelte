@@ -1,11 +1,11 @@
 <script lang="ts">
-	import logo from "$lib/assets/city-scav-logo.svg";
 	import { slide } from "svelte/transition";
-	import { resolve } from "$app/paths";
 	import { afterNavigate } from "$app/navigation";
-	import HDivider from "./h-divider.svelte";
-	import { currentGame } from "$lib/stores/game.svelte";
+	import { resolve } from "$app/paths";
 	import { page } from "$app/state";
+	import logo from "$lib/assets/city-scav-logo.svg";
+	import { currentGame } from "$lib/stores/game.svelte";
+	import HDivider from "./h-divider.svelte";
 
 	let isMenuOpen = $state(false);
 

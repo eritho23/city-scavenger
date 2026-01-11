@@ -1,0 +1,227 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2026-01-11T20:04:28Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 81401467,
+  "lat": 59.6123293,
+  "lon": 16.5482166,
+  "tags": {
+    "addr:city": "Västerås",
+    "addr:country": "SE",
+    "addr:housenumber": "2",
+    "addr:postcode": "722 13",
+    "addr:street": "Smedjegatan",
+    "amenity": "restaurant",
+    "capacity": "25",
+    "check_date": "2024-11-25",
+    "cuisine": "pizza",
+    "name": "Pizzeria Amore",
+    "opening_hours": "Mo-Th 11:00-21:00; Fr 11:00-22:00; Sa-Su 12:00-21:00",
+    "website": "https://pizzeriaamore.se/"
+  }
+},
+{
+  "type": "node",
+  "id": 278816157,
+  "lat": 59.6204130,
+  "lon": 16.5938803,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "pizza",
+    "name": "Pizzeria Valentino"
+  }
+},
+{
+  "type": "node",
+  "id": 1495700604,
+  "lat": 59.6060451,
+  "lon": 16.5320204,
+  "tags": {
+    "addr:place": "Oxbackstorget",
+    "amenity": "restaurant",
+    "cuisine": "pizza",
+    "name": "Viking Pizzeria"
+  }
+},
+{
+  "type": "node",
+  "id": 1894270106,
+  "lat": 59.6113188,
+  "lon": 16.5468364,
+  "tags": {
+    "addr:city": "Västerås",
+    "addr:country": "SE",
+    "addr:housenumber": "13",
+    "addr:postcode": "722 13",
+    "addr:street": "Sturegatan",
+    "amenity": "restaurant",
+    "capacity": "50",
+    "check_date": "2025-12-03",
+    "cuisine": "pizza",
+    "name": "Sturegatans Pizzeria",
+    "opening_hours": "10:00-22:00",
+    "phone": "+46 21 147 01 9",
+    "website": "https://sturegatanspizzeria.se"
+  }
+},
+{
+  "type": "node",
+  "id": 2582089493,
+  "lat": 59.6097513,
+  "lon": 16.4954248,
+  "tags": {
+    "addr:city": "Västerås",
+    "addr:country": "SE",
+    "addr:housenumber": "1",
+    "addr:place": "Råby Centrum",
+    "addr:postcode": "724 70",
+    "amenity": "restaurant",
+    "capacity": "25",
+    "cuisine": "pizza",
+    "name": "Råbyrian",
+    "opening_hours": "Mo-Th 11:00-20:45; Fr 11:00-21:45; Su 12:00-21:45"
+  }
+},
+{
+  "type": "node",
+  "id": 2582091622,
+  "lat": 59.6143437,
+  "lon": 16.5820129,
+  "tags": {
+    "addr:city": "Västerås",
+    "addr:country": "SE",
+    "addr:housenumber": "19",
+    "addr:postcode": "723 44",
+    "addr:street": "Klockartorpsgatan",
+    "amenity": "restaurant",
+    "cuisine": "pizza",
+    "name": "La Pizza"
+  }
+},
+{
+  "type": "node",
+  "id": 3402678140,
+  "lat": 59.5958390,
+  "lon": 16.4938170,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "pizza",
+    "name": "Alibabba kolgrill & vedugnspizzeria"
+  }
+},
+{
+  "type": "node",
+  "id": 3635364905,
+  "lat": 59.6005533,
+  "lon": 16.4889880,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-10-16",
+    "cuisine": "pizza",
+    "name": "Jojo's pizzeria",
+    "opening_hours": "11:00-21:00"
+  }
+},
+{
+  "type": "node",
+  "id": 3717475454,
+  "lat": 59.5982030,
+  "lon": 16.5122810,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "pizza",
+    "name": "Lorenzo"
+  }
+},
+{
+  "type": "node",
+  "id": 4731921681,
+  "lat": 59.5997810,
+  "lon": 16.5789351,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "pizza",
+    "name": "Mälarparkens pizzeria"
+  }
+},
+{
+  "type": "node",
+  "id": 8972213761,
+  "lat": 59.6043702,
+  "lon": 16.5586425,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "pizza",
+    "name": "LillåUddens krog"
+  }
+},
+{
+  "type": "node",
+  "id": 11752895663,
+  "lat": 59.6307250,
+  "lon": 16.5514114,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "pizza",
+    "name": "Pizza Napoli"
+  }
+},
+{
+  "type": "node",
+  "id": 13204215519,
+  "lat": 59.6161470,
+  "lon": 16.5174785,
+  "tags": {
+    "addr:housenumber": "30",
+    "addr:street": "Pettersbergsgatan",
+    "amenity": "restaurant",
+    "check_date": "2025-10-09",
+    "cuisine": "pizza",
+    "name": "Capri Pizzeria",
+    "opening_hours": "Mo-Th 11:00-21:00; Fr 11:00-22:00; Sa 12:00-22:00; Su 12:00-21:00",
+    "payment:cash": "yes",
+    "payment:credit_cards": "yes",
+    "payment:debit_cards": "yes",
+    "phone": "+46 21 121 73 5",
+    "website": "https://www.capripizzeriavasteras.se/restaurant/capri-pizzeria"
+  }
+},
+{
+  "type": "node",
+  "id": 13204215520,
+  "lat": 59.6131892,
+  "lon": 16.5176431,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-10-09",
+    "cuisine": "pizza",
+    "name": "Pizza på Fiket",
+    "opening_hours": "12:00-21:00",
+    "phone": "+46 70 698 86 23"
+  }
+},
+{
+  "type": "node",
+  "id": 13387217012,
+  "lat": 59.6251265,
+  "lon": 16.5484254,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-12-18",
+    "cuisine": "pizza",
+    "name": "Top Pizzeria",
+    "opening_hours": "Mo-Th 11:00-24:00; Fr-Sa 11:00-02:00; Su 12:00-24:00",
+    "phone": "+46 21 204 39",
+    "website": "https://www.toppizzeria.se/"
+  }
+}
+
+  ]
+}

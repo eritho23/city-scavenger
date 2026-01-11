@@ -1,0 +1,226 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2026-01-11T20:04:28Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 1666359635,
+  "lat": 59.6201749,
+  "lon": 16.5937648,
+  "tags": {
+    "amenity": "pharmacy",
+    "app:apple": "https://itunes.apple.com/se/app/apotek-hj%C3%A4rtat-n%C3%A4ra-dig/id1150817089",
+    "app:google": "https://play.google.com/store/apps/details?id=com.presencekit.apotek.se&hl=en_US",
+    "brand": "Apotek Hjärtat",
+    "brand:wikidata": "Q10416114",
+    "healthcare": "pharmacy",
+    "name": "Apotek Hjärtat",
+    "operator": "Apotek Hjärtat Retail AB",
+    "owner": "ICA Gruppen AB",
+    "ownership": "private",
+    "phone": "+46771405405",
+    "website:stock": "https://www.fass.se/"
+  }
+},
+{
+  "type": "node",
+  "id": 2791510914,
+  "lat": 59.6059806,
+  "lon": 16.5317306,
+  "tags": {
+    "addr:city": "Västerås",
+    "addr:housenumber": "8",
+    "addr:place": "Oxbackstorget",
+    "addr:postcode": "724 60",
+    "amenity": "pharmacy",
+    "branch": "Apoteksgruppen",
+    "brand": "Apoteksgruppen",
+    "brand:wikidata": "Q10416129",
+    "dispensing": "yes",
+    "healthcare": "pharmacy",
+    "name": "Apoteksgruppen",
+    "not:brand:wikidata": "Q1785637",
+    "opening_hours": "Mo-Th 09:00-18:00; Sa 10:00-14:00",
+    "operator": "Apoteksgruppen AB (556773-4156)",
+    "phone": "+46 21 184030",
+    "website:stock": "https://www.fass.se/"
+  }
+},
+{
+  "type": "node",
+  "id": 6364287604,
+  "lat": 59.6355152,
+  "lon": 16.5685549,
+  "tags": {
+    "amenity": "pharmacy",
+    "brand": "Kronans Apotek",
+    "brand:wikidata": "Q10549422",
+    "check_date": "2025-10-13",
+    "dispensing": "yes",
+    "healthcare": "pharmacy",
+    "name": "Kronans Apotek",
+    "opening_hours": "Mo-Fr 09:00-19:00; Sa 09:00-16:00; Su 11:00-15:00"
+  }
+},
+{
+  "type": "node",
+  "id": 7969290443,
+  "lat": 59.6373794,
+  "lon": 16.5450047,
+  "tags": {
+    "amenity": "pharmacy",
+    "brand": "Apotek Hjärtat",
+    "brand:wikidata": "Q10416114",
+    "check_date:opening_hours": "2024-11-11",
+    "healthcare": "pharmacy",
+    "name": "Apotek Hjärtat",
+    "opening_hours": "Mo-Fr 08:00-20:00; Sa,Su 10:00-18:00"
+  }
+},
+{
+  "type": "node",
+  "id": 10089774984,
+  "lat": 59.6079280,
+  "lon": 16.6192630,
+  "tags": {
+    "amenity": "pharmacy",
+    "brand": "Apoteket",
+    "brand:wikidata": "Q1785637",
+    "dispensing": "yes",
+    "healthcare": "pharmacy",
+    "name": "Apoteket"
+  }
+},
+{
+  "type": "node",
+  "id": 10802491891,
+  "lat": 59.5986135,
+  "lon": 16.4755412,
+  "tags": {
+    "addr:city": "Västerås",
+    "addr:housenumber": "13",
+    "addr:postcode": "72474",
+    "addr:street": "Bäckby torggata",
+    "amenity": "pharmacy",
+    "brand": "Kronans Apotek",
+    "brand:wikidata": "Q10549422",
+    "drive_through": "no",
+    "healthcare": "pharmacy",
+    "name": "Kronans Apotek",
+    "opening_hours": "Mo-Fr 09:30-17:00"
+  }
+},
+{
+  "type": "node",
+  "id": 11062425361,
+  "lat": 59.6096822,
+  "lon": 16.5453567,
+  "tags": {
+    "amenity": "pharmacy",
+    "brand": "Apoteket",
+    "brand:wikidata": "Q1785637",
+    "check_date": "2025-10-04",
+    "healthcare": "pharmacy",
+    "name": "Apoteket",
+    "opening_hours": "Mo-Fr 08:00-19:30; Sa 10:00-17:00; Su 11:00-16:00"
+  }
+},
+{
+  "type": "node",
+  "id": 11070059525,
+  "lat": 59.6087671,
+  "lon": 16.5407646,
+  "tags": {
+    "amenity": "pharmacy",
+    "brand": "Apoteket",
+    "brand:wikidata": "Q1785637",
+    "healthcare": "pharmacy",
+    "level": "0",
+    "name": "Apoteket",
+    "website": "https://www.apoteket.se/apotek/apoteket-stora-gatan-52-vasteras-vasteras/"
+  }
+},
+{
+  "type": "node",
+  "id": 12373067726,
+  "lat": 59.6176536,
+  "lon": 16.5808097,
+  "tags": {
+    "amenity": "pharmacy",
+    "brand": "Apotek",
+    "check_date": "2024-11-25",
+    "dispensing": "yes",
+    "drive_through": "no",
+    "healthcare": "pharmacy",
+    "name": "Apotek Hjärtat",
+    "opening_hours:drive_through": "Mo-Fr 08:00-18:00; Sa 10:00-14:00; Su off"
+  }
+},
+{
+  "type": "node",
+  "id": 12551140552,
+  "lat": 59.6118905,
+  "lon": 16.5444661,
+  "tags": {
+    "addr:housenumber": "25",
+    "addr:street": "Vasagatan",
+    "amenity": "pharmacy",
+    "brand": "Kronans Apotek",
+    "brand:wikidata": "Q10549422",
+    "check_date": "2025-12-30",
+    "contact:instagram": "https://www.instagram.com/kronansapotek_igor",
+    "dispensing": "yes",
+    "drive_through": "no",
+    "email": "kundservice@kronansapotek.se",
+    "healthcare": "pharmacy",
+    "name": "Kronans Apotek",
+    "opening_hours": "Mo-Fr 10:00-18:00; Sa 10:00-15:00",
+    "phone": "+46 771 612 612",
+    "website": "https://www.kronansapotek.se/hitta-apotek/kronans-apotek-vasteras-kvarteret-igor-1763/"
+  }
+},
+{
+  "type": "node",
+  "id": 13060108538,
+  "lat": 59.6059860,
+  "lon": 16.5306458,
+  "tags": {
+    "addr:city": "Västerås",
+    "addr:housenumber": "8",
+    "addr:place": "Oxbackstorget",
+    "addr:postcode": "724 60",
+    "amenity": "pharmacy",
+    "branch": "Västerås Oxbacken",
+    "brand": "Kronans Apotek",
+    "brand:wikidata": "Q10549422",
+    "drive_through": "no",
+    "healthcare": "pharmacy",
+    "name": "Kronans Apotek",
+    "opening_hours": "Mo-Fr 13:00-17:00",
+    "phone": "+4621-184030",
+    "website": "https://www.kronansapotek.se/hitta-apotek/kronans-apotek-vasteras-oxbacken-0473/"
+  }
+},
+{
+  "type": "node",
+  "id": 13236287049,
+  "lat": 59.6108459,
+  "lon": 16.5490900,
+  "tags": {
+    "amenity": "pharmacy",
+    "brand": "Apoteket",
+    "brand:wikidata": "Q1785637",
+    "check_date": "2025-10-16",
+    "healthcare": "pharmacy",
+    "name": "Apoteket",
+    "opening_hours": "Mo-Fr 08:00-18:00; Sa 10:00-15:00"
+  }
+}
+
+  ]
+}

@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { resolve } from "$app/paths";
+	import Header from "$lib/components/Header.svelte";
 
 	let { data } = $props();
-	let score = 0;
-	let time = "--:--:--";
+	let score = $state(0);
+	let time = $state("--:--:--");
 
 	function fmt(iso: string) {
 		const d = new Date(iso);

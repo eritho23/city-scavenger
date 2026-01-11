@@ -5,10 +5,10 @@
 	interface Props {
 		score: number;
 		time: string;
-		onMenuClick: (isOpen: boolean) => undefined | undefined;
-	};
+		onMenuClick: (isOpen: boolean) => void | undefined;
+	}
 
-	let {score, time, onMenuClick = () => {}}: Props = $props();
+	const { score, time, onMenuClick = () => {} }: Props = $props();
 
 	let showMenu = $state(false);
 

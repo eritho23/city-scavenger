@@ -1,10 +1,9 @@
 <script lang="ts">
+	import { onMount } from "svelte";
+	import { SvelteSet } from "svelte/reactivity";
 	import Map from "$lib/components/map.svelte";
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
-
 	import { currentGame } from "$lib/stores/game.svelte.js";
-
-	import { onMount } from "svelte";
 
 	let { data } = $props();
 
@@ -20,9 +19,7 @@
 		const updateTime = () => {
 			const now = new Date();
 			const startedAt = new Date(data.game.started_at);
-			const totalSeconds = Math.floor(
-				(now.getTime() - startedAt.getTime()) / 1000,
-			);
+			const totalSeconds = Math.floor((now.getTime() - startedAt.getTime()) / 1000);
 			const hours = Math.floor(totalSeconds / 3600);
 			const minutes = Math.floor((totalSeconds % 3600) / 60);
 			const seconds = totalSeconds % 60;
@@ -37,16 +34,15 @@
 
 	let currentType = $state(0);
 	let answeredQuestions: Record<number, Set<number>> = $state({
-		0: new Set(),
-		1: new Set(),
-		2: new Set(),
-		3: new Set(),
-		4: new Set(),
+		0: new SvelteSet(),
+		1: new SvelteSet(),
+		2: new SvelteSet(),
+		3: new SvelteSet(),
+		4: new SvelteSet(),
 	});
 
 	function handleQuestionAnswered(type: number, questionIndex: number) {
 		answeredQuestions[type].add(questionIndex);
-		answeredQuestions = answeredQuestions;
 
 		// Add points with animation
 		animatePoints(30);

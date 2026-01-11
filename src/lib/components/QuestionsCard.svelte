@@ -1,12 +1,46 @@
 <script lang="ts">
 	import { ChevronLeft, ChevronRight } from "@lucide/svelte";
 
+	import { RadarQuestions } from "$lib/questions/radars";
+	import { RelativeKey, RelativeQuestions } from "$lib/questions/relative";
+
 	interface Props {
 		scoreChange: string;
 		currentType: number;
 		answeredQuestions: Record<number, Set<number>>;
 		questionAnswerCallback: (type: number, questionIndex: number) => void;
 	}
+
+	const relativeOrder = [
+		RelativeKey.Longitude,
+		RelativeKey.Latitude,
+		RelativeKey.RailwayDistance,
+		RelativeKey.SvartanDistance,
+		RelativeKey.SameAirport,
+	] as const;
+
+	const relativeQuestionsFromConfig: Question[] = relativeOrder.map((key) => {
+		const rq = RelativeQuestions[key];
+		let a: string;
+		switch (key) {
+			case RelativeKey.Longitude:
+				a = "Högre eller lägre longitud";
+				break;
+			case RelativeKey.Latitude:
+				a = "Högre eller lägre latitud";
+				break;
+			case RelativeKey.RailwayDistance:
+				a = "Närmare eller längre från järnvägen";
+				break;
+			case RelativeKey.SvartanDistance:
+				a = "Närmare eller längre från Svartån";
+				break;
+			case RelativeKey.SameAirport:
+				a = "Ja, samma flygplats / Nej, olika";
+				break;
+		}
+		return { q: rq.prompt, a };
+	});
 
 	let {
 		scoreChange = "+ 30 poäng",
@@ -26,10 +60,14 @@
 		a: string;
 	};
 
+	const radarQuestionsFromConfig: Question[] = Object.values(RadarQuestions).map((rq) => ({
+		q: `Är målpunkten inom ${rq.displayName} från mig?`,
+		a: `Radargräns: ${rq.range} km`,
+	}));
+
 	type QuestionType = {
 		name: string;
 		bg: string;
-		// button: string;
 		secondButton: string;
 		mainText: string;
 		secondText: string;
@@ -46,23 +84,7 @@
 			mainText: "text-card-blue-100",
 			secondText: "text-card-blue-200",
 			thirdText: "text-card-blue-300",
-			questions: [
-				{
-					q: "Är du närmare eller längre ifrån Burger King Västerås än mig?",
-					a: "Längre ifrån",
-				},
-				{ q: "Vilken väg är kortast?", a: "Österledenvägen" },
-				{ q: "Ligger platsen norr eller söder om här?", a: "Norr" },
-				{ q: "Är detta objekt väster om dig?", a: "Ja" },
-				{ q: "Hur många kvarter bort är det?", a: "Ungefär 3 kvarter" },
-				{ q: "Är du närmare eller längre bort?", a: "Närmare" },
-				{ q: "I vilken riktning ligger målpunkten?", a: "Nordöst" },
-				{ q: "Hur långt är det ungefär?", a: "500 meter" },
-				{ q: "Ligger det till höger eller vänster?", a: "Till höger" },
-				{ q: "Är platsen högt eller lågt belägen?", a: "Lågt belägen" },
-				{ q: "Vilken sida av vägen?", a: "Östra sidan" },
-				{ q: "Närmaste eller längsta punkt?", a: "Närmaste" },
-			],
+			questions: relativeQuestionsFromConfig,
 		},
 		{
 			name: "Foton",
@@ -102,20 +124,7 @@
 			mainText: "text-card-red-100",
 			secondText: "text-card-red-200",
 			thirdText: "text-card-red-300",
-			questions: [
-				{ q: "Hur långt bort är målpunkten?", a: "Ungefär 800 meter" },
-				{ q: "I vilken riktning ligger objektet?", a: "Nordväst" },
-				{ q: "Estimera avståndet", a: "Ca 600-700 meter" },
-				{ q: "Är det inom 100m?", a: "Nej" },
-				{ q: "Ungefär hur många meter?", a: "750 meter" },
-				{ q: "Är signalen stark eller svag?", a: "Medel styrka" },
-				{ q: "I vilken sektor är målpunkten?", a: "Nordvästlig sektor" },
-				{ q: "Närmare eller längre än 500m?", a: "Längre än 500m" },
-				{ q: "Vilken kompassriktning?", a: "315 grader (NW)" },
-				{ q: "Är målet synligt?", a: "Delvis synligt" },
-				{ q: "Hur många grader från norr?", a: "45 grader väst" },
-				{ q: "Är det rakt fram eller åt sidan?", a: "Åt vänster och bakåt" },
-			],
+			questions: radarQuestionsFromConfig,
 		},
 		{
 			name: "Oddball",
@@ -191,7 +200,6 @@
 	let touchStartY = $state(0);
 	let touchEndX = $state(0);
 	let touchEndY = $state(0);
-	let containerEl: HTMLElement;
 
 	function handleTouchStart(e: TouchEvent) {
 		touchStartX = e.changedTouches[0].screenX;
@@ -250,8 +258,7 @@
 
 	function prevType() {
 		selectedQuestion = 0;
-		currentType =
-			(currentType - 1 + questionTypes.length) % questionTypes.length;
+		currentType = (currentType - 1 + questionTypes.length) % questionTypes.length;
 	}
 
 	function submitAnswer() {
@@ -264,19 +271,12 @@
 
 	let current = $derived(questionTypes[currentType]);
 	let currentQuestion = $derived(current.questions[selectedQuestion]);
-	let isAnswered = $derived(
-		answeredQuestions[currentType].has(selectedQuestion),
-	);
-	let nextType1 = $derived(
-		questionTypes[(currentType + 1) % questionTypes.length],
-	);
-	let nextType2 = $derived(
-		questionTypes[(currentType + 2) % questionTypes.length],
-	);
+	let isAnswered = $derived(answeredQuestions[currentType].has(selectedQuestion));
+	let nextType1 = $derived(questionTypes[(currentType + 1) % questionTypes.length]);
+	let nextType2 = $derived(questionTypes[(currentType + 2) % questionTypes.length]);
 
 	// Hold animation
 	let isHolding = $state(false);
-	let buttonEl: HTMLElement;
 	let animationCompleted = $state(false);
 
 	function startHold() {
@@ -307,7 +307,6 @@
 
 <div class="relative mb-3">
 	<div
-		bind:this={containerEl}
 		ontouchstart={handleTouchStart}
 		ontouchend={handleTouchEnd}
 		class="transition-colors rounded-3xl duration-300 ease-out {current.bg} {current.mainText} px-8 py-4 transform relative z-30 bg-clip-padding"
@@ -325,7 +324,6 @@
 		<div class="h-26">
 			{#if !isAnswered}
 				<button
-					bind:this={buttonEl}
 					class="relative overflow-hidden w-full"
 					onmousedown={startHold}
 					onmouseup={endHold}
