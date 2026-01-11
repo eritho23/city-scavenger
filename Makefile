@@ -6,7 +6,7 @@
 	clean-disk-images \
 	clean-tmp
 
-clean: postgres-kill postgres-clean dev-clean geodata-clean clean-tmp clean-disk-images
+clean: postgres-kill postgres-clean dev-clean clean-tmp clean-disk-images
 
 clean-disk-images:
 	rm -f *.qcow2

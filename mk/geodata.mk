@@ -2,10 +2,7 @@
 .POSIX:
 
 .PHONY: \
-	geodata \
-	geodata-clean
-
-clean: geodata-clean
+	geodata
 
 # OVERPASS_API_ENDPOINT = https://overpass-api.de/api/interpreter
 OVERPASS_API_ENDPOINT = https://overpass.kumi.systems/api/interpreter

@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 import { cwd } from "process";
+import { dev } from "$app/environment";
 import { asset } from "$app/paths";
 
 export interface BusStop {
@@ -17,8 +18,13 @@ export function loadBusStops(): BusStop[] {
 		return cachedStops;
 	}
 
-    asset('/geodata/busstops-raw.geojson')
-	const filePath = join(cwd(), "static/geodata/busstops-raw.geojson");
+    let filePath: string = "";
+    if (dev) {
+        filePath = join(cwd(), 'static', '/geodata/busstops-raw.geojson');
+    } else {
+        // TODO: Verify this works in production.
+        filePath = asset('/geodata/busstops-raw.geojson')
+    }
 	const fileContent = readFileSync(filePath, "utf-8");
 	const geojson = JSON.parse(fileContent) as { elements: Array<{ id: number; lat: number; lon: number; tags?: { name?: string } }> };
 
