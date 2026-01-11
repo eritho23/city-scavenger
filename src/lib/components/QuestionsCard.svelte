@@ -38,7 +38,7 @@
 	};
 
 	const radarQuestionsFromConfig: Question[] = Object.values(RadarQuestions).map((rq) => ({
-		q: `Är målpunkten inom ${rq.displayName}?`,
+		q: `Är målpunkten inom ${rq.displayName} från mig?`,
 		a: `Radargräns: ${rq.range} km`,
 	}));
 
