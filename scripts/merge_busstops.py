@@ -1,5 +1,6 @@
 import json
 import math
+import re
 from sys import argv
 import os
 
@@ -17,6 +18,14 @@ def distance(lat1, lon1, lat2, lon2):
         + math.cos(phi1) * math.cos(phi2) * math.sin(dlam / 2) ** 2
     )
     return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+
+def sort_route_key(line):
+    """Sort key for bus lines that handles numeric + alphanumeric (e.g., '111A')"""
+    match = re.match(r"(\d+)([A-Z]*)", line)
+    if match:
+        return (int(match.group(1)), match.group(2))
+    return (float("inf"), line)  # fallback for non-standard formats
 
 
 if not os.path.exists(argv[1]):
@@ -48,13 +57,30 @@ for name, stops in by_name.items():
             ):
                 cluster.append(other)
                 used.add(j)
+
+        # Merge route_refs from all stops in the cluster
+        route_refs = set()
+        for stop in cluster:
+            route_ref = stop.get("tags", {}).get("route_ref")
+            if route_ref:
+                route_refs.update(route_ref.split(";"))
+
+        merged_route_ref = (
+            ";".join(sorted(route_refs, key=sort_route_key)) if route_refs else ""
+        )
+
+        # Preserve original tags and add merged route_ref
+        merged_tags = cluster[0].get("tags", {}).copy()
+        if merged_route_ref:
+            merged_tags["route_ref"] = merged_route_ref
+
         grouped.append(
             {
                 "type": "node",
                 "id": cluster[0]["id"],
                 "lat": sum(c["lat"] for c in cluster) / len(cluster),
                 "lon": sum(c["lon"] for c in cluster) / len(cluster),
-                "tags": cluster[0].get("tags", {}),
+                "tags": merged_tags,
             }
         )
 

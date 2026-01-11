@@ -364,7 +364,8 @@
         "highway": "bus_stop",
         "name": "Bjurhovdamotet",
         "network": "VL",
-        "shelter": "yes"
+        "shelter": "yes",
+        "route_ref": "1"
       }
     },
     {
@@ -378,7 +379,8 @@
         "highway": "bus_stop",
         "name": "Skiljebomotet",
         "network": "VL",
-        "shelter": "yes"
+        "shelter": "yes",
+        "route_ref": "5;22;773;874"
       }
     },
     {
@@ -406,7 +408,7 @@
         "highway": "bus_stop",
         "name": "Pilgatan",
         "network": "VL",
-        "route_ref": "2;3;5;22",
+        "route_ref": "2;3;5;15;22;24",
         "shelter": "yes"
       }
     },
@@ -421,7 +423,8 @@
         "highway": "bus_stop",
         "name": "Pilgatan",
         "network": "VL",
-        "shelter": "yes"
+        "shelter": "yes",
+        "route_ref": "4"
       }
     },
     {
@@ -480,7 +483,8 @@
         "name": "Kopparlunden",
         "network": "VL",
         "network:wikidata": "Q10718177",
-        "shelter": "yes"
+        "shelter": "yes",
+        "route_ref": "6;21"
       }
     },
     {
@@ -573,7 +577,8 @@
         "highway": "bus_stop",
         "name": "Biskopsgatan",
         "network": "VL",
-        "shelter": "no"
+        "shelter": "no",
+        "route_ref": "511;514"
       }
     },
     {
@@ -754,7 +759,8 @@
         "highway": "bus_stop",
         "name": "Hamregatan",
         "network": "VL",
-        "shelter": "no"
+        "shelter": "no",
+        "route_ref": "2"
       }
     },
     {
@@ -813,7 +819,8 @@
         "highway": "bus_stop",
         "name": "M\u00e4larparksv\u00e4gen",
         "network": "VL",
-        "shelter": "yes"
+        "shelter": "yes",
+        "route_ref": "2;15"
       }
     },
     {
@@ -1140,7 +1147,8 @@
         "highway": "bus_stop",
         "name": "H\u00e4lla",
         "network": "VL",
-        "shelter": "no"
+        "shelter": "no",
+        "route_ref": "5;22"
       }
     },
     {
@@ -1187,7 +1195,8 @@
         "name": "Nordanbymotet",
         "network": "VL",
         "shelter": "yes",
-        "tactile_paving": "yes"
+        "tactile_paving": "yes",
+        "route_ref": "5;21"
       }
     },
     {
@@ -1201,7 +1210,8 @@
         "highway": "bus_stop",
         "name": "Lundamotet",
         "network": "VL",
-        "shelter": "yes"
+        "shelter": "yes",
+        "route_ref": "21"
       }
     },
     {
@@ -1216,7 +1226,8 @@
         "local_ref": "H",
         "name": "V\u00e4ster\u00e5s Central",
         "network": "VL",
-        "shelter": "yes"
+        "shelter": "yes",
+        "route_ref": "1;2;3;4;5;6;14;773;874"
       }
     },
     {
@@ -1247,7 +1258,8 @@
         "local_ref": "B",
         "name": "V\u00e4ster\u00e5s Central",
         "network": "VL",
-        "shelter": "yes"
+        "shelter": "yes",
+        "route_ref": "21"
       }
     },
     {
@@ -1262,7 +1274,8 @@
         "name": "\u00c4ngsg\u00e4rdsgatan",
         "network": "VL",
         "network:wikidata": "Q10718177",
-        "shelter": "yes"
+        "shelter": "yes",
+        "route_ref": "4"
       }
     },
     {
@@ -1622,7 +1635,8 @@
         "name": "Tomtebov\u00e4gen",
         "network": "VL",
         "shelter": "yes",
-        "tactile_paving": "yes"
+        "tactile_paving": "yes",
+        "route_ref": "1;14;515"
       }
     },
     {
@@ -2214,7 +2228,8 @@
         "highway": "bus_stop",
         "name": "Odensviplatsen",
         "network": "VL",
-        "shelter": "yes"
+        "shelter": "yes",
+        "route_ref": "1"
       }
     },
     {
@@ -2315,7 +2330,8 @@
         "highway": "bus_stop",
         "name": "Kristiansborgsbadet",
         "network": "VL",
-        "shelter": "yes"
+        "shelter": "yes",
+        "route_ref": "5"
       }
     },
     {

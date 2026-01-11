@@ -3,6 +3,7 @@
   node["highway"="bus_stop"](59.585804,16.466103,59.644673,16.624718);
   node["public_transport"="platform"]["bus"="yes"](59.585804,16.466103,59.644673,16.624718);
   node["public_transport"="stop_position"]["bus"="yes"](59.585804,16.466103,59.644673,16.624718);
+  node["route"="bus"](around:50);
 );
 out body;
 >;
