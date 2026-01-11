@@ -131,7 +131,7 @@
 				</div>
 			</div>
 			<div class="w-[90%] mx-auto flex flex-wrap gap-x-3 gap-y-1 mb-6">
-				{#each gamedatamock as gameScore}
+				{#each gamedatamock as gameScore, index (index)}
 					{#if gameScore == null}
 						<Minus size={24} />
 					{:else}
