@@ -4,11 +4,24 @@
 
   programs = {
     biome = {
+      includes = [ "*.svelte" ];
       enable = true;
       settings = {
         formatter = {
           lineWidth = 120;
         };
+        html.formatter.indentScriptAndStyle = true;
+        # From https://biomejs.dev/internals/language-support/#linting-html-ish-languages.
+        overrides = [
+          {
+            includes = [ "**/*.svelte" ];
+            linter.rules = {
+              style = {
+                useConst = "off";
+              };
+            };
+          }
+        ];
       };
     };
     black.enable = true;

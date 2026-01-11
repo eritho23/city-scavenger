@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { Loader } from "@lucide/svelte";
 	import { enhance } from "$app/forms";
 	import { resolve } from "$app/paths";
-	import { Loader } from "@lucide/svelte";
 
 	let isLoading = $state(false);
 </script>

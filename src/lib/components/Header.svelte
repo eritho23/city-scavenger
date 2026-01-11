@@ -6,9 +6,9 @@
 		score: number;
 		time: string;
 		onMenuClick: (isOpen: boolean) => undefined | undefined;
-	};
+	}
 
-	let {score, time, onMenuClick = () => {}}: Props = $props();
+	const { score, time, onMenuClick = () => {} }: Props = $props();
 
 	let showMenu = $state(false);
 

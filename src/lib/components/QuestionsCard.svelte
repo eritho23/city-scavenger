@@ -1,34 +1,48 @@
 <script lang="ts">
-	import { Camera, CircleQuestionMark, Radar, Dice5, Target, ArrowLeft, ArrowRight, type Icon as IconType } from "@lucide/svelte";
-	
+	import {
+		ArrowLeft,
+		ArrowRight,
+		Camera,
+		CircleQuestionMark,
+		Dice5,
+		type Icon as IconType,
+		Radar,
+		Target,
+	} from "@lucide/svelte";
+
 	interface Props {
-		scoreChange: string,
-		currentType: number,
-		answeredQuestions: Record<number, Set<number>>,
-		questionAnswerCallback: (type: number, questionIndex: number) => void
+		scoreChange: string;
+		currentType: number;
+		answeredQuestions: Record<number, Set<number>>;
+		questionAnswerCallback: (type: number, questionIndex: number) => void;
 	}
 
-	let {scoreChange = "+ 30 poäng", currentType = $bindable(0), answeredQuestions = $bindable({
-		0: new Set(),
-		1: new Set(),
-		2: new Set(),
-		3: new Set(),
-		4: new Set(),
-	}), questionAnswerCallback}: Props = $props();
+	let {
+		scoreChange = "+ 30 poäng",
+		currentType = $bindable(0),
+		answeredQuestions = $bindable({
+			0: new Set(),
+			1: new Set(),
+			2: new Set(),
+			3: new Set(),
+			4: new Set(),
+		}),
+		questionAnswerCallback,
+	}: Props = $props();
 
 	type Question = {
-		q: string,
-		a: string,
+		q: string;
+		a: string;
 	};
 
 	type QuestionType = {
-		name: string,
-		icon: typeof IconType,
-		color: string,
-		buttonColor: string,
-		accentColor: string,
-		lightButtonColor: string,
-		questions: Question[],
+		name: string;
+		icon: typeof IconType;
+		color: string;
+		buttonColor: string;
+		accentColor: string;
+		lightButtonColor: string;
+		questions: Question[];
 	};
 
 	const questionTypes: QuestionType[] = [
@@ -199,8 +213,7 @@
 		slideDirection = -1;
 		selectedQuestion = 0;
 		setTimeout(() => {
-			currentType =
-				(currentType - 1 + questionTypes.length) % questionTypes.length;
+			currentType = (currentType - 1 + questionTypes.length) % questionTypes.length;
 			slideDirection = 0;
 			isTransitioning = false;
 		}, 300);
@@ -213,17 +226,13 @@
 	function submitAnswer() {
 		if (!isAnswered) {
 			answeredQuestions[currentType].add(selectedQuestion);
-			answeredQuestions = answeredQuestions;
-			questionAnswerCallback(
-				currentType,
-				selectedQuestion,
-			)
+			questionAnswerCallback(currentType, selectedQuestion);
 		}
 	}
 
-	let current = $derived(questionTypes[currentType]);
-	let currentQuestion = $derived(current.questions[selectedQuestion]);
-	let isAnswered = $derived(answeredQuestions[currentType].has(selectedQuestion));
+	const current = $derived(questionTypes[currentType]);
+	const currentQuestion = $derived(current.questions[selectedQuestion]);
+	const isAnswered = $derived(answeredQuestions[currentType].has(selectedQuestion));
 </script>
 
 <div class="relative overflow-hidden rounded-3xl">
