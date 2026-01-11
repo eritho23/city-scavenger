@@ -7,8 +7,6 @@
 
 	let { data } = $props()
 
-	$inspect(data.game)
-
 	let score = $state(0);
 	let time = $state("00:00:00");
 
