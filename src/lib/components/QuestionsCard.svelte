@@ -11,6 +11,7 @@
 	} from "@lucide/svelte";
 
 	import { RadarQuestions } from "$lib/questions/radars";
+	import { RelativeKey, RelativeQuestions } from "$lib/questions/relative";
 
 	interface Props {
 		scoreChange: string;
@@ -18,6 +19,37 @@
 		answeredQuestions: Record<number, Set<number>>;
 		questionAnswerCallback: (type: number, questionIndex: number) => void;
 	}
+
+	const relativeOrder = [
+		RelativeKey.Longitude,
+		RelativeKey.Latitude,
+		RelativeKey.RailwayDistance,
+		RelativeKey.SvartanDistance,
+		RelativeKey.SameAirport,
+	] as const;
+
+	const relativeQuestionsFromConfig: Question[] = relativeOrder.map((key) => {
+		const rq = RelativeQuestions[key];
+		let a: string;
+		switch (key) {
+			case RelativeKey.Longitude:
+				a = "Högre eller lägre longitud";
+				break;
+			case RelativeKey.Latitude:
+				a = "Högre eller lägre latitud";
+				break;
+			case RelativeKey.RailwayDistance:
+				a = "Närmare eller längre från järnvägen";
+				break;
+			case RelativeKey.SvartanDistance:
+				a = "Närmare eller längre från Svartån";
+				break;
+			case RelativeKey.SameAirport:
+				a = "Ja, samma flygplats / Nej, olika";
+				break;
+		}
+		return { q: rq.prompt, a };
+	});
 
 	let {
 		scoreChange = "+ 30 poäng",
@@ -60,23 +92,7 @@
 			buttonColor: "bg-blue-300",
 			accentColor: "text-blue-900",
 			lightButtonColor: "bg-blue-200",
-			questions: [
-				{
-					q: "Är du närmare eller längre ifrån Burger King Västerås än mig?",
-					a: "Längre ifrån",
-				},
-				{ q: "Vilken väg är kortast?", a: "Österledenvägen" },
-				{ q: "Ligger platsen norr eller söder om här?", a: "Norr" },
-				{ q: "Är detta objekt väster om dig?", a: "Ja" },
-				{ q: "Hur många kvarter bort är det?", a: "Ungefär 3 kvarter" },
-				{ q: "Är du närmare eller längre bort?", a: "Närmare" },
-				{ q: "I vilken riktning ligger målpunkten?", a: "Nordöst" },
-				{ q: "Hur långt är det ungefär?", a: "500 meter" },
-				{ q: "Ligger det till höger eller vänster?", a: "Till höger" },
-				{ q: "Är platsen högt eller lågt belägen?", a: "Lågt belägen" },
-				{ q: "Vilken sida av vägen?", a: "Östra sidan" },
-				{ q: "Närmaste eller längsta punkt?", a: "Närmaste" },
-			],
+			questions: relativeQuestionsFromConfig,
 		},
 		{
 			name: "Foton",
