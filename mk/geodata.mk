@@ -7,12 +7,13 @@
 
 clean: geodata-clean
 
-OVERPASS_API_ENDPOINT = https://overpass-api.de/api/interpreter
+# OVERPASS_API_ENDPOINT = https://overpass-api.de/api/interpreter
+OVERPASS_API_ENDPOINT = https://overpass.kumi.systems/api/interpreter
 
-generated:
-	mkdir -p ./generated
+static/generated:
+	mkdir -p ./static/generated
 
-generated/busstops-raw.geojson: generated queries/busstops.query
+static/generated/busstops-raw.geojson: static/generated queries/busstops.query
 	curl \
 		--fail \
 		--request POST \
@@ -21,7 +22,7 @@ generated/busstops-raw.geojson: generated queries/busstops.query
 		$(OVERPASS_API_ENDPOINT) \
 		--output "$@"
 
-generated/pizzerias.geojson: generated queries/pizzerias.query
+static/generated/pizzerias.geojson: static/generated queries/pizzerias.query
 	curl \
 		--fail \
 		--request POST \
@@ -30,7 +31,7 @@ generated/pizzerias.geojson: generated queries/pizzerias.query
 		$(OVERPASS_API_ENDPOINT) \
 		--output "$@"
 
-generated/pharmacies.geojson: generated queries/pharmacies.query
+static/generated/pharmacies.geojson: static/generated queries/pharmacies.query
 	curl \
 		--fail \
 		--request POST \
@@ -39,16 +40,16 @@ generated/pharmacies.geojson: generated queries/pharmacies.query
 		$(OVERPASS_API_ENDPOINT) \
 		--output "$@"
 
-generated/busstops-merged.geojson: generated/busstops-raw.geojson
+static/generated/busstops-merged.geojson: static/generated/busstops-raw.geojson
 	python3 \
 		./scripts/merge_busstops.py \
-		$$(realpath ./generated/busstops-raw.geojson) \
-		"$$(realpath .)/generated/busstops-merged.geojson"
+		$$(realpath ./static/generated/busstops-raw.geojson) \
+		"$$(realpath .)/static/generated/busstops-merged.geojson"
 
 geodata: \
-	generated/busstops-merged.geojson \
-	generated/pharmacies.geojson \
-	generated/pizzerias.geojson
+	static/generated/busstops-merged.geojson \
+	static/generated/pharmacies.geojson \
+	static/generated/pizzerias.geojson
 
 geodata-clean:
-	rm -rf ./generated
+	rm -rf ./static/generated

@@ -27,3 +27,4 @@ result*
 tmp
 
 *.qcow2
+static/generated
