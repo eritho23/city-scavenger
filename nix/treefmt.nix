@@ -19,6 +19,10 @@ _: {
           {
             includes = ["**/*.svelte"];
             linter.rules = {
+              correctness = {
+                noUnusedImports = "off";
+                noUnusedVariables = "off";
+              };
               style = {
                 useConst = "off";
               };

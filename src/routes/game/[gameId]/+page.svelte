@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { SvelteSet } from "svelte/reactivity";
-	import Map from "$lib/components/map.svelte";
+	import MapComponent from "$lib/components/map.svelte";
+
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
 	import { currentGame } from "$lib/stores/game.svelte.js";
 
@@ -74,7 +75,7 @@
 	class="absolute w-full h-[20%] bottom-0 left-0 bg-linear-to-t from-40% from-bg-900 to-transparent"
 ></div>
 <div class="w-full h-full absolute top-0 left-0 -z-10">
-	<Map />
+	<MapComponent />
 </div>
 <div class="fixed bottom-3 left-0 px-3 w-full">
 	<QuestionsCard

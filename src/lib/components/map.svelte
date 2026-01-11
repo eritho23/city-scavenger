@@ -16,11 +16,9 @@
 
 		map.locate({ setView: true, maxZoom: 16 });
 
-		map.on("locationfound", (e) => {});
+		map.on("locationfound", () => {});
 
-		map.on("locationerror", (e) => {});
-
-		// L.marker([51.505, -0.09]).addTo(map);
+		map.on("locationerror", () => {});
 	});
 </script>
 
