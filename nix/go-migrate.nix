@@ -43,7 +43,7 @@ buildGoModule rec {
   proxyVendor = true; # darwin/linux hash mismatch
   vendorHash = "sha256-aAtPYD8gZReUJu+oOkuZ1afUKnGvP5shXCo7FgigBDI=";
 
-  subPackages = [ "cmd/migrate" ];
+  subPackages = ["cmd/migrate"];
 
   tags = [
     "pgx"

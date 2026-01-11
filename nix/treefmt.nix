@@ -1,8 +1,8 @@
-_:
-{
+_: {
   projectRootFile = "flake.nix";
 
   programs = {
+    alejandra.enable = true;
     biome = {
       includes = [
         "*.svelte"
@@ -17,7 +17,7 @@ _:
         # From https://biomejs.dev/internals/language-support/#linting-html-ish-languages.
         overrides = [
           {
-            includes = [ "**/*.svelte" ];
+            includes = ["**/*.svelte"];
             linter.rules = {
               style = {
                 useConst = "off";
@@ -32,7 +32,6 @@ _:
     dos2unix.enable = true;
     mbake.enable = true;
     mdformat.enable = true;
-    nixfmt.enable = true;
     shfmt.enable = true;
     statix.enable = true;
     yamlfmt.enable = true;
