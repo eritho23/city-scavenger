@@ -1,11 +1,10 @@
 import { zodResponseFormat } from "openai/helpers/zod.mjs";
-import { client } from "./openaiClient";
+import { client } from "$lib/server/openaiClient";
 import { PlaceProfile } from "./schemas";
 
 export async function generatePlaceProfile(busStopName: string): Promise<PlaceProfile | null> {
 	const context = `
-    Stop name: Strandbron
-
+    Stop name: ${busStopName}
   `;
 	const completion = await client.chat.completions.create({
 		model: "gemma3:12b",
@@ -26,13 +25,24 @@ export async function generatePlaceProfile(busStopName: string): Promise<PlacePr
 	});
 
 	if (completion === null) {
+		console.log("returning null");
 		return null;
 	}
 
 	if (completion.choices[0].message.content === null) {
+		console.log("returning null, content is null");
 		return null;
 	}
 
-	const placeProfile = JSON.parse(completion.choices[0].message.content);
-	return PlaceProfile.parse(placeProfile);
+	console.log("here");
+	console.log(completion.choices[0].message.content);
+
+	const placeProfile = PlaceProfile.safeParse(JSON.parse(completion.choices[0].message.content));
+	if (!placeProfile.success) {
+		console.log(placeProfile.error);
+		return null;
+	} else {
+		console.log(placeProfile.data);
+		return placeProfile.data;
+	}
 }
