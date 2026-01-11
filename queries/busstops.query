@@ -7,4 +7,5 @@
 );
 out body;
 >;
-out skel qt;
+
+out body geom;

@@ -3,6 +3,5 @@ import { env } from "$env/dynamic/private";
 
 export const client = new OpenAI({
 	baseURL: env.OPENAI_API_URL ?? "",
-	logLevel: "debug",
-	apiKey: "ollama",
+	apiKey: env.OPENAI_API_URL ?? "ollama",
 });

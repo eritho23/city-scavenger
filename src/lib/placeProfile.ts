@@ -35,24 +35,22 @@ export async function generatePlaceProfile(stop: BusStopData): Promise<PlaceProf
 	});
 
 	if (completion === null) {
-		console.log("returning null");
 		return null;
 	}
 
 	if (completion.choices[0].message.content === null) {
-		console.log("returning null, content is null");
 		return null;
 	}
 
-	console.log("here");
-	console.log(completion.choices[0].message.content);
-
 	const placeProfile = PlaceProfile.safeParse(JSON.parse(completion.choices[0].message.content));
 	if (!placeProfile.success) {
-		console.log(placeProfile.error);
 		return null;
 	} else {
-		console.log(placeProfile.data);
+		const placeProfileEditable = placeProfile.data;
+		placeProfileEditable.lat = stop.lat;
+		placeProfileEditable.lon = stop.lon;
+		placeProfileEditable.stopId = String(stop.id);
+
 		return placeProfile.data;
 	}
 }

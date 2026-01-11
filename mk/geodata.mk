@@ -4,8 +4,8 @@
 .PHONY: \
 	geodata
 
-# OVERPASS_API_ENDPOINT = https://overpass-api.de/api/interpreter
-OVERPASS_API_ENDPOINT = https://overpass.kumi.systems/api/interpreter
+OVERPASS_API_ENDPOINT = https://overpass-api.de/api/interpreter
+# OVERPASS_API_ENDPOINT = https://overpass.kumi.systems/api/interpreter
 
 static/geodata:
 	mkdir -p ./static/geodata
