@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ChevronLeft, ChevronRight } from "@lucide/svelte";
+	import { SvelteSet } from "svelte/reactivity";
 	import { enhance } from "$app/forms";
-
 	import { RadarQuestions } from "$lib/questions/radars";
 	import { RelativeKey, RelativeQuestions } from "$lib/questions/relative";
 	import type { ActionData } from "../../routes/game/[gameId]/$types";
@@ -50,11 +50,11 @@
 		scoreChange = "+ 30 poäng",
 		currentType = $bindable(0),
 		answeredQuestions = $bindable({
-			0: new Set(),
-			1: new Set(),
-			2: new Set(),
-			3: new Set(),
-			4: new Set(),
+			0: new SvelteSet(),
+			1: new SvelteSet(),
+			2: new SvelteSet(),
+			3: new SvelteSet(),
+			4: new SvelteSet(),
 		}),
 		questionAnswerCallback,
 		currentPosition,
@@ -66,13 +66,18 @@
 		a: string;
 	};
 
-	const radarQuestionsFromConfig: Question[] = Object.values(RadarQuestions).map((rq) => ({
-		q: `Är målpunkten inom ${rq.displayName} från mig?`,
-		a: `Radargräns: ${rq.range} km`,
-	}));
+	const radarQuestionKeys = Object.keys(RadarQuestions);
+	const radarQuestionsFromConfig: Question[] = radarQuestionKeys.map((key) => {
+		const rq = RadarQuestions[key as keyof typeof RadarQuestions];
+		return {
+			q: `Är målpunkten inom ${rq.displayName} från mig?`,
+			a: `Radargräns: ${rq.range} km`,
+		};
+	});
 
 	type QuestionType = {
 		name: string;
+		type: "relative" | "photo" | "radar" | "oddball" | "precision";
 		bg: string;
 		secondButton: string;
 		mainText: string;
@@ -84,6 +89,7 @@
 	const questionTypes: QuestionType[] = [
 		{
 			name: "Relativ",
+			type: "relative",
 			bg: "bg-card-blue-900",
 			// button: "bg-card-blue-700",
 			secondButton: "bg-card-blue-800",
@@ -94,6 +100,7 @@
 		},
 		{
 			name: "Foton",
+			type: "photo",
 			bg: "bg-card-green-900",
 			secondButton: "bg-card-green-800",
 			mainText: "text-card-green-100",
@@ -125,6 +132,7 @@
 		},
 		{
 			name: "Radar",
+			type: "radar",
 			bg: "bg-card-red-900",
 			secondButton: "bg-card-red-800",
 			mainText: "text-card-red-100",
@@ -134,6 +142,7 @@
 		},
 		{
 			name: "Oddball",
+			type: "oddball",
 			bg: "bg-card-purple-900",
 			secondButton: "bg-card-purple-800",
 			mainText: "text-card-purple-100",
@@ -174,6 +183,7 @@
 		},
 		{
 			name: "Precision",
+			type: "precision",
 			bg: "bg-card-yellow-900",
 			secondButton: "bg-card-yellow-800",
 			mainText: "text-card-yellow-100",
@@ -272,6 +282,8 @@
 	// Hold animation
 	let isHolding = $state(false);
 	let animationCompleted = $state(false);
+	let isSubmitting = $state(false);
+	let lastProcessedSubmission = $state<string | null>(null);
 
 	function startHold() {
 		if (isAnswered) return;
@@ -299,9 +311,10 @@
 	}
 
 	function askQuestion() {
-		if (!isAnswered && formElement) {
+		if (!isAnswered && formElement && !isSubmitting) {
+			isSubmitting = true;
 			console.log("[askQuestion] Asking server:", {
-				questionTypeName,
+				questionType,
 				questionId,
 				currentPosition,
 				currentType,
@@ -319,9 +332,17 @@
 	// Handle form submission response
 	$effect(() => {
 		if (form?.success) {
-			answeredQuestions[currentType].add(selectedQuestion);
-			answeredQuestions = { ...answeredQuestions };
-			questionAnswerCallback(currentType, selectedQuestion);
+			// Create a unique ID for this submission to avoid reprocessing
+			const submissionId = `${currentType}-${selectedQuestion}`;
+			if (lastProcessedSubmission !== submissionId) {
+				lastProcessedSubmission = submissionId;
+				answeredQuestions[currentType].add(selectedQuestion);
+				answeredQuestions = { ...answeredQuestions };
+				questionAnswerCallback(currentType, selectedQuestion);
+			}
+			isSubmitting = false;
+			isHolding = false;
+			animationCompleted = false;
 		}
 	});
 
@@ -335,12 +356,16 @@
 	let nextType2 = $derived(questionTypes[(currentType + 2) % questionTypes.length]);
 
 	// Values for the form submission
-	let questionTypeName = $derived(current.name);
-	let questionId = $derived(selectedQuestion);
+	let questionType = $derived(current.type);
+	let questionId = $derived(
+		questionType === "radar" && selectedQuestion < radarQuestionKeys.length
+			? radarQuestionKeys[selectedQuestion]
+			: String(selectedQuestion),
+	);
 	let userAnswer = $derived<string | undefined>(undefined); // Placeholder for user answer if needed
 
 	$inspect("Form values:", {
-		questionTypeName,
+		questionType,
 		questionId,
 		userAnswer,
 		isAnswered,
@@ -356,7 +381,7 @@
 		use:enhance
 		class="hidden"
 	>
-		<input type="hidden" name="questionType" value={questionTypeName} />
+		<input type="hidden" name="questionType" value={questionType} />
 		<input type="hidden" name="questionId" value={questionId} />
 		<input type="hidden" name="userLat" value={currentPosition.lat} />
 		<input type="hidden" name="userLng" value={currentPosition.lng} />
