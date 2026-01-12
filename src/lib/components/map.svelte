@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 
+	import { VästeråsLatLng } from "$lib/constants/coords";
+
 	let mapEl: HTMLElement;
 
 	onMount(async () => {
@@ -8,7 +10,7 @@
 
 		const map = L.map(mapEl, {
 			zoomControl: false,
-		}).setView([51.505, -0.09], 13);
+		}).setView(VästeråsLatLng, 12);
 
 		L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 			maxZoom: 19,
