@@ -29,7 +29,7 @@
 			map.on("locationfound", (e) => {
 				console.log("Location found:", e.latlng);
 				currentPosition = e.latlng;
-				if (map) map.setView(e.latlng, 16);
+				// if (map) map.setView(e.latlng, 16);
 				if (userMarker !== undefined) userMarker.remove();
 
 				userMarker = L.circleMarker(e.latlng, {
