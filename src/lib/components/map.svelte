@@ -1,16 +1,30 @@
 <script lang="ts">
+	import L from "leaflet";
 	import { onMount } from "svelte";
 	import { browser } from "$app/environment";
-
 	import { VästeråsLatLng } from "$lib/constants/coords";
 
+	interface Props {
+		coords: { lat: number; lng: number };
+	}
+
+	let { coords }: Props = $props();
 	let mapEl: HTMLElement;
+	let map: L.Map | undefined;
+	let userMarker: L.Marker | undefined;
+
+	$effect(() => {
+		if (map !== undefined) {
+			if (userMarker !== undefined) userMarker.remove();
+
+			userMarker = new L.Marker([coords.lat, coords.lng]);
+			userMarker.addTo(map);
+		}
+	});
 
 	onMount(async () => {
 		if (browser && window) {
-			const L = (await import("leaflet")).default;
-
-			const map = L.map(mapEl, {
+			map = L.map(mapEl, {
 				zoomControl: false,
 			}).setView(VästeråsLatLng, 12);
 
@@ -25,7 +39,8 @@
 
 			map.on("locationerror", () => {});
 
-			L.circle(VästeråsLatLng, { radius: 500, fillColor: "red", color: "red", fillOpacity: 0.5 }).addTo(map);
+			userMarker = new L.Marker([coords.lat, coords.lng]);
+			userMarker.addTo(map);
 		}
 	});
 </script>
