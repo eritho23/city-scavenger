@@ -1,22 +1,18 @@
-{ self }:
-{
+{self}: {
   config,
   pkgs,
   lib,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.services.city-scav;
-  goMigrate = pkgs.callPackage ./go-migrate.nix { };
+  goMigrate = pkgs.callPackage ./go-migrate.nix {};
   cityScavBundle = self.packages.${pkgs.stdenv.hostPlatform.system}.frontend;
   postgresConnectionStringFile =
-    if !cfg.postgres.configureLocal then
-      cfg.postgres.connectionStringFile
-    else
-      pkgs.writeText "database-url" "postgresql://city-scav@/city-scav?host=/run/postgresql";
-in
-{
+    if !cfg.postgres.configureLocal
+    then cfg.postgres.connectionStringFile
+    else pkgs.writeText "database-url" "postgresql://city-scav@/city-scav?host=/run/postgresql";
+in {
   options.services.city-scav = {
     enable = mkEnableOption "Whether to enable the CityScav service.";
     publicUrl = mkOption {
@@ -47,7 +43,7 @@ in
   config = mkIf cfg.enable {
     services.postgresql = mkIf cfg.postgres.configureLocal {
       enable = true;
-      ensureDatabases = [ "city-scav" ];
+      ensureDatabases = ["city-scav"];
       ensureUsers = [
         {
           name = "city-scav";
@@ -71,23 +67,22 @@ in
       createHome = false;
       group = "city-scav";
     };
-    users.groups."city-scav" = { };
+    users.groups."city-scav" = {};
 
     systemd.services."city-scav" = {
       description = "The CityScavenger Bun HTTP server.";
       after =
-        if !cfg.postgres.configureLocal then
-          [
-            "postgresql.service"
-            "postgresql-setup.service"
-          ]
-        else
-          [ "network.target" ];
+        if !cfg.postgres.configureLocal
+        then [
+          "postgresql.service"
+          "postgresql-setup.service"
+        ]
+        else ["network.target"];
       requires = optionals cfg.postgres.configureLocal [
         "postgresql.service"
         "postgresql-setup.service"
       ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
       serviceConfig = {
         # Execute the main process only after migrations are applied.
         ExecStartPre = pkgs.writeShellScript "city-scav-exec-start-pre" ''

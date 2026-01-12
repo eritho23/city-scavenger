@@ -1,8 +1,4 @@
-{
-  modulesPath,
-  ...
-}:
-{
+{modulesPath, ...}: {
   imports = [
     "${modulesPath}/profiles/minimal.nix"
     "${modulesPath}/profiles/perlless.nix"

@@ -1,46 +1,49 @@
 <script lang="ts">
-	import Header from "$lib/components/Header.svelte";
-	import MapPlaceholder from "$lib/components/MapPlaceholder.svelte";
+	import { onMount } from "svelte";
+	import { SvelteSet } from "svelte/reactivity";
+	import MapComponent from "$lib/components/map.svelte";
+
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
+	import { currentGame } from "$lib/stores/game.svelte.js";
 
-	import {onMount} from "svelte"
-
-	let { data } = $props()
+	let { data } = $props();
 
 	let score = $state(0);
 	let time = $state("00:00:00");
 
+	$effect(() => {
+		currentGame.score = score;
+		currentGame.time = time;
+	});
+
 	onMount(() => {
 		const updateTime = () => {
-			const now = new Date()
-			const startedAt = new Date(data.game.started_at)
-			const totalSeconds = Math.floor((now.getTime() - startedAt.getTime())/1000)
-			const hours = Math.floor(totalSeconds/3600)
+			const now = new Date();
+			const startedAt = new Date(data.game.started_at);
+			const totalSeconds = Math.floor((now.getTime() - startedAt.getTime()) / 1000);
+			const hours = Math.floor(totalSeconds / 3600);
 			const minutes = Math.floor((totalSeconds % 3600) / 60);
 			const seconds = totalSeconds % 60;
-			time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
-		}
+			time = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+		};
 
 		updateTime();
 		const interval = setInterval(updateTime, 1000);
 
 		return () => clearInterval(interval);
-	})
+	});
 
 	let currentType = $state(0);
 	let answeredQuestions: Record<number, Set<number>> = $state({
-		0: new Set(),
-		1: new Set(),
-		2: new Set(),
-		3: new Set(),
-		4: new Set(),
+		0: new SvelteSet(),
+		1: new SvelteSet(),
+		2: new SvelteSet(),
+		3: new SvelteSet(),
+		4: new SvelteSet(),
 	});
 
-	function handleQuestionAnswered(
-		type: number, questionIndex: number 
-	) {
+	function handleQuestionAnswered(type: number, questionIndex: number) {
 		answeredQuestions[type].add(questionIndex);
-		answeredQuestions = answeredQuestions;
 
 		// Add points with animation
 		animatePoints(30);
@@ -68,26 +71,17 @@
 	}
 </script>
 
-<div class="min-h-screen bg-white">
-	<Header {score} {time} onMenuClick={() => {}}/>
-	<div class="w-full">
-		<MapPlaceholder />
-	</div>
-	<div class="px-5 py-5">
-		<QuestionsCard
-			bind:currentType
-			bind:answeredQuestions
-			questionAnswerCallback={handleQuestionAnswered}
-			scoreChange=""
-		/>
-	</div>
+<div
+	class="absolute w-full h-[20%] bottom-0 left-0 bg-linear-to-t from-40% from-bg-900 to-transparent"
+></div>
+<div class="w-full h-full absolute top-0 left-0 -z-10">
+	<MapComponent />
 </div>
-
-<style>
-	:global(body) {
-		margin: 0;
-		padding: 0;
-		font-family:
-			-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-	}
-</style>
+<div class="fixed bottom-3 left-0 px-3 w-full">
+	<QuestionsCard
+		bind:currentType
+		bind:answeredQuestions
+		questionAnswerCallback={handleQuestionAnswered}
+		scoreChange=""
+	/>
+</div>

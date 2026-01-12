@@ -35,7 +35,7 @@ If you find yourself suggesting npm, STOP and use bun instead.
 - **Bun** - Package manager and JavaScript runtime
 - **Kysely** - Type-safe SQL query builder for TypeScript
 - **PostgreSQL** - Database (local instance in dev)
-- **Valibot** - Schema validation library
+- **Zod** - Schema validation library
 - **Nix** - Development environments, reproducible builds, and CI/CD (with flakes enabled)
 - **Sops** - Secrets management
 - **svelte-adapter-bun** - SvelteKit adapter for Bun runtime
