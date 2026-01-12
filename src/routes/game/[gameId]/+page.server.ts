@@ -3,6 +3,8 @@ import { db } from "$lib/database";
 import { PlaceProfile } from "$lib/schemas";
 import type { PageServerLoad } from "./$types";
 
+export const ssr = false;
+
 export const load: PageServerLoad = async ({ params }) => {
 	const game = await db
 		.selectFrom("game")
