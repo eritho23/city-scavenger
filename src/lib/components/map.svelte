@@ -2,9 +2,10 @@
 	import { onMount } from "svelte";
 	import { browser } from "$app/environment";
 
-	import { VästeråsLatLng } from "$lib/constants/coords";
+	import { VästeråsLatLng, VästeråsBounds } from "$lib/constants/coords";
 
 	let mapEl: HTMLElement;
+	let playerMarker: any;
 
 	onMount(async () => {
 		if (browser && window) {
@@ -19,13 +20,33 @@
 				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			}).addTo(map);
 
-			map.locate({ setView: true, maxZoom: 16 });
+			map.locate({ maxZoom: 16, watch: true });
 
-			map.on("locationfound", () => {});
+			map.on("locationfound", (e: any) => {
+				if (playerMarker) {
+					map.removeLayer(playerMarker);
+				}
+				
+				playerMarker = L.circleMarker(e.latlng, { 
+					radius: 8, 
+					fillColor: "green", 
+					color: "darkgreen", 
+					fillOpacity: 0.8,
+					weight: 2
+				}).addTo(map);
+			});
 
-			map.on("locationerror", () => {});
+			map.on("locationerror", () => {
+				console.warn("Location access denied or unavailable");
+			});
 
-			L.circle(VästeråsLatLng, { radius: 500, fillColor: "red", color: "red", fillOpacity: 0.5 }).addTo(map);
+			L.rectangle(VästeråsBounds, { 
+				fillColor: "red", 
+				color: "darkred", 
+				fillOpacity: 0.1,
+				weight: 2,
+				dashArray: "5, 10"
+			}).addTo(map);
 		}
 	});
 </script>
