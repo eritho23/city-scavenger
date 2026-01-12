@@ -1,51 +1,57 @@
 <script lang="ts">
+	import L from "leaflet";
 	import { onMount } from "svelte";
 	import { browser } from "$app/environment";
 
 	import { VästeråsLatLng, VästeråsBounds } from "$lib/constants/coords";
 
 	let mapEl: HTMLElement;
-	let playerMarker: any;
+	let map: L.Map | undefined;
+	let userMarker: L.CircleMarker | undefined;
+	let currentPosition = $state(
+		L.latLng(VästeråsLatLng.lat, VästeråsLatLng.lng),
+	);
 
 	onMount(async () => {
 		if (browser && window) {
-			const L = (await import("leaflet")).default;
-
-			const map = L.map(mapEl, {
+			map = L.map(mapEl, {
 				zoomControl: false,
-			}).setView(VästeråsLatLng, 12);
+			}).setView(currentPosition, 12);
 
 			L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 				maxZoom: 19,
-				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+				attribution:
+					'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			}).addTo(map);
 
-			map.locate({ maxZoom: 16, watch: true });
+			map.locate({ maxZoom: 16, watch: true, setView: false });
 
-			map.on("locationfound", (e: any) => {
-				if (playerMarker) {
-					map.removeLayer(playerMarker);
-				}
-				
-				playerMarker = L.circleMarker(e.latlng, { 
-					radius: 8, 
-					fillColor: "green", 
-					color: "darkgreen", 
+			map.on("locationfound", (e) => {
+				console.log("Location found:", e.latlng);
+				currentPosition = e.latlng;
+				if (map) map.setView(e.latlng, 16);
+				if (userMarker !== undefined) userMarker.remove();
+
+				userMarker = L.circleMarker(e.latlng, {
+					radius: 8,
+					fillColor: "green",
+					color: "darkgreen",
 					fillOpacity: 0.8,
-					weight: 2
-				}).addTo(map);
+					weight: 2,
+				});
+				if (map) userMarker.addTo(map);
 			});
 
-			map.on("locationerror", () => {
-				console.warn("Location access denied or unavailable");
+			map.on("locationerror", (e) => {
+				console.warn("Location access denied or unavailable", e);
 			});
 
-			L.rectangle(VästeråsBounds, { 
-				fillColor: "red", 
-				color: "darkred", 
+			L.rectangle(VästeråsBounds, {
+				fillColor: "red",
+				color: "darkred",
 				fillOpacity: 0.1,
 				weight: 2,
-				dashArray: "5, 10"
+				dashArray: "5, 10",
 			}).addTo(map);
 		}
 	});

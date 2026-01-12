@@ -14,7 +14,7 @@ export const cityBoundaryPolygon = bboxPolygon([
 /**
  * Get the area above the player (north of player's position)
  */
-export function getAreaAbovePlayer(playerLat: number, _playerLng: number): Feature<Polygon> {
+export function getAreaAbovePlayer(playerLat: number): Feature<Polygon> {
 	// Create polygon covering area north of player
 	const northPolygon = polygon([[
 		[VästeråsExtremities.left, playerLat],
@@ -23,7 +23,7 @@ export function getAreaAbovePlayer(playerLat: number, _playerLng: number): Featu
 		[VästeråsExtremities.left, VästeråsExtremities.top],
 		[VästeråsExtremities.left, playerLat]
 	]]);
-	
+
 	// Intersect with city boundary
 	const result = intersect(featureCollection([cityBoundaryPolygon, northPolygon]));
 	return result as Feature<Polygon>;
@@ -32,7 +32,7 @@ export function getAreaAbovePlayer(playerLat: number, _playerLng: number): Featu
 /**
  * Get the area below the player (south of player's position)
  */
-export function getAreaBelowPlayer(playerLat: number, _playerLng: number): Feature<Polygon> {
+export function getAreaBelowPlayer(playerLat: number): Feature<Polygon> {
 	// Create polygon covering area south of player
 	const southPolygon = polygon([[
 		[VästeråsExtremities.left, VästeråsExtremities.bottom],
@@ -41,7 +41,7 @@ export function getAreaBelowPlayer(playerLat: number, _playerLng: number): Featu
 		[VästeråsExtremities.left, playerLat],
 		[VästeråsExtremities.left, VästeråsExtremities.bottom]
 	]]);
-	
+
 	// Intersect with city boundary
 	const result = intersect(featureCollection([cityBoundaryPolygon, southPolygon]));
 	return result as Feature<Polygon>;
@@ -59,7 +59,7 @@ export function getAreaLeftOfPlayer(playerLat: number, playerLng: number): Featu
 		[VästeråsExtremities.left, VästeråsExtremities.top],
 		[VästeråsExtremities.left, VästeråsExtremities.bottom]
 	]]);
-	
+
 	// Intersect with city boundary
 	const result = intersect(featureCollection([cityBoundaryPolygon, westPolygon]));
 	return result as Feature<Polygon>;
@@ -77,7 +77,7 @@ export function getAreaRightOfPlayer(playerLat: number, playerLng: number): Feat
 		[playerLng, VästeråsExtremities.top],
 		[playerLng, VästeråsExtremities.bottom]
 	]]);
-	
+
 	// Intersect with city boundary
 	const result = intersect(featureCollection([cityBoundaryPolygon, eastPolygon]));
 	return result as Feature<Polygon>;
@@ -94,7 +94,7 @@ export function getQuadrants(playerLat: number, playerLng: number) {
 		[playerLng, VästeråsExtremities.top],
 		[playerLng, playerLat]
 	]]);
-	
+
 	const northWest = polygon([[
 		[VästeråsExtremities.left, playerLat],
 		[playerLng, playerLat],
@@ -102,7 +102,7 @@ export function getQuadrants(playerLat: number, playerLng: number) {
 		[VästeråsExtremities.left, VästeråsExtremities.top],
 		[VästeråsExtremities.left, playerLat]
 	]]);
-	
+
 	const southEast = polygon([[
 		[playerLng, VästeråsExtremities.bottom],
 		[VästeråsExtremities.right, VästeråsExtremities.bottom],
@@ -110,7 +110,7 @@ export function getQuadrants(playerLat: number, playerLng: number) {
 		[playerLng, playerLat],
 		[playerLng, VästeråsExtremities.bottom]
 	]]);
-	
+
 	const southWest = polygon([[
 		[VästeråsExtremities.left, VästeråsExtremities.bottom],
 		[playerLng, VästeråsExtremities.bottom],
@@ -118,7 +118,7 @@ export function getQuadrants(playerLat: number, playerLng: number) {
 		[VästeråsExtremities.left, playerLat],
 		[VästeråsExtremities.left, VästeråsExtremities.bottom]
 	]]);
-	
+
 	return {
 		northEast: intersect(featureCollection([cityBoundaryPolygon, northEast])) as Feature<Polygon>,
 		northWest: intersect(featureCollection([cityBoundaryPolygon, northWest])) as Feature<Polygon>,
@@ -142,18 +142,4 @@ export function turfToLeafletPolygon(turfPolygon: Feature<Polygon>): number[][][
 	const coords = turfPolygon.geometry.coordinates;
 	// Convert from [lng, lat] to [lat, lng] for Leaflet
 	return coords.map((ring: number[][]) => ring.map((coord: number[]) => [coord[1], coord[0]]));
-}
-
-/**
- * Get all boundary types for a player position
- */
-export function getAllBoundaries(playerLat: number, playerLng: number) {
-	return {
-		fullCity: cityBoundaryPolygon,
-		above: getAreaAbovePlayer(playerLat, 0),
-		below: getAreaBelowPlayer(playerLat, 0),
-		left: getAreaLeftOfPlayer(playerLat, playerLng),
-		right: getAreaRightOfPlayer(playerLat, playerLng),
-		quadrants: getQuadrants(playerLat, playerLng),
-	};
 }

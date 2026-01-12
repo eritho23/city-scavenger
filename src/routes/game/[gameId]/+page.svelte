@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { SvelteSet } from "svelte/reactivity";
+	import { browser, dev } from "$app/environment";
 	import MapComponent from "$lib/components/map.svelte";
 
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
+	import { VästeråsLatLng } from "$lib/constants/coords.js";
 	import { currentGame } from "$lib/stores/game.svelte.js";
 
 	let { data } = $props();
@@ -16,11 +18,15 @@
 		currentGame.time = time;
 	});
 
+
+
 	onMount(() => {
 		const updateTime = () => {
 			const now = new Date();
 			const startedAt = new Date(data.game.started_at);
-			const totalSeconds = Math.floor((now.getTime() - startedAt.getTime()) / 1000);
+			const totalSeconds = Math.floor(
+				(now.getTime() - startedAt.getTime()) / 1000,
+			);
 			const hours = Math.floor(totalSeconds / 3600);
 			const minutes = Math.floor((totalSeconds % 3600) / 60);
 			const seconds = totalSeconds % 60;
