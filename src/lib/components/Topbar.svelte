@@ -53,7 +53,6 @@
 			>
 				<a href={resolve("/")}>Hem</a>
 				<a href={resolve("/history")}>Spelhistorik</a>
-				<a href={resolve("/")}>Inställningar</a>
 			</div>
 		{/if}
 	</header>
