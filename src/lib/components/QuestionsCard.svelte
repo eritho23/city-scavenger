@@ -1,14 +1,18 @@
 <script lang="ts">
 	import { ChevronLeft, ChevronRight } from "@lucide/svelte";
+	import { enhance } from "$app/forms";
 
 	import { RadarQuestions } from "$lib/questions/radars";
 	import { RelativeKey, RelativeQuestions } from "$lib/questions/relative";
+	import type { ActionData } from "../../routes/game/[gameId]/$types";
 
 	interface Props {
 		scoreChange: string;
 		currentType: number;
 		answeredQuestions: Record<number, Set<number>>;
 		questionAnswerCallback: (type: number, questionIndex: number) => void;
+		currentPosition: { lat: number; lng: number };
+		form: ActionData;
 	}
 
 	const relativeOrder = [
@@ -53,6 +57,8 @@
 			4: new Set(),
 		}),
 		questionAnswerCallback,
+		currentPosition,
+		form,
 	}: Props = $props();
 
 	type Question = {
@@ -261,19 +267,7 @@
 		currentType = (currentType - 1 + questionTypes.length) % questionTypes.length;
 	}
 
-	function submitAnswer() {
-		if (!isAnswered) {
-			answeredQuestions[currentType].add(selectedQuestion);
-			answeredQuestions = { ...answeredQuestions };
-			questionAnswerCallback(currentType, selectedQuestion);
-		}
-	}
-
-	let current = $derived(questionTypes[currentType]);
-	let currentQuestion = $derived(current.questions[selectedQuestion]);
-	let isAnswered = $derived(answeredQuestions[currentType].has(selectedQuestion));
-	let nextType1 = $derived(questionTypes[(currentType + 1) % questionTypes.length]);
-	let nextType2 = $derived(questionTypes[(currentType + 2) % questionTypes.length]);
+	let formElement: HTMLFormElement | undefined = $state();
 
 	// Hold animation
 	let isHolding = $state(false);
@@ -289,7 +283,7 @@
 		if (!isHolding) return;
 
 		if (animationCompleted) {
-			submitAnswer();
+			askQuestion();
 		}
 
 		isHolding = false;
@@ -299,11 +293,75 @@
 	function handleTransitionEnd(event: TransitionEvent) {
 		if (event.propertyName === "width" && isHolding) {
 			animationCompleted = true;
-			submitAnswer();
+			askQuestion();
 			isHolding = false;
 		}
 	}
+
+	function askQuestion() {
+		if (!isAnswered && formElement) {
+			console.log("[askQuestion] Asking server:", {
+				questionTypeName,
+				questionId,
+				currentPosition,
+				currentType,
+				selectedQuestion,
+			});
+			// Submit the form programmatically
+			if (formElement.requestSubmit) {
+				formElement.requestSubmit();
+			} else {
+				formElement.submit();
+			}
+		}
+	}
+
+	// Handle form submission response
+	$effect(() => {
+		if (form?.success) {
+			answeredQuestions[currentType].add(selectedQuestion);
+			answeredQuestions = { ...answeredQuestions };
+			questionAnswerCallback(currentType, selectedQuestion);
+		}
+	});
+
+	$inspect(currentPosition);
+
+	// Derived state for current question and types
+	let isAnswered = $derived(answeredQuestions[currentType]?.has(selectedQuestion) ?? false);
+	let current = $derived(questionTypes[currentType]);
+	let currentQuestion = $derived(current.questions[selectedQuestion]);
+	let nextType1 = $derived(questionTypes[(currentType + 1) % questionTypes.length]);
+	let nextType2 = $derived(questionTypes[(currentType + 2) % questionTypes.length]);
+
+	// Values for the form submission
+	let questionTypeName = $derived(current.name);
+	let questionId = $derived(selectedQuestion);
+	let userAnswer = $derived<string | undefined>(undefined); // Placeholder for user answer if needed
+
+	$inspect("Form values:", {
+		questionTypeName,
+		questionId,
+		userAnswer,
+		isAnswered,
+	});
 </script>
+
+<!-- Hidden form for question submission -->
+{#if currentPosition}
+	<form
+		bind:this={formElement}
+		method="POST"
+		action="?/askQuestion"
+		use:enhance
+		class="hidden"
+	>
+		<input type="hidden" name="questionType" value={questionTypeName} />
+		<input type="hidden" name="questionId" value={questionId} />
+		<input type="hidden" name="userLat" value={currentPosition.lat} />
+		<input type="hidden" name="userLng" value={currentPosition.lng} />
+	</form>
+{/if}
 
 <div class="relative mb-3">
 	<div

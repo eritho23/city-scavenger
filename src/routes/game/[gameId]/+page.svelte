@@ -8,7 +8,7 @@
 	import { VästeråsLatLng } from "$lib/constants/coords.js";
 	import { currentGame } from "$lib/stores/game.svelte.js";
 
-	let { data } = $props();
+	let { data, form } = $props();
 
 	let score = $state(0);
 	let time = $state("00:00:00");
@@ -110,5 +110,7 @@
 		bind:answeredQuestions
 		questionAnswerCallback={handleQuestionAnswered}
 		scoreChange=""
+		{currentPosition}
+		{form}
 	/>
 </div>
