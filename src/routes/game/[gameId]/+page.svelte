@@ -18,15 +18,11 @@
 		currentGame.time = time;
 	});
 
-
-
 	onMount(() => {
 		const updateTime = () => {
 			const now = new Date();
 			const startedAt = new Date(data.game.started_at);
-			const totalSeconds = Math.floor(
-				(now.getTime() - startedAt.getTime()) / 1000,
-			);
+			const totalSeconds = Math.floor((now.getTime() - startedAt.getTime()) / 1000);
 			const hours = Math.floor(totalSeconds / 3600);
 			const minutes = Math.floor((totalSeconds % 3600) / 60);
 			const seconds = totalSeconds % 60;

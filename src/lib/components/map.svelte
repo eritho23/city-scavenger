@@ -3,14 +3,12 @@
 	import { onMount } from "svelte";
 	import { browser } from "$app/environment";
 
-	import { VästeråsLatLng, VästeråsBounds } from "$lib/constants/coords";
+	import { VästeråsBounds, VästeråsLatLng } from "$lib/constants/coords";
 
 	let mapEl: HTMLElement;
 	let map: L.Map | undefined;
 	let userMarker: L.CircleMarker | undefined;
-	let currentPosition = $state(
-		L.latLng(VästeråsLatLng.lat, VästeråsLatLng.lng),
-	);
+	let currentPosition = $state(L.latLng(VästeråsLatLng.lat, VästeråsLatLng.lng));
 
 	onMount(async () => {
 		if (browser && window) {
@@ -20,8 +18,7 @@
 
 			L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 				maxZoom: 19,
-				attribution:
-					'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			}).addTo(map);
 
 			map.locate({ maxZoom: 16, watch: true, setView: false });
