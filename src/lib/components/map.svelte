@@ -7,7 +7,7 @@
 	let mapEl: HTMLElement;
 
 	onMount(async () => {
-		if (browser) {
+		if (browser && window) {
 			const L = (await import("leaflet")).default;
 
 			const map = L.map(mapEl, {
@@ -16,6 +16,7 @@
 
 			L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 				maxZoom: 19,
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			}).addTo(map);
 
 			map.locate({ setView: true, maxZoom: 16 });
@@ -23,6 +24,8 @@
 			map.on("locationfound", () => {});
 
 			map.on("locationerror", () => {});
+
+			L.circle(VästeråsLatLng, { radius: 500, fillColor: "red", color: "red", fillOpacity: 0.5 }).addTo(map);
 		}
 	});
 </script>
