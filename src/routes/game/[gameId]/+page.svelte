@@ -5,6 +5,7 @@
 	import MapComponent from "$lib/components/map.svelte";
 
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
+	import { VästeråsLatLng } from "$lib/constants/coords.js";
 	import { currentGame } from "$lib/stores/game.svelte.js";
 
 	let { data, form } = $props();
@@ -12,7 +13,7 @@
 	let score = $state(0);
 	let time = $state("00:00:00");
 
-	let currentPosition: LatLng | undefined = $state();
+	let currentPosition: LatLng = $state(VästeråsLatLng);
 
 	function handlePositionUpdate(pos: LatLng) {
 		currentPosition = pos;
@@ -90,7 +91,7 @@
 		bind:answeredQuestions
 		questionAnswerCallback={handleQuestionAnswered}
 		scoreChange=""
-		{currentPosition}
+		currentPosition={{lat: currentPosition.lat, lng: currentPosition.lng}}
 		{form}
 	/>
 </div>
