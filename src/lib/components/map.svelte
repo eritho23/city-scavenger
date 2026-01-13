@@ -27,6 +27,7 @@
 			fillOpacity?: number;
 			weight?: number;
 		};
+		showBoundaryLines?: boolean;
 	}
 
 	let {
@@ -36,9 +37,10 @@
 		boundaryStyle = {
 			fillColor: "#1f2937",
 			color: "#111827",
-			fillOpacity: 0.6,
+			fillOpacity: 0.2,
 			weight: 1,
 		},
+		showBoundaryLines = true,
 	}: Props = $props();
 
 	// Update boundary layer when boundary prop changes
@@ -47,6 +49,7 @@
 		const currentBoundary = boundary;
 		const currentBoundaryLines = boundaryLines ?? [];
 		const currentMap = map;
+		const shouldShowDividerLines = showBoundaryLines && currentBoundaryLines.length > 0;
 
 		console.log("[Map] $effect triggered, map:", !!currentMap, "boundary:", currentBoundary);
 
@@ -96,7 +99,7 @@
 			console.log("[Map] No boundary to add");
 		}
 
-		if (currentBoundaryLines.length > 0) {
+		if (shouldShowDividerLines) {
 			try {
 				const lineCollection = featureCollection(currentBoundaryLines);
 				dividerLayer = L.geoJSON(lineCollection, {
@@ -112,7 +115,7 @@
 				console.error("[Map] Error drawing divider lines:", err);
 			}
 		} else {
-			console.log("[Map] No divider lines to draw");
+			console.log("[Map] Divider lines hidden");
 		}
 	});
 

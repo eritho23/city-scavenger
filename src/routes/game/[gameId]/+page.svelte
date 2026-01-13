@@ -6,9 +6,10 @@
 	import MapComponent from "$lib/components/map.svelte";
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
 	import { VästeråsLatLng } from "$lib/constants/coords.js";
+	import { airportLocations, svartanLineFeature } from "$lib/constants/geography";
 	import {
-		intersectBoundaries,
 		type BoundaryResult,
+		intersectBoundaries,
 		type QuestionAnswer,
 		type RadarQuestionKey,
 		type RelativeQuestionKey,
@@ -99,6 +100,10 @@
 
 	let initialQuestionAnswers: Record<string, string> = $state({});
 
+	function computeBoundaryResult(playerLat: number, playerLng: number, questionAnswer: QuestionAnswer) {
+		return updateBoundary(playerLat, playerLng, questionAnswer, undefined, svartanLineFeature, airportLocations);
+	}
+
 	function applyBoundaryResult(boundaryResult: BoundaryResult) {
 		const newBoundaries = [...answeredBoundaries, boundaryResult.boundary];
 		answeredBoundaries = newBoundaries;
@@ -126,6 +131,7 @@
 						questionType: string;
 						questionId: string;
 						answer: string;
+						userPosition?: { lat: number; lng: number };
 					};
 					const typeIndex = questionTypeMap[record.questionType];
 					if (typeIndex !== undefined) {
@@ -136,6 +142,9 @@
 							initialQuestionAnswers[key] = record.answer;
 							loadedQuestions++;
 
+							const playerLatForAnswer = record.userPosition?.lat ?? currentPosition.lat;
+							const playerLngForAnswer = record.userPosition?.lng ?? currentPosition.lng;
+
 							// Rebuild boundaries from saved radar/relative answers
 							if (record.questionType === "radar") {
 								const radarAnswer: QuestionAnswer = {
@@ -143,7 +152,7 @@
 									key: record.questionId as RadarQuestionKey,
 									answer: record.answer === "true",
 								};
-								const boundaryResult = updateBoundary(currentPosition.lat, currentPosition.lng, radarAnswer);
+								const boundaryResult = computeBoundaryResult(playerLatForAnswer, playerLngForAnswer, radarAnswer);
 								applyBoundaryResult(boundaryResult);
 							} else if (record.questionType === "relative") {
 								const relativeKey = record.questionId as RelativeQuestionKey;
@@ -160,7 +169,7 @@
 									key: relativeKey,
 									answer: relativeAnswer,
 								};
-								const boundaryResult = updateBoundary(currentPosition.lat, currentPosition.lng, questionAnswer);
+								const boundaryResult = computeBoundaryResult(playerLatForAnswer, playerLngForAnswer, questionAnswer);
 								applyBoundaryResult(boundaryResult);
 							}
 						}
@@ -194,7 +203,7 @@
 				answer: answer === "true",
 			};
 
-			const boundaryResult = updateBoundary(currentPosition.lat, currentPosition.lng, radarAnswer);
+			const boundaryResult = computeBoundaryResult(currentPosition.lat, currentPosition.lng, radarAnswer);
 			console.log("[Game] Radar boundary result:", boundaryResult.description, boundaryResult.boundary);
 
 			applyBoundaryResult(boundaryResult);
@@ -221,7 +230,7 @@
 				answer: relativeAnswer,
 			};
 
-			const boundaryResult = updateBoundary(currentPosition.lat, currentPosition.lng, questionAnswer);
+			const boundaryResult = computeBoundaryResult(currentPosition.lat, currentPosition.lng, questionAnswer);
 			console.log("[Game] Relative boundary result:", boundaryResult.description, boundaryResult.boundary);
 
 			applyBoundaryResult(boundaryResult);
@@ -255,22 +264,23 @@
 </script>
 
 <div
-	class="absolute w-full h-[20%] bottom-0 left-0 bg-linear-to-t from-40% from-bg-900 to-transparent"
+	class="absolute z-0 pointer-events-none w-full h-[20%] bottom-0 left-0 bg-linear-to-t from-40% from-bg-900 to-transparent"
 ></div>
 <div class="w-full h-full absolute top-0 left-0 -z-10">
 	<MapComponent 
 		positionCallback={handlePositionUpdate} 
 		boundary={currentBoundary}
 		boundaryLines={boundaryLines}
+		showBoundaryLines={false}
 		boundaryStyle={{
 			fillColor: "#1f2937",
 			color: "#374151",
-			fillOpacity: 0.55,
+			fillOpacity: 0.2,
 			weight: 1,
 		}}
 	/>
 </div>
-<div class="fixed bottom-3 left-0 px-3 w-full">
+<div class="fixed bottom-3 left-0 px-3 w-full z-30">
 	<QuestionsCard
 		bind:currentType
 		bind:answeredQuestions

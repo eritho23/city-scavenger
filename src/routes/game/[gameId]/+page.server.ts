@@ -4,6 +4,8 @@ import { PlaceProfile } from "$lib/schemas";
 import { calculateDistance } from "$lib/distance";
 import { RadarQuestions } from "$lib/questions/radars";
 import { RelativeKey, RelativeQuestions } from "$lib/questions/relative";
+import { airportLocations, svartanLineFeature } from "$lib/constants/geography";
+import { getDistanceToFeature } from "$lib/geometry/distance-to-feature";
 import type { PageServerLoad } from "./$types";
 
 export const ssr = false;
@@ -15,6 +17,21 @@ type AnswerRecord = {
 	userPosition: { lat: number; lng: number };
 	answer: string;
 };
+
+function findNearestAirport(lat: number, lng: number) {
+	let nearest = airportLocations[0];
+	let minDistance = calculateDistance(lat, lng, nearest.lat, nearest.lng);
+
+	for (const airport of airportLocations) {
+		const distance = calculateDistance(lat, lng, airport.lat, airport.lng);
+		if (distance < minDistance) {
+			minDistance = distance;
+			nearest = airport;
+		}
+	}
+
+	return nearest.name;
+}
 
 export const load: PageServerLoad = async ({ params }) => {
 	const gameId = params.gameId;
@@ -127,6 +144,18 @@ export const actions = {
 				const isTargetNorth = placeProfile.lat > userLat;
 				answer = isTargetNorth ? "true" : "false";
 				console.log("[askQuestion] Latitude answer:", { userLat, targetLat: placeProfile.lat, answer });
+			} else if (questionId === RelativeKey.SvartanDistance) {
+				const playerDistance = getDistanceToFeature(userLat, userLng, svartanLineFeature);
+				const targetDistance = getDistanceToFeature(placeProfile.lat, placeProfile.lon, svartanLineFeature);
+				const isTargetCloser = targetDistance < playerDistance;
+				answer = isTargetCloser ? "true" : "false";
+				console.log("[askQuestion] Svartån answer:", { playerDistance, targetDistance, answer });
+			} else if (questionId === RelativeKey.SameAirport) {
+				const playerAirport = findNearestAirport(userLat, userLng);
+				const targetAirport = findNearestAirport(placeProfile.lat, placeProfile.lon);
+				const hasSameAirport = playerAirport === targetAirport;
+				answer = hasSameAirport ? "true" : "false";
+				console.log("[askQuestion] Airport answer:", { playerAirport, targetAirport, answer });
 			} else {
 				return fail(400, { error: "Question type not yet implemented" });
 			}

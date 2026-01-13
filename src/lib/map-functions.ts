@@ -6,15 +6,15 @@ import {
 	polygon,
 	intersect,
 	difference,
-	union,
 	featureCollection,
 	circle,
 	buffer,
-	nearestPointOnLine,
-	lineString
+	lineString,
+	voronoi
 } from "@turf/turf";
 import { point } from "@turf/helpers";
-import type { Feature, Polygon, MultiPolygon, Point, LineString } from "geojson";
+import type { Feature, Polygon, MultiPolygon, LineString, Point as GeoPoint } from "geojson";
+import { getDistanceToFeature } from "$lib/geometry/distance-to-feature";
 
 // Question type categories
 export type QuestionCategory = 'relative' | 'radar';
@@ -253,72 +253,13 @@ export function isPointInBoundary(lat: number, lng: number, boundary: Feature<Po
 	return booleanPointInPolygon(testPoint, boundary);
 }
 
-/**
- * Calculate distance from a point to a feature (Point, LineString, Polygon, etc.)
- */
-function getDistanceToFeature(
-	pointLat: number,
-	pointLng: number,
-	feature: Feature
-): number {
-	const testPoint = point([pointLng, pointLat]);
-
-	if (feature.geometry.type === 'Point') {
-		const featurePoint = feature as Feature<Point>;
-		return calculateDistance(
-			pointLat,
-			pointLng,
-			featurePoint.geometry.coordinates[1],
-			featurePoint.geometry.coordinates[0]
-		);
-	} else if (feature.geometry.type === 'LineString') {
-		const nearest = nearestPointOnLine(feature as Feature<LineString>, testPoint);
-		return calculateDistance(
-			pointLat,
-			pointLng,
-			nearest.geometry.coordinates[1],
-			nearest.geometry.coordinates[0]
-		);
-	} else if (feature.geometry.type === 'Polygon') {
-		// Find distance to polygon boundary (exterior ring)
-		const coords = feature.geometry.coordinates[0] as number[][];
-		const line = lineString(coords);
-		const nearest = nearestPointOnLine(line, testPoint);
-		return calculateDistance(
-			pointLat,
-			pointLng,
-			nearest.geometry.coordinates[1],
-			nearest.geometry.coordinates[0]
-		);
-	} else if (feature.geometry.type === 'MultiPolygon') {
-		// Find minimum distance to any polygon in the MultiPolygon
-		let minDistance = Infinity;
-		const multiPoly = feature.geometry.coordinates;
-
-		for (const poly of multiPoly) {
-			const coords = poly[0] as number[][];
-			const line = lineString(coords);
-			const nearest = nearestPointOnLine(line, testPoint);
-			const dist = calculateDistance(
-				pointLat,
-				pointLng,
-				nearest.geometry.coordinates[1],
-				nearest.geometry.coordinates[0]
-			);
-			minDistance = Math.min(minDistance, dist);
-		}
-
-		return minDistance;
-	}
-
-	throw new Error(`Unsupported geometry type: ${feature.geometry.type}`);
-}
 
 /**
  * Get boundary for distance to feature questions (railway, river, etc.)
  * This creates a boundary where points are closer/farther to a feature than the player is
  */
 function getDistanceToBoundary(
+
 	playerLat: number,
 	playerLng: number,
 	featureGeometry: Feature,
@@ -355,21 +296,20 @@ function getDistanceToBoundary(
 function getSameAirportBoundary(
 	playerLat: number,
 	playerLng: number,
-	airportLocations: Array<{ lat: number, lng: number, name: string }>,
-	hasSameAirport: boolean
+	airportLocations: Array<{ lat: number; lng: number; name: string }>,
+	hasSameAirport: boolean,
 ): Feature<Polygon | MultiPolygon> {
 	if (airportLocations.length === 0) {
-		console.error('No airports provided');
+		console.error("No airports provided");
 		return cityBoundaryPolygon;
 	}
 
-	// Find player's nearest airport
 	let nearestAirportToPlayer = airportLocations[0];
 	let minDistanceToPlayer = calculateDistance(
 		playerLat,
 		playerLng,
 		nearestAirportToPlayer.lat,
-		nearestAirportToPlayer.lng
+		nearestAirportToPlayer.lng,
 	);
 
 	for (const airport of airportLocations) {
@@ -380,84 +320,61 @@ function getSameAirportBoundary(
 		}
 	}
 
-	// Create a grid of points and determine which belong to the same Voronoi cell
-	const gridResolution = 0.002; // ~200m resolution for accurate Voronoi
-	const matchingPoints: Array<[number, number]> = [];
+	const airportPoints = featureCollection<GeoPoint>(
+		airportLocations.map((airport) =>
+			point([airport.lng, airport.lat], {
+				name: airport.name,
+			}) as Feature<GeoPoint>,
+		),
+	);
 
-	for (let lng = VästeråsExtremities.left; lng <= VästeråsExtremities.right; lng += gridResolution) {
-		for (let lat = VästeråsExtremities.bottom; lat <= VästeråsExtremities.top; lat += gridResolution) {
-			const testPoint = point([lng, lat]);
+	const bbox: [number, number, number, number] = [
+		VästeråsExtremities.left,
+		VästeråsExtremities.bottom,
+		VästeråsExtremities.right,
+		VästeråsExtremities.top,
+	];
 
-			// Skip if outside city boundary
-			if (!booleanPointInPolygon(testPoint, cityBoundaryPolygon)) {
-				continue;
-			}
+	const voronoiPolygons = voronoi(airportPoints, { bbox });
 
-			// Find nearest airport to this grid point
-			let nearestToPoint = airportLocations[0];
-			let minDistToPoint = calculateDistance(lat, lng, nearestToPoint.lat, nearestToPoint.lng);
-
-			for (const airport of airportLocations) {
-				const dist = calculateDistance(lat, lng, airport.lat, airport.lng);
-				if (dist < minDistToPoint) {
-					minDistToPoint = dist;
-					nearestToPoint = airport;
-				}
-			}
-
-			// Check if this point has same nearest airport as player
-			const isSameAirport = nearestToPoint.name === nearestAirportToPlayer.name;
-
-			if ((hasSameAirport && isSameAirport) || (!hasSameAirport && !isSameAirport)) {
-				matchingPoints.push([lng, lat]);
-			}
-		}
+	if (!voronoiPolygons) {
+		console.warn("Voronoi generation failed, returning city boundary");
+		return cityBoundaryPolygon;
 	}
 
-	// If no matching points found, return empty intersection
-	if (matchingPoints.length === 0) {
-		console.warn('No matching points found for airport boundary');
-		// Return a very small polygon that effectively excludes everything
-		const emptyResult = difference(featureCollection([
-			cityBoundaryPolygon,
-			cityBoundaryPolygon
-		]));
-		return emptyResult || cityBoundaryPolygon;
-	}
-
-	// Create small buffers around each matching point and union them
-	// This creates an approximate Voronoi region
-	const bufferRadius = gridResolution * 111; // Convert degrees to km (approx)
-	let resultBoundary: Feature<Polygon | MultiPolygon> | null = null;
-
-	// Sample points to avoid creating too many buffers (performance optimization)
-	const samplingRate = Math.max(1, Math.floor(matchingPoints.length / 500));
-
-	for (let i = 0; i < matchingPoints.length; i += samplingRate) {
-		const [lng, lat] = matchingPoints[i];
-		const pointFeature = point([lng, lat]);
-		const buffered = buffer(pointFeature, bufferRadius, { units: 'kilometers' });
-
-		if (!buffered) continue;
-
-		if (resultBoundary === null) {
-			resultBoundary = buffered as Feature<Polygon | MultiPolygon>;
-		} else {
-			// Union with existing boundary
-			const unioned = union(featureCollection([resultBoundary, buffered]));
-			if (unioned) {
-				resultBoundary = unioned as Feature<Polygon | MultiPolygon>;
+	const matchingPolygon = voronoiPolygons.features.find((feature: Feature<Polygon | MultiPolygon> | undefined) => {
+		if (!feature) return false;
+		const props = feature.properties as
+			| {
+				name?: string;
+				site?: { properties?: { name?: string } };
 			}
-		}
+			| undefined;
+		const polyName = props?.name ?? props?.site?.properties?.name;
+		return polyName === nearestAirportToPlayer.name;
+	});
+
+	if (!matchingPolygon) {
+		console.warn("No matching Voronoi polygon found, returning city boundary");
+		return cityBoundaryPolygon;
 	}
 
-	// Intersect with city boundary
-	if (resultBoundary) {
-		const finalResult = intersect(featureCollection([cityBoundaryPolygon, resultBoundary]));
-		return finalResult as Feature<Polygon | MultiPolygon>;
+	const matchedRegion = intersect(
+		featureCollection([cityBoundaryPolygon, matchingPolygon as Feature<Polygon | MultiPolygon>]),
+	);
+
+	if (!matchedRegion) {
+		return cityBoundaryPolygon;
 	}
 
-	return cityBoundaryPolygon;
+	if (hasSameAirport) {
+		return matchedRegion as Feature<Polygon | MultiPolygon>;
+	}
+
+	const complement = difference(
+		featureCollection([cityBoundaryPolygon, matchedRegion as Feature<Polygon | MultiPolygon>]),
+	);
+	return (complement || cityBoundaryPolygon) as Feature<Polygon | MultiPolygon>;
 }
 
 /**
