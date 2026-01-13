@@ -7,8 +7,8 @@
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
 	import { VästeråsLatLng } from "$lib/constants/coords.js";
 	import {
-		intersectBoundaries,
 		type BoundaryResult,
+		intersectBoundaries,
 		type QuestionAnswer,
 		type RadarQuestionKey,
 		type RelativeQuestionKey,
