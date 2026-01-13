@@ -28,10 +28,10 @@
 		let a: string;
 		switch (key) {
 			case RelativeKey.Longitude:
-				a = "Högre eller lägre longitud";
+				a = "East (true) or West (false)?";
 				break;
 			case RelativeKey.Latitude:
-				a = "Högre eller lägre latitud";
+				a = "North (true) or South (false)?";
 				break;
 			case RelativeKey.RailwayDistance:
 				a = "Närmare eller längre från järnvägen";
@@ -70,8 +70,8 @@
 	const radarQuestionsFromConfig: Question[] = radarQuestionKeys.map((key) => {
 		const rq = RadarQuestions[key as keyof typeof RadarQuestions];
 		return {
-			q: `Är målpunkten inom ${rq.displayName} från mig?`,
-			a: `Radargräns: ${rq.range} km`,
+			q: `${rq.displayName}`,
+			a: `True = inside, False = outside`,
 		};
 	});
 

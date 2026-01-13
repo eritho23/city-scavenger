@@ -14,23 +14,23 @@ enum RadarRange {
 
 export const RadarQuestions: Record<RadarRange, RadarQuestion> = {
 	"one-km": {
-		displayName: "1 km",
+		displayName: "Inside (true) or outside (false) 1 km?",
 		range: 1,
 	},
 	"two-km": {
-		displayName: "2 km",
+		displayName: "Inside (true) or outside (false) 2 km?",
 		range: 2,
 	},
 	"three-km": {
-		displayName: "3 km",
+		displayName: "Inside (true) or outside (false) 3 km?",
 		range: 3,
 	},
 	"five-km": {
-		displayName: "5 km",
+		displayName: "Inside (true) or outside (false) 5 km?",
 		range: 5,
 	},
 	"ten-km": {
-		displayName: "10 km",
+		displayName: "Inside (true) or outside (false) 10 km?",
 		range: 10,
 	},
 };

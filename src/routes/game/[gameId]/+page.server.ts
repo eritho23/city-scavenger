@@ -105,9 +105,9 @@ export const actions = {
 				placeProfile.lon,
 			);
 
-			// Answer is "yes" if within range, "no" otherwise
+			// Answer is true if within range, false otherwise
 			const isWithinRange = distance <= radarQuestion.range;
-			answer = isWithinRange ? "yes" : "no";
+			answer = isWithinRange ? "true" : "false";
 			console.log("[askQuestion] Radar answer:", { distance, range: radarQuestion.range, answer });
 		} else if (questionType === "relative") {
 			const relativeQuestion =
@@ -118,14 +118,14 @@ export const actions = {
 
 			// Handle longitude and latitude questions
 			if (questionId === RelativeKey.Longitude) {
-				// User has higher longitude than target?
-				const userHasHigher = userLng > placeProfile.lon;
-				answer = userHasHigher ? "higher" : "lower";
+				// Are you east of the target? (higher longitude = further east)
+				const isEast = userLng > placeProfile.lon;
+				answer = isEast ? "true" : "false";
 				console.log("[askQuestion] Longitude answer:", { userLng, targetLng: placeProfile.lon, answer });
 			} else if (questionId === RelativeKey.Latitude) {
-				// User has higher latitude than target?
-				const userHasHigher = userLat > placeProfile.lat;
-				answer = userHasHigher ? "higher" : "lower";
+				// Are you north of the target? (higher latitude = further north)
+				const isNorth = userLat > placeProfile.lat;
+				answer = isNorth ? "true" : "false";
 				console.log("[askQuestion] Latitude answer:", { userLat, targetLat: placeProfile.lat, answer });
 			} else {
 				return fail(400, { error: "Question type not yet implemented" });
