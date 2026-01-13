@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { LatLng } from "leaflet";
 	import { onMount } from "svelte";
 	import { SvelteSet } from "svelte/reactivity";
 	import { browser, dev } from "$app/environment";
@@ -12,6 +13,12 @@
 
 	let score = $state(0);
 	let time = $state("00:00:00");
+
+	let currentPosition: LatLng | undefined = $state();
+
+	function handlePositionUpdate(pos: LatLng) {
+		currentPosition = pos;
+	}
 
 	$effect(() => {
 		currentGame.score = score;
@@ -77,7 +84,7 @@
 	class="absolute w-full h-[20%] bottom-0 left-0 bg-linear-to-t from-40% from-bg-900 to-transparent"
 ></div>
 <div class="w-full h-full absolute top-0 left-0 -z-10">
-	<MapComponent />
+	<MapComponent positionCallback={handlePositionUpdate} />
 </div>
 <div class="fixed bottom-3 left-0 px-3 w-full">
 	<QuestionsCard
