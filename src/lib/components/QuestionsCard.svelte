@@ -27,10 +27,10 @@
 		let a: string;
 		switch (key) {
 			case RelativeKey.Longitude:
-				a = "Yes = East, No = West";
+				a = "Ja = öster, Nej = väster";
 				break;
 			case RelativeKey.Latitude:
-				a = "Yes = North, No = South";
+				a = "Ja = norr, Nej = söder";
 				break;
 			case RelativeKey.RailwayDistance:
 				a = "Närmare eller längre från järnvägen";
@@ -70,7 +70,7 @@
 		const rq = RadarQuestions[key as keyof typeof RadarQuestions];
 		return {
 			q: `${rq.displayName}`,
-			a: `Yes = within ${rq.range} km, No = outside`,
+			a: `Ja = inom ${rq.range} km, Nej = utanför`,
 		};
 	});
 
@@ -140,7 +140,7 @@
 			questions: radarQuestionsFromConfig,
 		},
 		{
-			name: "Oddball",
+			name: "Udda",
 			type: "oddball",
 			bg: "bg-card-purple-900",
 			secondButton: "bg-card-purple-800",
@@ -451,7 +451,7 @@
 			{:else}
 				<div class="pt-1 *:leading-tight px-3">
 					<p class="mb-3 font-bold text-lg">
-						{currentAnswer === "true" ? "Yes" : "No"}
+						{currentAnswer === "true" ? "Ja" : "Nej"}
 					</p>
 					<p class="text-sm {current.secondText}">{currentQuestion.q}</p>
 				</div>

@@ -32,7 +32,7 @@
 				</div>
 			{:else}
 				<a href={resolve("/")}>
-					<img src={logo} alt="city scav" class="h-4.5" />
+					<img src={logo} alt="City Scavenger-logotyp" class="h-4.5" />
 				</a>
 			{/if}
 			<div>

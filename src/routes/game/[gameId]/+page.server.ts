@@ -36,7 +36,7 @@ function findNearestAirport(lat: number, lng: number) {
 export const load: PageServerLoad = async ({ params }) => {
 	const gameId = params.gameId;
 	if (!gameId) {
-		error(404, { message: "Missing gameId" });
+		error(404, { message: "Saknar gameId" });
 	}
 
 	const game = await db
@@ -46,12 +46,12 @@ export const load: PageServerLoad = async ({ params }) => {
 		.executeTakeFirst();
 
 	if (!game) {
-		error(404, { message: "No such game found." });
+		error(404, { message: "Inget spel hittades." });
 	}
 
 	const parsedPlaceProfileParseResult = PlaceProfile.safeParse(game.place_profile);
 	if (!parsedPlaceProfileParseResult.success || !parsedPlaceProfileParseResult.data) {
-		error(500, { message: "Inconsistent place profile data in database." });
+		error(500, { message: "Felaktig platsinformation i databasen." });
 	}
 
 	// Do not send the place profile to the client.
@@ -67,8 +67,9 @@ export const actions = {
 	askQuestion: async ({ params, request }) => {
 		const gameId = params.gameId;
 		if (!gameId) {
-			return fail(404, { error: "Missing gameId" });
+			return fail(404, { error: "Saknar gameId" });
 		}
+
 		const formData = await request.formData();
 
 		const questionType = formData.get("questionType") as string;
@@ -85,7 +86,7 @@ export const actions = {
 		// Validate form data
 		if (!questionType || !questionId || Number.isNaN(userLat) || Number.isNaN(userLng)) {
 			console.error("[askQuestion] Invalid question data");
-			return fail(400, { error: "Invalid form data" });
+			return fail(400, { error: "Ogiltiga formulärdata" });
 		}
 
 		// Fetch game and place profile
@@ -96,12 +97,12 @@ export const actions = {
 			.executeTakeFirst();
 
 		if (!game) {
-			return fail(404, { error: "Game not found" });
+			return fail(404, { error: "Hittar inte spelet" });
 		}
 
 		const placeProfileResult = PlaceProfile.safeParse(game.place_profile);
 		if (!placeProfileResult.success) {
-			return fail(500, { error: "Invalid place profile" });
+			return fail(500, { error: "Ogiltig platsprofil" });
 		}
 
 		const placeProfile = placeProfileResult.data;
@@ -111,10 +112,9 @@ export const actions = {
 		if (questionType === "radar") {
 			const radarQuestion = RadarQuestions[questionId as keyof typeof RadarQuestions];
 			if (!radarQuestion) {
-				return fail(400, { error: "Invalid radar question" });
+				return fail(400, { error: "Ogiltig radarfråga" });
 			}
 
-			// Calculate distance from user to target
 			const distance = calculateDistance(
 				userLat,
 				userLng,
@@ -122,7 +122,6 @@ export const actions = {
 				placeProfile.lon,
 			);
 
-			// Answer is true if within range, false otherwise
 			const isWithinRange = distance <= radarQuestion.range;
 			answer = isWithinRange ? "true" : "false";
 			console.log("[askQuestion] Radar answer:", { distance, range: radarQuestion.range, answer });
@@ -130,17 +129,14 @@ export const actions = {
 			const relativeQuestion =
 				RelativeQuestions[questionId as keyof typeof RelativeQuestions];
 			if (!relativeQuestion) {
-				return fail(400, { error: "Invalid relative question" });
+				return fail(400, { error: "Ogiltig relativfråga" });
 			}
 
-			// Handle longitude and latitude questions
 			if (questionId === RelativeKey.Longitude) {
-				// Is the target east of the player? (higher longitude = further east)
 				const isTargetEast = placeProfile.lon > userLng;
 				answer = isTargetEast ? "true" : "false";
 				console.log("[askQuestion] Longitude answer:", { userLng, targetLng: placeProfile.lon, answer });
 			} else if (questionId === RelativeKey.Latitude) {
-				// Is the target north of the player? (higher latitude = further north)
 				const isTargetNorth = placeProfile.lat > userLat;
 				answer = isTargetNorth ? "true" : "false";
 				console.log("[askQuestion] Latitude answer:", { userLat, targetLat: placeProfile.lat, answer });
@@ -157,10 +153,10 @@ export const actions = {
 				answer = hasSameAirport ? "true" : "false";
 				console.log("[askQuestion] Airport answer:", { playerAirport, targetAirport, answer });
 			} else {
-				return fail(400, { error: "Question type not yet implemented" });
+				return fail(400, { error: "Frågetypen stöds inte ännu" });
 			}
 		} else {
-			return fail(400, { error: "Invalid question type" });
+			return fail(400, { error: "Ogiltig frågetyp" });
 		}
 
 		// Store question and answer in database
@@ -172,12 +168,10 @@ export const actions = {
 			answer,
 		};
 
-		// Update game's answers array - check if question already answered
 		const currentAnswers: AnswerRecord[] = Array.isArray(game.answers)
 			? (game.answers as AnswerRecord[])
 			: [];
-		
-		// Remove any existing answer for this question (to allow re-answering)
+
 		const filteredAnswers = currentAnswers.filter(
 			(record) => !(record.questionType === questionType && record.questionId === questionId)
 		);
@@ -189,7 +183,6 @@ export const actions = {
 			.where("uid", "=", gameId)
 			.execute();
 
-		// Insert question record
 		await db
 			.insertInto("question")
 			.values({
@@ -213,3 +206,4 @@ export const actions = {
 		};
 	},
 } satisfies Actions;
+

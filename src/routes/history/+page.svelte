@@ -41,9 +41,10 @@
 										{f.date} <span class="text-text-200">•</span>
 										{f.time}
 									</p>
-								{:else}
-									well well well
-								{/if}
+							{:else}
+								Ingen tidsstämpel tillgänglig
+							{/if}
+
 							</div>
 							<p class="text-sm text-text-200">
 								{game.ended_at ? "Vunnen" : "Aktiv"}
