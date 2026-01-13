@@ -9,7 +9,7 @@
 		scoreChange: string;
 		currentType: number;
 		answeredQuestions: Record<number, Set<number>>;
-		questionAnswerCallback: (type: number, questionIndex: number) => void;
+		questionAnswerCallback: (type: number, questionIndex: number, questionId: string, answer: string) => void;
 		currentPosition: { lat: number; lng: number };
 		initialAnswers?: Record<string, string>;
 	}
@@ -359,7 +359,19 @@
 				const question = Number.parseInt(questionStr, 10);
 				answeredQuestions[type].add(question);
 				answeredQuestions = { ...answeredQuestions };
-				questionAnswerCallback(type, question);
+
+				// Get the questionId based on type
+				const questionType = questionTypes[type].type;
+				let qId: string;
+				if (questionType === "radar" && question < radarQuestionKeys.length) {
+					qId = radarQuestionKeys[question];
+				} else if (questionType === "relative" && question < relativeOrder.length) {
+					qId = relativeOrder[question];
+				} else {
+					qId = String(question);
+				}
+
+				questionAnswerCallback(type, question, qId, answer);
 			}
 
 			submittedQuestionKey = null;

@@ -1,7 +1,7 @@
 import { type Actions, error, fail } from "@sveltejs/kit";
 import { db } from "$lib/database";
 import { PlaceProfile } from "$lib/schemas";
-import { calculateDistance } from "$lib/server/distance";
+import { calculateDistance } from "$lib/distance";
 import { RadarQuestions } from "$lib/questions/radars";
 import { RelativeKey, RelativeQuestions } from "$lib/questions/relative";
 import type { PageServerLoad } from "./$types";

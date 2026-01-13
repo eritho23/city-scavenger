@@ -1,20 +1,91 @@
 <script lang="ts">
 	import { MapStyle, MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
+	import { difference, featureCollection } from "@turf/turf";
+	import type { Feature, MultiPolygon, Polygon } from "geojson";
 	import L, { type LatLng } from "leaflet";
 	import { onMount } from "svelte";
 	import { browser } from "$app/environment";
 	import { VästeråsBounds, VästeråsLatLng } from "$lib/constants/coords";
+	import { cityBoundaryPolygon } from "$lib/map-functions";
 
 	let mapEl: HTMLElement;
-	let map: L.Map | undefined;
+	let map: L.Map | undefined = $state(undefined);
 	let userMarker: L.CircleMarker | undefined;
 	let currentPosition = $state(L.latLng(VästeråsLatLng.lat, VästeråsLatLng.lng));
 
+	// Layer for drawing boundaries (excluded areas)
+	let boundaryLayer: L.GeoJSON | undefined;
+
 	interface Props {
 		positionCallback?: (pos: LatLng) => void;
+		boundary?: Feature<Polygon | MultiPolygon> | null;
+		boundaryStyle?: {
+			fillColor?: string;
+			color?: string;
+			fillOpacity?: number;
+			weight?: number;
+		};
 	}
 
-	let { positionCallback }: Props = $props();
+	let {
+		positionCallback,
+		boundary = null,
+		boundaryStyle = {
+			fillColor: "#1f2937",
+			color: "#111827",
+			fillOpacity: 0.6,
+			weight: 1,
+		},
+	}: Props = $props();
+
+	// Update boundary layer when boundary prop changes
+	$effect(() => {
+		// Access boundary first to ensure it's tracked for reactivity
+		const currentBoundary = boundary;
+		const currentMap = map;
+
+		console.log("[Map] $effect triggered, map:", !!currentMap, "boundary:", currentBoundary);
+
+		if (!currentMap) {
+			console.log("[Map] Map not ready yet, skipping boundary update");
+			return;
+		}
+
+		// Remove existing boundary layer
+		if (boundaryLayer) {
+			console.log("[Map] Removing existing boundary layer");
+			boundaryLayer.remove();
+			boundaryLayer = undefined;
+		}
+
+		// Add new boundary if provided - we invert it to shade the EXCLUDED area
+		if (currentBoundary) {
+			console.log("[Map] Computing excluded area (inverse of valid boundary)");
+			try {
+				// Compute the excluded area by subtracting the valid boundary from the city boundary
+				const excludedArea = difference(featureCollection([cityBoundaryPolygon, currentBoundary]));
+
+				if (excludedArea) {
+					console.log("[Map] Drawing excluded area:", JSON.stringify(excludedArea).substring(0, 200));
+					boundaryLayer = L.geoJSON(excludedArea, {
+						style: {
+							fillColor: boundaryStyle.fillColor,
+							color: boundaryStyle.color,
+							fillOpacity: boundaryStyle.fillOpacity,
+							weight: boundaryStyle.weight,
+						},
+					}).addTo(currentMap);
+					console.log("[Map] Excluded area layer added successfully");
+				} else {
+					console.log("[Map] No excluded area to draw (entire city is valid)");
+				}
+			} catch (err) {
+				console.error("[Map] Error adding excluded area:", err);
+			}
+		} else {
+			console.log("[Map] No boundary to add");
+		}
+	});
 
 	onMount(async () => {
 		if (browser && window) {
@@ -57,6 +128,8 @@
 				weight: 2,
 				dashArray: "5, 10",
 			}).addTo(map);
+
+			console.log("[Map] Map initialized, boundary prop is:", boundary);
 		}
 	});
 </script>
