@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { SvelteSet } from "svelte/reactivity";
-	import { browser, dev } from "$app/environment";
 	import MapComponent from "$lib/components/map.svelte";
 
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
-	import { VästeråsLatLng } from "$lib/constants/coords.js";
 	import { currentGame } from "$lib/stores/game.svelte.js";
 
 	let { data } = $props();

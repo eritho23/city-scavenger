@@ -16,7 +16,7 @@
 				zoomControl: false,
 			}).setView(currentPosition, 12);
 
-			const tileLayer = new MaptilerLayer({
+			new MaptilerLayer({
 				apiKey: "TCMrUvyOBWQMOhVUBdg6",
 				style: MapStyle.STREETS,
 			}).addTo(map);
