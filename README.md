@@ -56,7 +56,8 @@ in order to have a more advantageous position for your next question.
 This repository has been started and initially built **without** the use of AI agents.
 Later in the project, we **have started to use AI agents**. To ensure consistency and
 quality, we have written a detailed **Copilot instruction file** in .github/copilot-instructions.md,
-which is sourced by the agent.
+which is sourced by the agent. The extensive use of linters and type checking also helps
+ensure consistent quality and avoid many trivial bugs.
 
 ## Development environment
 
