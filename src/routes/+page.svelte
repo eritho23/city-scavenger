@@ -7,7 +7,7 @@
 
 	import iconBg from "$lib/assets/bg-scav-icon.svg";
 
-	import HDivider from "$lib/components/h-divider.svelte";
+	import HDivider from "$lib/components/HDivider.svelte";
 
 	let isLoading = $state(false);
 
@@ -64,7 +64,10 @@
 	onMount(() => {
 		statInterval = setInterval(() => {
 			// move last to first (this triggers flip animation)
-			mockstats = [mockstats[mockstats.length - 1], ...mockstats.slice(0, mockstats.length - 1)];
+			mockstats = [
+				mockstats[mockstats.length - 1],
+				...mockstats.slice(0, mockstats.length - 1),
+			];
 		}, ROTATE_MS);
 	});
 

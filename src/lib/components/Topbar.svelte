@@ -5,7 +5,7 @@
 	import { page } from "$app/state";
 	import logo from "$lib/assets/city-scav-logo.svg";
 	import { currentGame } from "$lib/stores/game.svelte";
-	import HDivider from "./h-divider.svelte";
+	import HDivider from "./HDivider.svelte";
 
 	let isMenuOpen = $state(false);
 

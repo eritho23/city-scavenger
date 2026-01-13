@@ -6,7 +6,7 @@
 	import { onMount } from "svelte";
 	import { browser } from "$app/environment";
 	import { VästeråsBounds, VästeråsLatLng } from "$lib/constants/coords";
-	import { cityBoundaryPolygon } from "$lib/map-functions";
+	import { cityBoundaryPolygon } from "$lib/mapFunctions";
 
 	let mapEl: HTMLElement;
 	let map: L.Map | undefined = $state(undefined);
@@ -51,35 +51,28 @@
 		const currentMap = map;
 		const shouldShowDividerLines = showBoundaryLines && currentBoundaryLines.length > 0;
 
-		console.log("[Map] $effect triggered, map:", !!currentMap, "boundary:", currentBoundary);
-
 		if (!currentMap) {
-			console.log("[Map] Map not ready yet, skipping boundary update");
 			return;
 		}
 
 		// Remove existing boundary layer
 		if (boundaryLayer) {
-			console.log("[Map] Removing existing boundary layer");
 			boundaryLayer.remove();
 			boundaryLayer = undefined;
 		}
 
 		if (dividerLayer) {
-			console.log("[Map] Removing existing divider lines");
 			dividerLayer.remove();
 			dividerLayer = undefined;
 		}
 
 		// Add new boundary if provided - we invert it to shade the EXCLUDED area
 		if (currentBoundary) {
-			console.log("[Map] Computing excluded area (inverse of valid boundary)");
 			try {
 				// Compute the excluded area by subtracting the valid boundary from the city boundary
 				const excludedArea = difference(featureCollection([cityBoundaryPolygon, currentBoundary]));
 
 				if (excludedArea) {
-					console.log("[Map] Drawing excluded area:", JSON.stringify(excludedArea).substring(0, 200));
 					boundaryLayer = L.geoJSON(excludedArea, {
 						style: {
 							fillColor: boundaryStyle.fillColor,
@@ -88,15 +81,10 @@
 							weight: boundaryStyle.weight,
 						},
 					}).addTo(currentMap);
-					console.log("[Map] Excluded area layer added successfully");
-				} else {
-					console.log("[Map] No excluded area to draw (entire city is valid)");
 				}
 			} catch (err) {
 				console.error("[Map] Error adding excluded area:", err);
 			}
-		} else {
-			console.log("[Map] No boundary to add");
 		}
 
 		if (shouldShowDividerLines) {
@@ -110,12 +98,9 @@
 					},
 					interactive: false,
 				}).addTo(currentMap);
-				console.log("[Map] Divider lines drawn:", currentBoundaryLines.length);
 			} catch (err) {
 				console.error("[Map] Error drawing divider lines:", err);
 			}
-		} else {
-			console.log("[Map] Divider lines hidden");
 		}
 	});
 
@@ -133,7 +118,6 @@
 			map.locate({ maxZoom: 16, watch: true, setView: false });
 
 			map.on("locationfound", (e) => {
-				console.log("Location found:", e.latlng);
 				if (positionCallback) positionCallback(e.latlng);
 				currentPosition = e.latlng;
 				// if (map) map.setView(e.latlng, 16);
@@ -160,8 +144,6 @@
 				weight: 2,
 				dashArray: "5, 10",
 			}).addTo(map);
-
-			console.log("[Map] Map initialized, boundary prop is:", boundary);
 		}
 	});
 </script>

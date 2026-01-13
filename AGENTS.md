@@ -141,7 +141,7 @@ import { ChevronDown } from "@lucide/svelte";
 import { onMount } from "svelte";
 
 // Internal modules  
-import HDivider from "$lib/components/h-divider.svelte";
+import HDivider from "$lib/components/HDivider.svelte";
 import { db } from "$lib/database";
 ```
 

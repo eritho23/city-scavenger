@@ -77,12 +77,6 @@ export const actions = {
 		const userLat = Number.parseFloat(formData.get("userLat") as string);
 		const userLng = Number.parseFloat(formData.get("userLng") as string);
 
-		console.log("[askQuestion] Client is asking:", {
-			questionType,
-			questionId,
-			userPosition: { userLat, userLng },
-		});
-
 		// Validate form data
 		if (!questionType || !questionId || Number.isNaN(userLat) || Number.isNaN(userLng)) {
 			console.error("[askQuestion] Invalid question data");
@@ -124,7 +118,6 @@ export const actions = {
 
 			const isWithinRange = distance <= radarQuestion.range;
 			answer = isWithinRange ? "true" : "false";
-			console.log("[askQuestion] Radar answer:", { distance, range: radarQuestion.range, answer });
 		} else if (questionType === "relative") {
 			const relativeQuestion =
 				RelativeQuestions[questionId as keyof typeof RelativeQuestions];
@@ -135,23 +128,19 @@ export const actions = {
 			if (questionId === RelativeKey.Longitude) {
 				const isTargetEast = placeProfile.lon > userLng;
 				answer = isTargetEast ? "true" : "false";
-				console.log("[askQuestion] Longitude answer:", { userLng, targetLng: placeProfile.lon, answer });
 			} else if (questionId === RelativeKey.Latitude) {
 				const isTargetNorth = placeProfile.lat > userLat;
 				answer = isTargetNorth ? "true" : "false";
-				console.log("[askQuestion] Latitude answer:", { userLat, targetLat: placeProfile.lat, answer });
 			} else if (questionId === RelativeKey.SvartanDistance) {
 				const playerDistance = getDistanceToFeature(userLat, userLng, svartanLineFeature);
 				const targetDistance = getDistanceToFeature(placeProfile.lat, placeProfile.lon, svartanLineFeature);
 				const isTargetCloser = targetDistance < playerDistance;
 				answer = isTargetCloser ? "true" : "false";
-				console.log("[askQuestion] Svartån answer:", { playerDistance, targetDistance, answer });
 			} else if (questionId === RelativeKey.SameAirport) {
 				const playerAirport = findNearestAirport(userLat, userLng);
 				const targetAirport = findNearestAirport(placeProfile.lat, placeProfile.lon);
 				const hasSameAirport = playerAirport === targetAirport;
 				answer = hasSameAirport ? "true" : "false";
-				console.log("[askQuestion] Airport answer:", { playerAirport, targetAirport, answer });
 			} else {
 				return fail(400, { error: "Frågetypen stöds inte ännu" });
 			}
@@ -197,8 +186,6 @@ export const actions = {
 				}),
 			})
 			.execute();
-
-		console.log("[askQuestion] Sending answer to client:", answer);
 
 		return {
 			success: true,

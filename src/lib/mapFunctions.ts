@@ -187,18 +187,13 @@ export function createRadarBoundary(playerLat: number, playerLng: number, radius
 
 	const centerPoint = point([playerLng, playerLat]);
 	const circlePolygon = circle(centerPoint, radiusKm, { units: 'kilometers' });
-
-	console.log('[createRadarBoundary] Creating circle at', playerLat, playerLng, 'with radius', radiusKm, 'km');
-	console.log('[createRadarBoundary] Circle polygon:', JSON.stringify(circlePolygon).substring(0, 200));
-
 	const result = intersect(featureCollection([cityBoundaryPolygon, circlePolygon]));
-	
+
 	if (!result) {
 		console.warn('[createRadarBoundary] Intersection returned null, returning circle directly');
 		return circlePolygon as Feature<Polygon>;
 	}
-	
-	console.log('[createRadarBoundary] Intersection result:', JSON.stringify(result).substring(0, 200));
+
 	return result as Feature<Polygon>;
 }
 
@@ -216,18 +211,13 @@ export function createOutsideRadarBoundary(
 
 	const centerPoint = point([playerLng, playerLat]);
 	const circlePolygon = circle(centerPoint, radiusKm, { units: 'kilometers' });
-
-	console.log('[createOutsideRadarBoundary] Creating outside boundary at', playerLat, playerLng, 'with radius', radiusKm, 'km');
-
-	// Subtract the circle from the city boundary
 	const result = difference(featureCollection([cityBoundaryPolygon, circlePolygon]));
-	
+
 	if (!result) {
 		console.warn('[createOutsideRadarBoundary] Difference returned null, returning city boundary');
 		return cityBoundaryPolygon;
 	}
-	
-	console.log('[createOutsideRadarBoundary] Difference result:', JSON.stringify(result).substring(0, 200));
+
 	return result as Feature<Polygon | MultiPolygon>;
 }
 
@@ -477,13 +467,9 @@ export function updateBoundary(
 		const { key, answer } = questionAnswer;
 		const radiusKm = RadarQuestionConfig[key];
 
-		console.log('[updateBoundary] Radar question:', key, 'answer:', answer, 'type:', typeof answer, 'radiusKm:', radiusKm);
-
 		if (answer) {
 			// Target is WITHIN the radius
-			console.log('[updateBoundary] Answer is truthy, creating inside boundary');
 			const boundary = createRadarBoundary(playerLat, playerLng, radiusKm);
-			console.log('[updateBoundary] Boundary created:', boundary);
 			return {
 				boundary,
 				description: `Målpunkten är inom ${radiusKm} km från dig`,
@@ -492,7 +478,6 @@ export function updateBoundary(
 			};
 		} else {
 			// Target is OUTSIDE the radius
-			console.log('[updateBoundary] Answer is falsy, creating outside boundary');
 			return {
 				boundary: createOutsideRadarBoundary(playerLat, playerLng, radiusKm),
 				description: `Målpunkten är utanför ${radiusKm} km från dig`,
