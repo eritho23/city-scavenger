@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MapStyle, MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
-	import L from "leaflet";
+	import L, { type LatLng } from "leaflet";
 	import { onMount } from "svelte";
 	import { browser } from "$app/environment";
 	import { VästeråsBounds, VästeråsLatLng } from "$lib/constants/coords";
@@ -9,6 +9,12 @@
 	let map: L.Map | undefined;
 	let userMarker: L.CircleMarker | undefined;
 	let currentPosition = $state(L.latLng(VästeråsLatLng.lat, VästeråsLatLng.lng));
+
+	interface Props {
+		positionCallback?: (pos: LatLng) => void;
+	}
+
+	let { positionCallback }: Props = $props();
 
 	onMount(async () => {
 		if (browser && window) {
@@ -25,6 +31,7 @@
 
 			map.on("locationfound", (e) => {
 				console.log("Location found:", e.latlng);
+				if (positionCallback) positionCallback(e.latlng);
 				currentPosition = e.latlng;
 				// if (map) map.setView(e.latlng, 16);
 				if (userMarker !== undefined) userMarker.remove();
