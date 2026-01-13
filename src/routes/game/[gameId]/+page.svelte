@@ -6,10 +6,7 @@
 	import MapComponent from "$lib/components/map.svelte";
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
 	import { VästeråsLatLng } from "$lib/constants/coords.js";
-	import {
-		airportLocations,
-		svartanLineFeature,
-	} from "$lib/constants/geography";
+	import { airportLocations, svartanLineFeature } from "$lib/constants/geography";
 	import {
 		type BoundaryResult,
 		intersectBoundaries,
@@ -49,9 +46,7 @@
 		const updateTime = () => {
 			const now = new Date();
 			const startedAt = new Date(data.game.started_at);
-			const totalSeconds = Math.floor(
-				(now.getTime() - startedAt.getTime()) / 1000,
-			);
+			const totalSeconds = Math.floor((now.getTime() - startedAt.getTime()) / 1000);
 			const hours = Math.floor(totalSeconds / 3600);
 			const minutes = Math.floor((totalSeconds % 3600) / 60);
 			const seconds = totalSeconds % 60;
@@ -83,10 +78,7 @@
 		RelativeKey.SameAirport,
 	];
 
-	function getQuestionIndex(
-		questionType: string,
-		questionId: string,
-	): number | null {
+	function getQuestionIndex(questionType: string, questionId: string): number | null {
 		if (questionType === "radar") {
 			return radarQuestionKeys.indexOf(questionId);
 		} else if (questionType === "relative") {
@@ -108,19 +100,8 @@
 
 	let initialQuestionAnswers: Record<string, string> = $state({});
 
-	function computeBoundaryResult(
-		playerLat: number,
-		playerLng: number,
-		questionAnswer: QuestionAnswer,
-	) {
-		return updateBoundary(
-			playerLat,
-			playerLng,
-			questionAnswer,
-			undefined,
-			svartanLineFeature,
-			airportLocations,
-		);
+	function computeBoundaryResult(playerLat: number, playerLng: number, questionAnswer: QuestionAnswer) {
+		return updateBoundary(playerLat, playerLng, questionAnswer, undefined, svartanLineFeature, airportLocations);
 	}
 
 	function applyBoundaryResult(boundaryResult: BoundaryResult) {
@@ -154,20 +135,15 @@
 					};
 					const typeIndex = questionTypeMap[record.questionType];
 					if (typeIndex !== undefined) {
-						const questionIndex = getQuestionIndex(
-							record.questionType,
-							record.questionId,
-						);
+						const questionIndex = getQuestionIndex(record.questionType, record.questionId);
 						if (questionIndex !== null && questionIndex >= 0) {
 							answeredQuestions[typeIndex].add(questionIndex);
 							const key = `${typeIndex}-${questionIndex}`;
 							initialQuestionAnswers[key] = record.answer;
 							loadedQuestions++;
 
-							const playerLatForAnswer =
-								record.userPosition?.lat ?? currentPosition.lat;
-							const playerLngForAnswer =
-								record.userPosition?.lng ?? currentPosition.lng;
+							const playerLatForAnswer = record.userPosition?.lat ?? currentPosition.lat;
+							const playerLngForAnswer = record.userPosition?.lng ?? currentPosition.lng;
 
 							// Rebuild boundaries from saved radar/relative answers
 							if (record.questionType === "radar") {
@@ -176,33 +152,15 @@
 									key: record.questionId as RadarQuestionKey,
 									answer: record.answer === "true",
 								};
-								const boundaryResult = computeBoundaryResult(
-									playerLatForAnswer,
-									playerLngForAnswer,
-									radarAnswer,
-								);
+								const boundaryResult = computeBoundaryResult(playerLatForAnswer, playerLngForAnswer, radarAnswer);
 								applyBoundaryResult(boundaryResult);
 							} else if (record.questionType === "relative") {
 								const relativeKey = record.questionId as RelativeQuestionKey;
-								let relativeAnswer:
-									| "higher"
-									| "lower"
-									| "closer"
-									| "farther"
-									| "yes"
-									| "no";
-								if (
-									relativeKey === "relative-longitude" ||
-									relativeKey === "relative-latitude"
-								) {
-									relativeAnswer =
-										record.answer === "true" ? "higher" : "lower";
-								} else if (
-									relativeKey === "distance-railway" ||
-									relativeKey === "distance-svartan"
-								) {
-									relativeAnswer =
-										record.answer === "true" ? "closer" : "farther";
+								let relativeAnswer: "higher" | "lower" | "closer" | "farther" | "yes" | "no";
+								if (relativeKey === "relative-longitude" || relativeKey === "relative-latitude") {
+									relativeAnswer = record.answer === "true" ? "higher" : "lower";
+								} else if (relativeKey === "distance-railway" || relativeKey === "distance-svartan") {
+									relativeAnswer = record.answer === "true" ? "closer" : "farther";
 								} else {
 									relativeAnswer = record.answer === "true" ? "yes" : "no";
 								}
@@ -211,11 +169,7 @@
 									key: relativeKey,
 									answer: relativeAnswer,
 								};
-								const boundaryResult = computeBoundaryResult(
-									playerLatForAnswer,
-									playerLngForAnswer,
-									questionAnswer,
-								);
+								const boundaryResult = computeBoundaryResult(playerLatForAnswer, playerLngForAnswer, questionAnswer);
 								applyBoundaryResult(boundaryResult);
 							}
 						}
@@ -229,18 +183,11 @@
 
 	let currentType = $state(0);
 
-	function handleQuestionAnswered(
-		type: number,
-		questionIndex: number,
-		questionId: string,
-		answer: string,
-	) {
+	function handleQuestionAnswered(type: number, questionIndex: number, questionId: string, answer: string) {
 		answeredQuestions[type].add(questionIndex);
 
 		// Handle boundary updates for radar and relative questions
-		const questionTypeName = Object.keys(questionTypeMap).find(
-			(k) => questionTypeMap[k] === type,
-		);
+		const questionTypeName = Object.keys(questionTypeMap).find((k) => questionTypeMap[k] === type);
 
 		if (questionTypeName === "radar") {
 			// Create a QuestionAnswer for radar type
@@ -250,33 +197,17 @@
 				answer: answer === "true",
 			};
 
-			const boundaryResult = computeBoundaryResult(
-				currentPosition.lat,
-				currentPosition.lng,
-				radarAnswer,
-			);
+			const boundaryResult = computeBoundaryResult(currentPosition.lat, currentPosition.lng, radarAnswer);
 			applyBoundaryResult(boundaryResult);
 		} else if (questionTypeName === "relative") {
 			// Handle relative questions (latitude/longitude)
 			const relativeKey = questionId as RelativeQuestionKey;
 
 			// Map the answer to the expected format
-			let relativeAnswer:
-				| "higher"
-				| "lower"
-				| "closer"
-				| "farther"
-				| "yes"
-				| "no";
-			if (
-				relativeKey === "relative-longitude" ||
-				relativeKey === "relative-latitude"
-			) {
+			let relativeAnswer: "higher" | "lower" | "closer" | "farther" | "yes" | "no";
+			if (relativeKey === "relative-longitude" || relativeKey === "relative-latitude") {
 				relativeAnswer = answer === "true" ? "higher" : "lower";
-			} else if (
-				relativeKey === "distance-railway" ||
-				relativeKey === "distance-svartan"
-			) {
+			} else if (relativeKey === "distance-railway" || relativeKey === "distance-svartan") {
 				relativeAnswer = answer === "true" ? "closer" : "farther";
 			} else if (relativeKey === "same-airport") {
 				relativeAnswer = answer === "true" ? "yes" : "no";
@@ -290,11 +221,7 @@
 				answer: relativeAnswer,
 			};
 
-			const boundaryResult = computeBoundaryResult(
-				currentPosition.lat,
-				currentPosition.lng,
-				questionAnswer,
-			);
+			const boundaryResult = computeBoundaryResult(currentPosition.lat, currentPosition.lng, questionAnswer);
 
 			applyBoundaryResult(boundaryResult);
 		}

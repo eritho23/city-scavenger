@@ -64,10 +64,7 @@
 	onMount(() => {
 		statInterval = setInterval(() => {
 			// move last to first (this triggers flip animation)
-			mockstats = [
-				mockstats[mockstats.length - 1],
-				...mockstats.slice(0, mockstats.length - 1),
-			];
+			mockstats = [mockstats[mockstats.length - 1], ...mockstats.slice(0, mockstats.length - 1)];
 		}, ROTATE_MS);
 	});
 
