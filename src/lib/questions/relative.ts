@@ -14,12 +14,12 @@ export enum RelativeKey {
 
 export const RelativeQuestions: Record<RelativeKey, RelativeQuestion> = {
 	"relative-longitude": {
-		displayName: "East (true) or West (false) of me?",
+		displayName: "Are you east of me?",
 		prompt: "Are you east of me?",
 		kind: "comparison",
 	},
 	"relative-latitude": {
-		displayName: "North (true) or South (false) of me?",
+		displayName: "Are you north of me?",
 		prompt: "Are you north of me?",
 		kind: "comparison",
 	},

@@ -24,7 +24,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	const game = await db
 		.selectFrom("game")
-		.select(["uid", "ended_at", "started_at", "place_profile"])
+		.select(["uid", "ended_at", "started_at", "place_profile", "answers"])
 		.where("uid", "=", gameId)
 		.executeTakeFirst();
 
@@ -143,11 +143,16 @@ export const actions = {
 			answer,
 		};
 
-		// Update game's answers array
+		// Update game's answers array - check if question already answered
 		const currentAnswers: AnswerRecord[] = Array.isArray(game.answers)
 			? (game.answers as AnswerRecord[])
 			: [];
-		const updatedAnswers: AnswerRecord[] = [...currentAnswers, questionRecord];
+		
+		// Remove any existing answer for this question (to allow re-answering)
+		const filteredAnswers = currentAnswers.filter(
+			(record) => !(record.questionType === questionType && record.questionId === questionId)
+		);
+		const updatedAnswers: AnswerRecord[] = [...filteredAnswers, questionRecord];
 
 		await db
 			.updateTable("game")

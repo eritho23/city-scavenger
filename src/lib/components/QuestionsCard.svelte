@@ -13,6 +13,7 @@
 		questionAnswerCallback: (type: number, questionIndex: number) => void;
 		currentPosition: { lat: number; lng: number };
 		form: ActionData;
+		initialAnswers?: Record<string, string>;
 	}
 
 	const relativeOrder = [
@@ -28,10 +29,10 @@
 		let a: string;
 		switch (key) {
 			case RelativeKey.Longitude:
-				a = "East (true) or West (false)?";
+				a = "Yes = East, No = West";
 				break;
 			case RelativeKey.Latitude:
-				a = "North (true) or South (false)?";
+				a = "Yes = North, No = South";
 				break;
 			case RelativeKey.RailwayDistance:
 				a = "Närmare eller längre från järnvägen";
@@ -59,6 +60,7 @@
 		questionAnswerCallback,
 		currentPosition,
 		form,
+		initialAnswers = {},
 	}: Props = $props();
 
 	type Question = {
@@ -71,7 +73,7 @@
 		const rq = RadarQuestions[key as keyof typeof RadarQuestions];
 		return {
 			q: `${rq.displayName}`,
-			a: `True = inside, False = outside`,
+			a: `Yes = within ${rq.range} km, No = outside`,
 		};
 	});
 
@@ -278,12 +280,15 @@
 	}
 
 	let formElement: HTMLFormElement | undefined = $state();
+	// Store answers per question using a unique key
+	let questionAnswers = $state<Record<string, string>>({ ...initialAnswers });
 
 	// Hold animation
 	let isHolding = $state(false);
 	let animationCompleted = $state(false);
 	let isSubmitting = $state(false);
-	let lastProcessedSubmission = $state<string | null>(null);
+	// Track which question the current form submission was for
+	let submittedQuestionKey = $state<string | null>(null);
 
 	function startHold() {
 		if (isAnswered) return;
@@ -313,12 +318,15 @@
 	function askQuestion() {
 		if (!isAnswered && formElement && !isSubmitting) {
 			isSubmitting = true;
+			// Track which question we're submitting for
+			submittedQuestionKey = `${currentType}-${selectedQuestion}`;
 			console.log("[askQuestion] Asking server:", {
 				questionType,
 				questionId,
 				currentPosition,
 				currentType,
 				selectedQuestion,
+				submittedQuestionKey,
 			});
 			// Submit the form programmatically
 			if (formElement.requestSubmit) {
@@ -329,23 +337,6 @@
 		}
 	}
 
-	// Handle form submission response
-	$effect(() => {
-		if (form?.success) {
-			// Create a unique ID for this submission to avoid reprocessing
-			const submissionId = `${currentType}-${selectedQuestion}`;
-			if (lastProcessedSubmission !== submissionId) {
-				lastProcessedSubmission = submissionId;
-				answeredQuestions[currentType].add(selectedQuestion);
-				answeredQuestions = { ...answeredQuestions };
-				questionAnswerCallback(currentType, selectedQuestion);
-			}
-			isSubmitting = false;
-			isHolding = false;
-			animationCompleted = false;
-		}
-	});
-
 	$inspect(currentPosition);
 
 	// Derived state for current question and types
@@ -354,22 +345,65 @@
 	let currentQuestion = $derived(current.questions[selectedQuestion]);
 	let nextType1 = $derived(questionTypes[(currentType + 1) % questionTypes.length]);
 	let nextType2 = $derived(questionTypes[(currentType + 2) % questionTypes.length]);
+	// Get the answer for the current question
+	let answerKey = $derived(`${currentType}-${selectedQuestion}`);
+	let currentAnswer = $derived(questionAnswers[answerKey]);
+
+		$inspect("[QuestionsCard] Current answer lookup:", {
+			answerKey,
+			currentAnswer,
+			allAnswers: questionAnswers,
+		});
 
 	// Values for the form submission
 	let questionType = $derived(current.type);
 	let questionId = $derived(
 		questionType === "radar" && selectedQuestion < radarQuestionKeys.length
 			? radarQuestionKeys[selectedQuestion]
-			: String(selectedQuestion),
+			: questionType === "relative" && selectedQuestion < relativeOrder.length
+			? relativeOrder[selectedQuestion]
+			: String(selectedQuestion)
 	);
 	let userAnswer = $derived<string | undefined>(undefined); // Placeholder for user answer if needed
 
 	$inspect("Form values:", {
 		questionType,
 		questionId,
+		selectedQuestion,
 		userAnswer,
 		isAnswered,
+		currentAnswer,
 	});
+	$inspect(currentAnswer === "true")
+	$inspect("[Display]", { answerKey, currentAnswer })
+
+	function handleFormResult(result: { type: string; data?: { answer?: string; success?: boolean } }) {
+		console.log("[handleFormResult] Got result:", result, "for key:", submittedQuestionKey);
+		
+		if (result.type === "success" && result.data?.success && submittedQuestionKey) {
+			const answer = result.data.answer;
+			console.log("[handleFormResult] Storing answer:", submittedQuestionKey, "=", answer);
+			
+			if (answer !== undefined) {
+				questionAnswers = { ...questionAnswers, [submittedQuestionKey]: answer };
+				console.log("[handleFormResult] Updated questionAnswers:", $state.snapshot(questionAnswers));
+				
+				// Parse the submitted key to update the correct answered questions set
+				const [typeStr, questionStr] = submittedQuestionKey.split("-");
+				const type = Number.parseInt(typeStr, 10);
+				const question = Number.parseInt(questionStr, 10);
+				answeredQuestions[type].add(question);
+				answeredQuestions = { ...answeredQuestions };
+				questionAnswerCallback(type, question);
+			}
+			
+			submittedQuestionKey = null;
+		}
+		
+		isSubmitting = false;
+		isHolding = false;
+		animationCompleted = false;
+	}
 </script>
 
 <!-- Hidden form for question submission -->
@@ -378,13 +412,18 @@
 		bind:this={formElement}
 		method="POST"
 		action="?/askQuestion"
-		use:enhance
+		use:enhance={() => {
+			return async ({ result, update }) => {
+				handleFormResult(result as { type: string; data?: { answer?: string; success?: boolean } });
+				await update();
+			};
+		}}
 		class="hidden"
 	>
-		<input type="hidden" name="questionType" value={questionType} />
-		<input type="hidden" name="questionId" value={questionId} />
-		<input type="hidden" name="userLat" value={currentPosition.lat} />
-		<input type="hidden" name="userLng" value={currentPosition.lng} />
+		<input type="hidden" name="questionType" value={String(questionType)} />
+		<input type="hidden" name="questionId" value={String(questionId)} />
+		<input type="hidden" name="userLat" value={String(currentPosition.lat)} />
+		<input type="hidden" name="userLng" value={String(currentPosition.lng)} />
 	</form>
 {/if}
 
@@ -434,7 +473,9 @@
 				</button>
 			{:else}
 				<div class="pt-1 *:leading-tight px-3">
-					<p class="mb-3">{currentQuestion.a}</p>
+					<p class="mb-3 font-bold text-lg">
+						{currentAnswer === "true" ? "Yes" : "No"}
+					</p>
 					<p class="text-sm {current.secondText}">{currentQuestion.q}</p>
 				</div>
 			{/if}

@@ -6,6 +6,8 @@
 
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
 	import { VästeråsLatLng } from "$lib/constants/coords.js";
+	import { RadarQuestions } from "$lib/questions/radars";
+	import { RelativeKey } from "$lib/questions/relative";
 	import { currentGame } from "$lib/stores/game.svelte.js";
 
 	let { data, form } = $props();
@@ -41,7 +43,37 @@
 		return () => clearInterval(interval);
 	});
 
-	let currentType = $state(0);
+	// Question type indices
+	const questionTypeMap: Record<string, number> = {
+		relative: 0,
+		photo: 1,
+		radar: 2,
+		oddball: 3,
+		precision: 4,
+	};
+
+	// Maps for converting questionIds to indices
+	const radarQuestionKeys = Object.keys(RadarQuestions);
+	const relativeOrder = [
+		RelativeKey.Longitude,
+		RelativeKey.Latitude,
+		RelativeKey.RailwayDistance,
+		RelativeKey.SvartanDistance,
+		RelativeKey.SameAirport,
+	];
+
+	function getQuestionIndex(questionType: string, questionId: string): number | null {
+		if (questionType === "radar") {
+			return radarQuestionKeys.indexOf(questionId);
+		} else if (questionType === "relative") {
+			return relativeOrder.indexOf(questionId as RelativeKey);
+		}
+		// For other types, questionId is already the index as string
+		const idx = Number.parseInt(questionId, 10);
+		return Number.isNaN(idx) ? null : idx;
+	}
+
+	// Initialize answered questions and answers from server data
 	let answeredQuestions: Record<number, Set<number>> = $state({
 		0: new SvelteSet(),
 		1: new SvelteSet(),
@@ -49,6 +81,39 @@
 		3: new SvelteSet(),
 		4: new SvelteSet(),
 	});
+
+	let initialQuestionAnswers: Record<string, string> = $state({});
+
+	// Load from server on mount
+	onMount(() => {
+		const answers = data.game.answers;
+		if (Array.isArray(answers)) {
+			let loadedQuestions = 0;
+			for (const item of answers) {
+				if (item && typeof item === "object" && !Array.isArray(item)) {
+					const record = item as {
+						questionType: string;
+						questionId: string;
+						answer: string;
+					};
+					const typeIndex = questionTypeMap[record.questionType];
+					if (typeIndex !== undefined) {
+						const questionIndex = getQuestionIndex(record.questionType, record.questionId);
+						if (questionIndex !== null && questionIndex >= 0) {
+							answeredQuestions[typeIndex].add(questionIndex);
+							const key = `${typeIndex}-${questionIndex}`;
+							initialQuestionAnswers[key] = record.answer;
+							loadedQuestions++;
+						}
+					}
+				}
+			}
+			// Initialize score based on already-answered questions
+			score = loadedQuestions * 30;
+		}
+	});
+
+	let currentType = $state(0);
 
 	function handleQuestionAnswered(type: number, questionIndex: number) {
 		answeredQuestions[type].add(questionIndex);
@@ -93,5 +158,6 @@
 		scoreChange=""
 		currentPosition={{lat: currentPosition.lat, lng: currentPosition.lng}}
 		{form}
+		initialAnswers={initialQuestionAnswers}
 	/>
 </div>

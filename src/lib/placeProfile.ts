@@ -16,7 +16,7 @@ export async function generatePlaceProfile(stop: BusStopData): Promise<PlaceProf
 	Stop ID: ${stop.id}
   `;
 	const completion = await client.chat.completions.create({
-		model: "gpt-5",
+		model: "gemma3:12b",
 		messages: [
 			{
 				role: "system",
