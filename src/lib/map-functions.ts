@@ -45,6 +45,7 @@ export interface BoundaryResult {
 	description: string;
 	category: QuestionCategory;
 	questionKey: string;
+	dividerLine?: Feature<LineString>;
 }
 
 // Radar question configuration (range in km)
@@ -152,6 +153,28 @@ export function getAreaRightOfPlayer(playerLng: number): Feature<Polygon> {
 
 	const result = intersect(featureCollection([cityBoundaryPolygon, eastPolygon]));
 	return result as Feature<Polygon>;
+}
+
+/**
+ * Create a horizontal line across the city at the player's latitude
+ */
+function createLatitudeDividerLine(playerLat: number): Feature<LineString> {
+	const clampedLat = Math.min(Math.max(playerLat, VästeråsExtremities.bottom), VästeråsExtremities.top);
+	return lineString([
+		[VästeråsExtremities.left, clampedLat],
+		[VästeråsExtremities.right, clampedLat]
+	]);
+}
+
+/**
+ * Create a vertical line across the city at the player's longitude
+ */
+function createLongitudeDividerLine(playerLng: number): Feature<LineString> {
+	const clampedLng = Math.min(Math.max(playerLng, VästeråsExtremities.left), VästeråsExtremities.right);
+	return lineString([
+		[clampedLng, VästeråsExtremities.bottom],
+		[clampedLng, VästeråsExtremities.top]
+	]);
 }
 
 /**
@@ -454,26 +477,29 @@ export function updateBoundary(
 	if (category === 'relative') {
 		const { key, answer } = questionAnswer;
 
-		switch (key) {
-			case 'relative-longitude':
-				return {
-					boundary: answer === 'higher'
-						? getAreaRightOfPlayer(playerLng)
-						: getAreaLeftOfPlayer(playerLng),
-					description: `Målpunkten har ${answer === 'higher' ? 'högre' : 'lägre'} longitud (är ${answer === 'higher' ? 'öster' : 'väster'} om dig)`,
-					category,
-					questionKey: key
-				};
+			switch (key) {
+				case 'relative-longitude':
+					return {
+						boundary: answer === 'higher'
+							? getAreaRightOfPlayer(playerLng)
+							: getAreaLeftOfPlayer(playerLng),
+						description: `Målpunkten har ${answer === 'higher' ? 'högre' : 'lägre'} longitud (är ${answer === 'higher' ? 'öster' : 'väster'} om dig)`,
+						category,
+						questionKey: key,
+						dividerLine: createLongitudeDividerLine(playerLng)
+					};
 
-			case 'relative-latitude':
-				return {
-					boundary: answer === 'higher'
-						? getAreaAbovePlayer(playerLat)
-						: getAreaBelowPlayer(playerLat),
-					description: `Målpunkten har ${answer === 'higher' ? 'högre' : 'lägre'} latitud (är ${answer === 'higher' ? 'norr' : 'söder'} om dig)`,
-					category,
-					questionKey: key
-				};
+				case 'relative-latitude':
+					return {
+						boundary: answer === 'higher'
+							? getAreaAbovePlayer(playerLat)
+							: getAreaBelowPlayer(playerLat),
+						description: `Målpunkten har ${answer === 'higher' ? 'högre' : 'lägre'} latitud (är ${answer === 'higher' ? 'norr' : 'söder'} om dig)`,
+						category,
+						questionKey: key,
+						dividerLine: createLatitudeDividerLine(playerLat)
+					};
+
 
 			case 'same-airport':
 				if (!airportLocations || airportLocations.length === 0) {

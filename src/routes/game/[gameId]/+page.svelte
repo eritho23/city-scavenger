@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Feature, MultiPolygon, Polygon } from "geojson";
+	import type { Feature, LineString, MultiPolygon, Polygon } from "geojson";
 	import type { LatLng } from "leaflet";
 	import { onMount } from "svelte";
 	import { SvelteSet } from "svelte/reactivity";
@@ -8,6 +8,7 @@
 	import { VästeråsLatLng } from "$lib/constants/coords.js";
 	import {
 		intersectBoundaries,
+		type BoundaryResult,
 		type QuestionAnswer,
 		type RadarQuestionKey,
 		type RelativeQuestionKey,
@@ -28,6 +29,8 @@
 	let currentBoundary: Feature<Polygon | MultiPolygon> | null = $state(null);
 	// Store all answered boundaries to intersect
 	let answeredBoundaries: Feature<Polygon | MultiPolygon>[] = $state([]);
+	// Track divider lines (used for latitude/longitude questions)
+	let boundaryLines: Feature<LineString>[] = $state([]);
 
 	function handlePositionUpdate(pos: LatLng) {
 		currentPosition = pos;
@@ -96,12 +99,26 @@
 
 	let initialQuestionAnswers: Record<string, string> = $state({});
 
+	function applyBoundaryResult(boundaryResult: BoundaryResult) {
+		const newBoundaries = [...answeredBoundaries, boundaryResult.boundary];
+		answeredBoundaries = newBoundaries;
+
+		if (boundaryResult.dividerLine) {
+			boundaryLines = [...boundaryLines, boundaryResult.dividerLine];
+		}
+
+		if (newBoundaries.length === 1) {
+			currentBoundary = boundaryResult.boundary;
+		} else {
+			currentBoundary = intersectBoundaries(newBoundaries);
+		}
+	}
+
 	// Load from server on mount
 	onMount(() => {
 		const answers = data.game.answers;
 		if (Array.isArray(answers)) {
 			let loadedQuestions = 0;
-			const loadedBoundaries: Feature<Polygon | MultiPolygon>[] = [];
 
 			for (const item of answers) {
 				if (item && typeof item === "object" && !Array.isArray(item)) {
@@ -127,7 +144,7 @@
 									answer: record.answer === "true",
 								};
 								const boundaryResult = updateBoundary(currentPosition.lat, currentPosition.lng, radarAnswer);
-								loadedBoundaries.push(boundaryResult.boundary);
+								applyBoundaryResult(boundaryResult);
 							} else if (record.questionType === "relative") {
 								const relativeKey = record.questionId as RelativeQuestionKey;
 								let relativeAnswer: "higher" | "lower" | "closer" | "farther" | "yes" | "no";
@@ -144,7 +161,7 @@
 									answer: relativeAnswer,
 								};
 								const boundaryResult = updateBoundary(currentPosition.lat, currentPosition.lng, questionAnswer);
-								loadedBoundaries.push(boundaryResult.boundary);
+								applyBoundaryResult(boundaryResult);
 							}
 						}
 					}
@@ -153,15 +170,8 @@
 			// Initialize score based on already-answered questions
 			score = loadedQuestions * 30;
 
-			// Set the loaded boundaries
-			if (loadedBoundaries.length > 0) {
-				answeredBoundaries = loadedBoundaries;
-				if (loadedBoundaries.length === 1) {
-					currentBoundary = loadedBoundaries[0];
-				} else {
-					currentBoundary = intersectBoundaries(loadedBoundaries);
-				}
-				console.log("[Game] Restored boundaries from saved answers:", loadedBoundaries.length, "boundaries");
+			if (answeredBoundaries.length > 0) {
+				console.log("[Game] Restored boundaries from saved answers:", answeredBoundaries.length, "boundaries");
 			}
 		}
 	});
@@ -187,16 +197,7 @@
 			const boundaryResult = updateBoundary(currentPosition.lat, currentPosition.lng, radarAnswer);
 			console.log("[Game] Radar boundary result:", boundaryResult.description, boundaryResult.boundary);
 
-			// Add to answered boundaries and recalculate intersection
-			const newBoundaries = [...answeredBoundaries, boundaryResult.boundary];
-			answeredBoundaries = newBoundaries;
-
-			// Set the boundary directly for single boundary, or intersect for multiple
-			if (newBoundaries.length === 1) {
-				currentBoundary = boundaryResult.boundary;
-			} else {
-				currentBoundary = intersectBoundaries(newBoundaries);
-			}
+			applyBoundaryResult(boundaryResult);
 			console.log("[Game] Current boundary after update:", currentBoundary);
 		} else if (questionTypeName === "relative") {
 			// Handle relative questions (latitude/longitude)
@@ -223,16 +224,7 @@
 			const boundaryResult = updateBoundary(currentPosition.lat, currentPosition.lng, questionAnswer);
 			console.log("[Game] Relative boundary result:", boundaryResult.description, boundaryResult.boundary);
 
-			// Add to answered boundaries and recalculate intersection
-			const newBoundaries = [...answeredBoundaries, boundaryResult.boundary];
-			answeredBoundaries = newBoundaries;
-
-			// Set the boundary directly for single boundary, or intersect for multiple
-			if (newBoundaries.length === 1) {
-				currentBoundary = boundaryResult.boundary;
-			} else {
-				currentBoundary = intersectBoundaries(newBoundaries);
-			}
+			applyBoundaryResult(boundaryResult);
 			console.log("[Game] Current boundary after update:", currentBoundary);
 		}
 
@@ -269,6 +261,7 @@
 	<MapComponent 
 		positionCallback={handlePositionUpdate} 
 		boundary={currentBoundary}
+		boundaryLines={boundaryLines}
 		boundaryStyle={{
 			fillColor: "#1f2937",
 			color: "#374151",

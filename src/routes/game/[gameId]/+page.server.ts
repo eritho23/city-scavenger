@@ -118,14 +118,14 @@ export const actions = {
 
 			// Handle longitude and latitude questions
 			if (questionId === RelativeKey.Longitude) {
-				// Are you east of the target? (higher longitude = further east)
-				const isEast = userLng > placeProfile.lon;
-				answer = isEast ? "true" : "false";
+				// Is the target east of the player? (higher longitude = further east)
+				const isTargetEast = placeProfile.lon > userLng;
+				answer = isTargetEast ? "true" : "false";
 				console.log("[askQuestion] Longitude answer:", { userLng, targetLng: placeProfile.lon, answer });
 			} else if (questionId === RelativeKey.Latitude) {
-				// Are you north of the target? (higher latitude = further north)
-				const isNorth = userLat > placeProfile.lat;
-				answer = isNorth ? "true" : "false";
+				// Is the target north of the player? (higher latitude = further north)
+				const isTargetNorth = placeProfile.lat > userLat;
+				answer = isTargetNorth ? "true" : "false";
 				console.log("[askQuestion] Latitude answer:", { userLat, targetLat: placeProfile.lat, answer });
 			} else {
 				return fail(400, { error: "Question type not yet implemented" });

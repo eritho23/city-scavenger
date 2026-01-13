@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { MapStyle, MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 	import { difference, featureCollection } from "@turf/turf";
-	import type { Feature, MultiPolygon, Polygon } from "geojson";
+	import type { Feature, LineString, MultiPolygon, Polygon } from "geojson";
 	import L, { type LatLng } from "leaflet";
 	import { onMount } from "svelte";
 	import { browser } from "$app/environment";
@@ -15,10 +15,12 @@
 
 	// Layer for drawing boundaries (excluded areas)
 	let boundaryLayer: L.GeoJSON | undefined;
+	let dividerLayer: L.GeoJSON | undefined;
 
 	interface Props {
 		positionCallback?: (pos: LatLng) => void;
 		boundary?: Feature<Polygon | MultiPolygon> | null;
+		boundaryLines?: Feature<LineString>[] | null;
 		boundaryStyle?: {
 			fillColor?: string;
 			color?: string;
@@ -30,6 +32,7 @@
 	let {
 		positionCallback,
 		boundary = null,
+		boundaryLines = [],
 		boundaryStyle = {
 			fillColor: "#1f2937",
 			color: "#111827",
@@ -42,6 +45,7 @@
 	$effect(() => {
 		// Access boundary first to ensure it's tracked for reactivity
 		const currentBoundary = boundary;
+		const currentBoundaryLines = boundaryLines ?? [];
 		const currentMap = map;
 
 		console.log("[Map] $effect triggered, map:", !!currentMap, "boundary:", currentBoundary);
@@ -56,6 +60,12 @@
 			console.log("[Map] Removing existing boundary layer");
 			boundaryLayer.remove();
 			boundaryLayer = undefined;
+		}
+
+		if (dividerLayer) {
+			console.log("[Map] Removing existing divider lines");
+			dividerLayer.remove();
+			dividerLayer = undefined;
 		}
 
 		// Add new boundary if provided - we invert it to shade the EXCLUDED area
@@ -84,6 +94,25 @@
 			}
 		} else {
 			console.log("[Map] No boundary to add");
+		}
+
+		if (currentBoundaryLines.length > 0) {
+			try {
+				const lineCollection = featureCollection(currentBoundaryLines);
+				dividerLayer = L.geoJSON(lineCollection, {
+					style: {
+						color: "#fef08a",
+						weight: 2,
+						dashArray: "8 6",
+					},
+					interactive: false,
+				}).addTo(currentMap);
+				console.log("[Map] Divider lines drawn:", currentBoundaryLines.length);
+			} catch (err) {
+				console.error("[Map] Error drawing divider lines:", err);
+			}
+		} else {
+			console.log("[Map] No divider lines to draw");
 		}
 	});
 
