@@ -10,7 +10,7 @@ export const actions = {
 		const newPlaceProfile = await generatePlaceProfile(stop);
 
 		if (newPlaceProfile === null) {
-			error(500, { message: "Failed to generate place profile." });
+			error(500, { message: "Kunde inte skapa platsprofil." });
 		}
 
 		const result = await db
@@ -24,7 +24,7 @@ export const actions = {
 		if (!result) {
 			return fail(500, {
 				success: false,
-				message: "Failed to create game",
+				message: "Kunde inte starta spel",
 			});
 		}
 

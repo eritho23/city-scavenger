@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { ChevronLeft, ChevronRight } from "@lucide/svelte";
-
+	import { SvelteSet } from "svelte/reactivity";
+	import { enhance } from "$app/forms";
 	import { RadarQuestions } from "$lib/questions/radars";
 	import { RelativeKey, RelativeQuestions } from "$lib/questions/relative";
 
@@ -8,7 +9,9 @@
 		scoreChange: string;
 		currentType: number;
 		answeredQuestions: Record<number, Set<number>>;
-		questionAnswerCallback: (type: number, questionIndex: number) => void;
+		questionAnswerCallback: (type: number, questionIndex: number, questionId: string, answer: string) => void;
+		currentPosition: { lat: number; lng: number };
+		initialAnswers?: Record<string, string>;
 	}
 
 	const relativeOrder = [
@@ -24,10 +27,10 @@
 		let a: string;
 		switch (key) {
 			case RelativeKey.Longitude:
-				a = "Högre eller lägre longitud";
+				a = "Ja = öster, Nej = väster";
 				break;
 			case RelativeKey.Latitude:
-				a = "Högre eller lägre latitud";
+				a = "Ja = norr, Nej = söder";
 				break;
 			case RelativeKey.RailwayDistance:
 				a = "Närmare eller längre från järnvägen";
@@ -46,13 +49,15 @@
 		scoreChange = "+ 30 poäng",
 		currentType = $bindable(0),
 		answeredQuestions = $bindable({
-			0: new Set(),
-			1: new Set(),
-			2: new Set(),
-			3: new Set(),
-			4: new Set(),
+			0: new SvelteSet(),
+			1: new SvelteSet(),
+			2: new SvelteSet(),
+			3: new SvelteSet(),
+			4: new SvelteSet(),
 		}),
 		questionAnswerCallback,
+		currentPosition,
+		initialAnswers = {},
 	}: Props = $props();
 
 	type Question = {
@@ -60,13 +65,18 @@
 		a: string;
 	};
 
-	const radarQuestionsFromConfig: Question[] = Object.values(RadarQuestions).map((rq) => ({
-		q: `Är målpunkten inom ${rq.displayName} från mig?`,
-		a: `Radargräns: ${rq.range} km`,
-	}));
+	const radarQuestionKeys = Object.keys(RadarQuestions);
+	const radarQuestionsFromConfig: Question[] = radarQuestionKeys.map((key) => {
+		const rq = RadarQuestions[key as keyof typeof RadarQuestions];
+		return {
+			q: `${rq.displayName}`,
+			a: `Ja = inom ${rq.range} km, Nej = utanför`,
+		};
+	});
 
 	type QuestionType = {
 		name: string;
+		type: "relative" | "photo" | "radar" | "oddball" | "precision";
 		bg: string;
 		secondButton: string;
 		mainText: string;
@@ -78,6 +88,7 @@
 	const questionTypes: QuestionType[] = [
 		{
 			name: "Relativ",
+			type: "relative",
 			bg: "bg-card-blue-900",
 			// button: "bg-card-blue-700",
 			secondButton: "bg-card-blue-800",
@@ -88,6 +99,7 @@
 		},
 		{
 			name: "Foton",
+			type: "photo",
 			bg: "bg-card-green-900",
 			secondButton: "bg-card-green-800",
 			mainText: "text-card-green-100",
@@ -119,6 +131,7 @@
 		},
 		{
 			name: "Radar",
+			type: "radar",
 			bg: "bg-card-red-900",
 			secondButton: "bg-card-red-800",
 			mainText: "text-card-red-100",
@@ -127,7 +140,8 @@
 			questions: radarQuestionsFromConfig,
 		},
 		{
-			name: "Oddball",
+			name: "Udda",
+			type: "oddball",
 			bg: "bg-card-purple-900",
 			secondButton: "bg-card-purple-800",
 			mainText: "text-card-purple-100",
@@ -168,6 +182,7 @@
 		},
 		{
 			name: "Precision",
+			type: "precision",
 			bg: "bg-card-yellow-900",
 			secondButton: "bg-card-yellow-800",
 			mainText: "text-card-yellow-100",
@@ -261,23 +276,16 @@
 		currentType = (currentType - 1 + questionTypes.length) % questionTypes.length;
 	}
 
-	function submitAnswer() {
-		if (!isAnswered) {
-			answeredQuestions[currentType].add(selectedQuestion);
-			answeredQuestions = { ...answeredQuestions };
-			questionAnswerCallback(currentType, selectedQuestion);
-		}
-	}
-
-	let current = $derived(questionTypes[currentType]);
-	let currentQuestion = $derived(current.questions[selectedQuestion]);
-	let isAnswered = $derived(answeredQuestions[currentType].has(selectedQuestion));
-	let nextType1 = $derived(questionTypes[(currentType + 1) % questionTypes.length]);
-	let nextType2 = $derived(questionTypes[(currentType + 2) % questionTypes.length]);
+	let formElement: HTMLFormElement | undefined = $state();
+	// Store answers per question using a unique key
+	let questionAnswers = $state<Record<string, string>>({ ...initialAnswers });
 
 	// Hold animation
 	let isHolding = $state(false);
 	let animationCompleted = $state(false);
+	let isSubmitting = $state(false);
+	// Track which question the current form submission was for
+	let submittedQuestionKey = $state<string | null>(null);
 
 	function startHold() {
 		if (isAnswered) return;
@@ -289,7 +297,7 @@
 		if (!isHolding) return;
 
 		if (animationCompleted) {
-			submitAnswer();
+			askQuestion();
 		}
 
 		isHolding = false;
@@ -299,11 +307,102 @@
 	function handleTransitionEnd(event: TransitionEvent) {
 		if (event.propertyName === "width" && isHolding) {
 			animationCompleted = true;
-			submitAnswer();
+			askQuestion();
 			isHolding = false;
 		}
 	}
+
+	function askQuestion() {
+		if (!isAnswered && formElement && !isSubmitting) {
+			isSubmitting = true;
+			// Track which question we're submitting for
+			submittedQuestionKey = `${currentType}-${selectedQuestion}`;
+			// Submit the form programmatically
+			if (formElement.requestSubmit) {
+				formElement.requestSubmit();
+			} else {
+				formElement.submit();
+			}
+		}
+	}
+
+	// Derived state for current question and types
+	let isAnswered = $derived(answeredQuestions[currentType]?.has(selectedQuestion) ?? false);
+	let current = $derived(questionTypes[currentType]);
+	let currentQuestion = $derived(current.questions[selectedQuestion]);
+	let nextType1 = $derived(questionTypes[(currentType + 1) % questionTypes.length]);
+	let nextType2 = $derived(questionTypes[(currentType + 2) % questionTypes.length]);
+	// Get the answer for the current question
+	let answerKey = $derived(`${currentType}-${selectedQuestion}`);
+	let currentAnswer = $derived(questionAnswers[answerKey]);
+
+	// Values for the form submission
+	let questionType = $derived(current.type);
+	let questionId = $derived(
+		questionType === "radar" && selectedQuestion < radarQuestionKeys.length
+			? radarQuestionKeys[selectedQuestion]
+			: questionType === "relative" && selectedQuestion < relativeOrder.length
+				? relativeOrder[selectedQuestion]
+				: String(selectedQuestion),
+	);
+
+	function handleFormResult(result: { type: string; data?: { answer?: string; success?: boolean } }) {
+		if (result.type === "success" && result.data?.success && submittedQuestionKey) {
+			const answer = result.data.answer;
+
+			if (answer !== undefined) {
+				questionAnswers = { ...questionAnswers, [submittedQuestionKey]: answer };
+
+				// Parse the submitted key to update the correct answered questions set
+				const [typeStr, questionStr] = submittedQuestionKey.split("-");
+				const type = Number.parseInt(typeStr, 10);
+				const question = Number.parseInt(questionStr, 10);
+				answeredQuestions[type].add(question);
+				answeredQuestions = { ...answeredQuestions };
+
+				// Get the questionId based on type
+				const questionType = questionTypes[type].type;
+				let qId: string;
+				if (questionType === "radar" && question < radarQuestionKeys.length) {
+					qId = radarQuestionKeys[question];
+				} else if (questionType === "relative" && question < relativeOrder.length) {
+					qId = relativeOrder[question];
+				} else {
+					qId = String(question);
+				}
+
+				questionAnswerCallback(type, question, qId, answer);
+			}
+
+			submittedQuestionKey = null;
+		}
+
+		isSubmitting = false;
+		isHolding = false;
+		animationCompleted = false;
+	}
 </script>
+
+<!-- Hidden form for question submission -->
+{#if currentPosition}
+	<form
+		bind:this={formElement}
+		method="POST"
+		action="?/askQuestion"
+		use:enhance={() => {
+			return async ({ result, update }) => {
+				handleFormResult(result as { type: string; data?: { answer?: string; success?: boolean } });
+				await update();
+			};
+		}}
+		class="hidden"
+	>
+		<input type="hidden" name="questionType" value={String(questionType)} />
+		<input type="hidden" name="questionId" value={String(questionId)} />
+		<input type="hidden" name="userLat" value={String(currentPosition.lat)} />
+		<input type="hidden" name="userLng" value={String(currentPosition.lng)} />
+	</form>
+{/if}
 
 <div class="relative mb-3">
 	<div
@@ -351,7 +450,9 @@
 				</button>
 			{:else}
 				<div class="pt-1 *:leading-tight px-3">
-					<p class="mb-3">{currentQuestion.a}</p>
+					<p class="mb-3 font-bold text-lg">
+						{currentAnswer === "true" ? "Ja" : "Nej"}
+					</p>
 					<p class="text-sm {current.secondText}">{currentQuestion.q}</p>
 				</div>
 			{/if}

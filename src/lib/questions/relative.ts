@@ -14,13 +14,13 @@ export enum RelativeKey {
 
 export const RelativeQuestions: Record<RelativeKey, RelativeQuestion> = {
 	"relative-longitude": {
-		displayName: "Relativ longitud",
-		prompt: "Har du högre eller lägre longitud?",
+		displayName: "Är du öster om mig?",
+		prompt: "Är du öster om mig?",
 		kind: "comparison",
 	},
 	"relative-latitude": {
-		displayName: "Relativ latitud",
-		prompt: "Har du högre eller lägre latitud?",
+		displayName: "Är du norr om mig?",
+		prompt: "Är du norr om mig?",
 		kind: "comparison",
 	},
 	"distance-railway": {

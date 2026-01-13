@@ -7,7 +7,7 @@
 
 	import iconBg from "$lib/assets/bg-scav-icon.svg";
 
-	import HDivider from "$lib/components/h-divider.svelte";
+	import HDivider from "$lib/components/HDivider.svelte";
 
 	let isLoading = $state(false);
 
@@ -123,7 +123,7 @@
 			class="bg-bg-100 text-bg-900 selection:bg-bg-900! selection:text-text-100! rounded-3xl px-6 py-4 text-sm"
 		>
 			<div class="text-text-150 flex gap-2 items-center mb-8">
-				<span>Streak</span>
+				<span>Svit</span>
 				<HDivider class="bg-bg-300! w-4!" />
 				<div class="*:inline-block cursor-pointer">
 					<span>Senaste 30 dagarna</span>

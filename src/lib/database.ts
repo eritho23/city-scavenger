@@ -1,7 +1,7 @@
 import { Kysely, PostgresDialect } from "kysely";
 import { Pool } from "pg";
 import { env } from "$env/dynamic/private";
-import type { DB } from "./generated/db";
+import type { DB } from "./generated/db.d.ts";
 
 const dialect = new PostgresDialect({
 	pool: new Pool({

@@ -5,7 +5,7 @@
 	import { page } from "$app/state";
 	import logo from "$lib/assets/city-scav-logo.svg";
 	import { currentGame } from "$lib/stores/game.svelte";
-	import HDivider from "./h-divider.svelte";
+	import HDivider from "./HDivider.svelte";
 
 	let isMenuOpen = $state(false);
 
@@ -18,9 +18,10 @@
 	});
 </script>
 
-<div class="w-full fixed left-0 px-3 z-10">
+<div class="w-full fixed left-0 px-3 z-50">
 	<header
 		class="w-full overflow-hidden bg-bg-800 rounded-3xl px-6 py-2 transition-[height] duration-300 ease-in-out"
+		class:bg-bg-900={page.url.pathname.includes("/game")}
 	>
 		<div class="flex justify-between items-center">
 			{#if page.url.pathname.includes("/game")}
@@ -31,7 +32,7 @@
 				</div>
 			{:else}
 				<a href={resolve("/")}>
-					<img src={logo} alt="city scav" class="h-4.5" />
+					<img src={logo} alt="City Scavenger-logotyp" class="h-4.5" />
 				</a>
 			{/if}
 			<div>
