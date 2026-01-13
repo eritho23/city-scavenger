@@ -1,17 +1,14 @@
 <script lang="ts">
+	import { MapStyle, MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 	import L from "leaflet";
 	import { onMount } from "svelte";
 	import { browser } from "$app/environment";
-
 	import { VästeråsBounds, VästeråsLatLng } from "$lib/constants/coords";
-	import { MapStyle, MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 
 	let mapEl: HTMLElement;
 	let map: L.Map | undefined;
 	let userMarker: L.CircleMarker | undefined;
-	let currentPosition = $state(
-		L.latLng(VästeråsLatLng.lat, VästeråsLatLng.lng),
-	);
+	let currentPosition = $state(L.latLng(VästeråsLatLng.lat, VästeråsLatLng.lng));
 
 	onMount(async () => {
 		if (browser && window) {

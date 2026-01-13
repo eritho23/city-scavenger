@@ -6,13 +6,9 @@
 # or `pkgs.callPackage` if you wish to handle
 # it manually.
 {
-  copyPathToStore,
-  fetchFromGitHub,
-  fetchgit,
   fetchurl,
   ...
-}:
-{
+}: {
   "@babel/code-frame@7.27.1" = fetchurl {
     url = "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.27.1.tgz";
     hash = "sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==";
