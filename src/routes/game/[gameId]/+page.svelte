@@ -10,7 +10,7 @@
 	import { RelativeKey } from "$lib/questions/relative";
 	import { currentGame } from "$lib/stores/game.svelte.js";
 
-	let { data, form } = $props();
+	let { data } = $props();
 
 	let score = $state(0);
 	let time = $state("00:00:00");
@@ -157,7 +157,6 @@
 		questionAnswerCallback={handleQuestionAnswered}
 		scoreChange=""
 		currentPosition={{lat: currentPosition.lat, lng: currentPosition.lng}}
-		{form}
 		initialAnswers={initialQuestionAnswers}
 	/>
 </div>

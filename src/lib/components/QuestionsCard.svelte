@@ -4,7 +4,6 @@
 	import { enhance } from "$app/forms";
 	import { RadarQuestions } from "$lib/questions/radars";
 	import { RelativeKey, RelativeQuestions } from "$lib/questions/relative";
-	import type { ActionData } from "../../routes/game/[gameId]/$types";
 
 	interface Props {
 		scoreChange: string;
@@ -12,7 +11,6 @@
 		answeredQuestions: Record<number, Set<number>>;
 		questionAnswerCallback: (type: number, questionIndex: number) => void;
 		currentPosition: { lat: number; lng: number };
-		form: ActionData;
 		initialAnswers?: Record<string, string>;
 	}
 
@@ -59,7 +57,6 @@
 		}),
 		questionAnswerCallback,
 		currentPosition,
-		form,
 		initialAnswers = {},
 	}: Props = $props();
 
@@ -320,14 +317,6 @@
 			isSubmitting = true;
 			// Track which question we're submitting for
 			submittedQuestionKey = `${currentType}-${selectedQuestion}`;
-			console.log("[askQuestion] Asking server:", {
-				questionType,
-				questionId,
-				currentPosition,
-				currentType,
-				selectedQuestion,
-				submittedQuestionKey,
-			});
 			// Submit the form programmatically
 			if (formElement.requestSubmit) {
 				formElement.requestSubmit();
@@ -336,8 +325,6 @@
 			}
 		}
 	}
-
-	$inspect(currentPosition);
 
 	// Derived state for current question and types
 	let isAnswered = $derived(answeredQuestions[currentType]?.has(selectedQuestion) ?? false);
@@ -349,45 +336,23 @@
 	let answerKey = $derived(`${currentType}-${selectedQuestion}`);
 	let currentAnswer = $derived(questionAnswers[answerKey]);
 
-		$inspect("[QuestionsCard] Current answer lookup:", {
-			answerKey,
-			currentAnswer,
-			allAnswers: questionAnswers,
-		});
-
 	// Values for the form submission
 	let questionType = $derived(current.type);
 	let questionId = $derived(
 		questionType === "radar" && selectedQuestion < radarQuestionKeys.length
 			? radarQuestionKeys[selectedQuestion]
 			: questionType === "relative" && selectedQuestion < relativeOrder.length
-			? relativeOrder[selectedQuestion]
-			: String(selectedQuestion)
+				? relativeOrder[selectedQuestion]
+				: String(selectedQuestion),
 	);
-	let userAnswer = $derived<string | undefined>(undefined); // Placeholder for user answer if needed
-
-	$inspect("Form values:", {
-		questionType,
-		questionId,
-		selectedQuestion,
-		userAnswer,
-		isAnswered,
-		currentAnswer,
-	});
-	$inspect(currentAnswer === "true")
-	$inspect("[Display]", { answerKey, currentAnswer })
 
 	function handleFormResult(result: { type: string; data?: { answer?: string; success?: boolean } }) {
-		console.log("[handleFormResult] Got result:", result, "for key:", submittedQuestionKey);
-		
 		if (result.type === "success" && result.data?.success && submittedQuestionKey) {
 			const answer = result.data.answer;
-			console.log("[handleFormResult] Storing answer:", submittedQuestionKey, "=", answer);
-			
+
 			if (answer !== undefined) {
 				questionAnswers = { ...questionAnswers, [submittedQuestionKey]: answer };
-				console.log("[handleFormResult] Updated questionAnswers:", $state.snapshot(questionAnswers));
-				
+
 				// Parse the submitted key to update the correct answered questions set
 				const [typeStr, questionStr] = submittedQuestionKey.split("-");
 				const type = Number.parseInt(typeStr, 10);
@@ -396,10 +361,10 @@
 				answeredQuestions = { ...answeredQuestions };
 				questionAnswerCallback(type, question);
 			}
-			
+
 			submittedQuestionKey = null;
 		}
-		
+
 		isSubmitting = false;
 		isHolding = false;
 		animationCompleted = false;
