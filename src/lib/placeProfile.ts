@@ -9,12 +9,15 @@ export interface BusStopData {
 	id: number;
 }
 
+// TODO: Add RAG-based data for e.g. baths. Source data from reputable sources.
 export async function generatePlaceProfile(stop: BusStopData): Promise<PlaceProfile | null> {
 	const context = `
     Stop name: ${stop.name}
     Coordinates: ${stop.lat}, ${stop.lon}
 	Stop ID: ${stop.id}
   `;
+  // ... more context, add when there is time.
+
 	const completion = await client.chat.completions.create({
 		model: "gpt-5-mini",
 		messages: [

@@ -1,7 +1,25 @@
 # CityScavenger
 
 This repository contains the SvelteKit application for the CityScavenger game.
-It integrates RAG-based LLM prompting to obtain place data for the game.
+It utilizes LLM generation with structured output to obtain place data for the game.
+
+## What currently works
+
+[X] Creating games and viewing game history.
+[X] Keeping track of game score and time spent.
+[X] Initial _radar_ and _relative_ question categories.
+[X] Map markings on the map for _radar_ and _relative_ questions.
+[X] A basic place profile with some aspects, though not necessarily completly accurate.
+
+[X] Advanced Continuous Integration pipeline, which lints, checks formatting and types, and ensures the project is buildable in a non-developer environment.
+[X] NixOS module which configures a Linux system for deploying this app along with its dependencies to production. Any NixOS system flake may use this repo as an input in order to host.
+
+## What we want to add
+
+[ ] More question categories, including _photo questions_ and _precise questions_.
+[ ] For the aformetioned new categories, add _more accurate data_ by integrating RAG into the LLM prompt.
+[ ] Implement a _guess place_ win condition.
+[ ] Use a local YOLO model in the browser to add _curses_, which require a player to photograph a certain object.
 
 ## Development environment
 
@@ -70,9 +88,9 @@ nix flake check
 
 and one may see if CI will pass by running the command.
 
-## Generating GeoData files
+## Updating GeoData files
 
-To generate `.geojson` files for the app, run
+To update `.geojson` files for the app, run
 
 ```
 make geodata
