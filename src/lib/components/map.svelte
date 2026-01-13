@@ -1,46 +1,55 @@
 <script lang="ts">
+	import { MapStyle, MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 	import L from "leaflet";
 	import { onMount } from "svelte";
 	import { browser } from "$app/environment";
-	import { VästeråsLatLng } from "$lib/constants/coords";
+	import { VästeråsBounds, VästeråsLatLng } from "$lib/constants/coords";
 
-	interface Props {
-		coords: { lat: number; lng: number };
-	}
-
-	let { coords }: Props = $props();
 	let mapEl: HTMLElement;
 	let map: L.Map | undefined;
-	let userMarker: L.Marker | undefined;
-
-	$effect(() => {
-		if (map !== undefined) {
-			if (userMarker !== undefined) userMarker.remove();
-
-			userMarker = new L.Marker([coords.lat, coords.lng]);
-			userMarker.addTo(map);
-		}
-	});
+	let userMarker: L.CircleMarker | undefined;
+	let currentPosition = $state(L.latLng(VästeråsLatLng.lat, VästeråsLatLng.lng));
 
 	onMount(async () => {
 		if (browser && window) {
 			map = L.map(mapEl, {
 				zoomControl: false,
-			}).setView(VästeråsLatLng, 12);
+			}).setView(currentPosition, 12);
 
-			L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-				maxZoom: 19,
-				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+			new MaptilerLayer({
+				apiKey: "TCMrUvyOBWQMOhVUBdg6",
+				style: MapStyle.STREETS,
 			}).addTo(map);
 
-			map.locate({ setView: true, maxZoom: 16 });
+			map.locate({ maxZoom: 16, watch: true, setView: false });
 
-			map.on("locationfound", () => {});
+			map.on("locationfound", (e) => {
+				console.log("Location found:", e.latlng);
+				currentPosition = e.latlng;
+				// if (map) map.setView(e.latlng, 16);
+				if (userMarker !== undefined) userMarker.remove();
 
-			map.on("locationerror", () => {});
+				userMarker = L.circleMarker(e.latlng, {
+					radius: 4,
+					fillColor: "lightBlue",
+					color: "blue",
+					fillOpacity: 0.8,
+					weight: 2,
+				});
+				if (map) userMarker.addTo(map);
+			});
 
-			userMarker = new L.Marker([coords.lat, coords.lng]);
-			userMarker.addTo(map);
+			map.on("locationerror", (e) => {
+				console.warn("Location access denied or unavailable", e);
+			});
+
+			L.rectangle(VästeråsBounds, {
+				fillColor: "red",
+				color: "darkred",
+				fillOpacity: 0.1,
+				weight: 2,
+				dashArray: "5, 10",
+			}).addTo(map);
 		}
 	});
 </script>

@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { SvelteSet } from "svelte/reactivity";
-	import { browser, dev } from "$app/environment";
 	import MapComponent from "$lib/components/map.svelte";
 
 	import QuestionsCard from "$lib/components/QuestionsCard.svelte";
-	import { VästeråsLatLng } from "$lib/constants/coords.js";
 	import { currentGame } from "$lib/stores/game.svelte.js";
 
 	let { data, form } = $props();
@@ -16,31 +14,6 @@
 	$effect(() => {
 		currentGame.score = score;
 		currentGame.time = time;
-	});
-
-	let geolocationPosition: GeolocationPosition | undefined = $state();
-
-	let currentPosition: { lat: number; lng: number } = $derived.by(() => {
-		if (dev && geolocationPosition === undefined) {
-			const { lat, lng } = VästeråsLatLng;
-			return { lat, lng };
-		} else {
-			return {
-				lat: geolocationPosition?.coords.latitude ?? VästeråsLatLng.lat,
-				lng: geolocationPosition?.coords.longitude ?? VästeråsLatLng.lng,
-			};
-		}
-	});
-
-	onMount(() => {
-		if (browser && window) {
-			const geolocationId = window.navigator.geolocation.watchPosition((pos) => {
-				geolocationPosition = pos;
-			});
-			return () => {
-				window.navigator.geolocation.clearWatch(geolocationId);
-			};
-		}
 	});
 
 	onMount(() => {
@@ -102,7 +75,7 @@
 	class="absolute w-full h-[20%] bottom-0 left-0 bg-linear-to-t from-40% from-bg-900 to-transparent"
 ></div>
 <div class="w-full h-full absolute top-0 left-0 -z-10">
-	<MapComponent coords={currentPosition} />
+	<MapComponent />
 </div>
 <div class="fixed bottom-3 left-0 px-3 w-full">
 	<QuestionsCard
