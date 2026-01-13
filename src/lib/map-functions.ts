@@ -1,15 +1,17 @@
 import { VästeråsExtremities } from "$lib/constants/coords";
+import { calculateDistance } from "$lib/server/distance";
 import {
 	bboxPolygon,
 	booleanPointInPolygon,
 	polygon,
 	intersect,
 	difference,
+	union,
 	featureCollection,
 	circle,
 	buffer,
-	distance,
-	nearestPointOnLine
+	nearestPointOnLine,
+	lineString
 } from "@turf/turf";
 import { point } from "@turf/helpers";
 import type { Feature, Polygon, MultiPolygon, Point, LineString } from "geojson";
@@ -63,9 +65,23 @@ export const cityBoundaryPolygon = bboxPolygon([
 ]) as Feature<Polygon>;
 
 /**
+ * Validate that coordinates are within city boundaries
+ */
+export function validateCoordinates(lat: number, lng: number): boolean {
+	return lat >= VästeråsExtremities.bottom &&
+		lat <= VästeråsExtremities.top &&
+		lng >= VästeråsExtremities.left &&
+		lng <= VästeråsExtremities.right;
+}
+
+/**
  * Get the area above the player (north of player's position)
  */
 export function getAreaAbovePlayer(playerLat: number): Feature<Polygon> {
+	if (!validateCoordinates(playerLat, VästeråsExtremities.left)) {
+		console.warn('Player latitude outside city bounds');
+	}
+
 	const northPolygon = polygon([[
 		[VästeråsExtremities.left, playerLat],
 		[VästeråsExtremities.right, playerLat],
@@ -82,6 +98,10 @@ export function getAreaAbovePlayer(playerLat: number): Feature<Polygon> {
  * Get the area below the player (south of player's position)
  */
 export function getAreaBelowPlayer(playerLat: number): Feature<Polygon> {
+	if (!validateCoordinates(playerLat, VästeråsExtremities.left)) {
+		console.warn('Player latitude outside city bounds');
+	}
+
 	const southPolygon = polygon([[
 		[VästeråsExtremities.left, VästeråsExtremities.bottom],
 		[VästeråsExtremities.right, VästeråsExtremities.bottom],
@@ -97,7 +117,11 @@ export function getAreaBelowPlayer(playerLat: number): Feature<Polygon> {
 /**
  * Get the area to the left of player (west of player's position)
  */
-export function getAreaLeftOfPlayer(playerLat: number, playerLng: number): Feature<Polygon> {
+export function getAreaLeftOfPlayer(playerLng: number): Feature<Polygon> {
+	if (!validateCoordinates(VästeråsExtremities.bottom, playerLng)) {
+		console.warn('Player longitude outside city bounds');
+	}
+
 	const westPolygon = polygon([[
 		[VästeråsExtremities.left, VästeråsExtremities.bottom],
 		[playerLng, VästeråsExtremities.bottom],
@@ -113,7 +137,11 @@ export function getAreaLeftOfPlayer(playerLat: number, playerLng: number): Featu
 /**
  * Get the area to the right of player (east of player's position)
  */
-export function getAreaRightOfPlayer(playerLat: number, playerLng: number): Feature<Polygon> {
+export function getAreaRightOfPlayer(playerLng: number): Feature<Polygon> {
+	if (!validateCoordinates(VästeråsExtremities.bottom, playerLng)) {
+		console.warn('Player longitude outside city bounds');
+	}
+
 	const eastPolygon = polygon([[
 		[playerLng, VästeråsExtremities.bottom],
 		[VästeråsExtremities.right, VästeråsExtremities.bottom],
@@ -130,6 +158,10 @@ export function getAreaRightOfPlayer(playerLat: number, playerLng: number): Feat
  * Create a circular boundary around the player's position with specified radius in km
  */
 export function createRadarBoundary(playerLat: number, playerLng: number, radiusKm: number): Feature<Polygon> {
+	if (!validateCoordinates(playerLat, playerLng)) {
+		console.warn('Player position outside city bounds');
+	}
+
 	const centerPoint = point([playerLng, playerLat]);
 	const circlePolygon = circle(centerPoint, radiusKm, { units: 'kilometers' });
 
@@ -145,6 +177,10 @@ export function createOutsideRadarBoundary(
 	playerLng: number,
 	radiusKm: number
 ): Feature<Polygon | MultiPolygon> {
+	if (!validateCoordinates(playerLat, playerLng)) {
+		console.warn('Player position outside city bounds');
+	}
+
 	const centerPoint = point([playerLng, playerLat]);
 	const circlePolygon = circle(centerPoint, radiusKm, { units: 'kilometers' });
 
@@ -163,10 +199,8 @@ export function isPointWithinRadius(
 	targetLng: number,
 	radiusKm: number
 ): boolean {
-	const playerPoint = point([playerLng, playerLat]);
-	const targetPoint = point([targetLng, targetLat]);
-	const pointDistance = distance(playerPoint, targetPoint, { units: 'kilometers' });
-	return pointDistance <= radiusKm;
+	const distanceKm = calculateDistance(playerLat, playerLng, targetLat, targetLng);
+	return distanceKm <= radiusKm;
 }
 
 /**
@@ -175,6 +209,67 @@ export function isPointWithinRadius(
 export function isPointInBoundary(lat: number, lng: number, boundary: Feature<Polygon | MultiPolygon>): boolean {
 	const testPoint = point([lng, lat]);
 	return booleanPointInPolygon(testPoint, boundary);
+}
+
+/**
+ * Calculate distance from a point to a feature (Point, LineString, Polygon, etc.)
+ */
+function getDistanceToFeature(
+	pointLat: number,
+	pointLng: number,
+	feature: Feature
+): number {
+	const testPoint = point([pointLng, pointLat]);
+
+	if (feature.geometry.type === 'Point') {
+		const featurePoint = feature as Feature<Point>;
+		return calculateDistance(
+			pointLat,
+			pointLng,
+			featurePoint.geometry.coordinates[1],
+			featurePoint.geometry.coordinates[0]
+		);
+	} else if (feature.geometry.type === 'LineString') {
+		const nearest = nearestPointOnLine(feature as Feature<LineString>, testPoint);
+		return calculateDistance(
+			pointLat,
+			pointLng,
+			nearest.geometry.coordinates[1],
+			nearest.geometry.coordinates[0]
+		);
+	} else if (feature.geometry.type === 'Polygon') {
+		// Find distance to polygon boundary (exterior ring)
+		const coords = feature.geometry.coordinates[0] as number[][];
+		const line = lineString(coords);
+		const nearest = nearestPointOnLine(line, testPoint);
+		return calculateDistance(
+			pointLat,
+			pointLng,
+			nearest.geometry.coordinates[1],
+			nearest.geometry.coordinates[0]
+		);
+	} else if (feature.geometry.type === 'MultiPolygon') {
+		// Find minimum distance to any polygon in the MultiPolygon
+		let minDistance = Infinity;
+		const multiPoly = feature.geometry.coordinates;
+
+		for (const poly of multiPoly) {
+			const coords = poly[0] as number[][];
+			const line = lineString(coords);
+			const nearest = nearestPointOnLine(line, testPoint);
+			const dist = calculateDistance(
+				pointLat,
+				pointLng,
+				nearest.geometry.coordinates[1],
+				nearest.geometry.coordinates[0]
+			);
+			minDistance = Math.min(minDistance, dist);
+		}
+
+		return minDistance;
+	}
+
+	throw new Error(`Unsupported geometry type: ${feature.geometry.type}`);
 }
 
 /**
@@ -187,42 +282,33 @@ function getDistanceToBoundary(
 	featureGeometry: Feature,
 	isCloser: boolean
 ): Feature<Polygon | MultiPolygon> {
-	const playerPoint = point([playerLng, playerLat]);
-
 	// Calculate player's distance to the feature
-	let playerDistance: number;
-
-	if (featureGeometry.geometry.type === 'Point') {
-		playerDistance = distance(playerPoint, featureGeometry as Feature<Point>, { units: 'kilometers' });
-	} else if (featureGeometry.geometry.type === 'LineString') {
-		const nearest = nearestPointOnLine(featureGeometry as Feature<LineString>, playerPoint);
-		playerDistance = distance(playerPoint, nearest, { units: 'kilometers' });
-	} else {
-		// For other geometry types (Polygon, MultiPolygon), use a reasonable approximation
-		// We'll use a fixed distance as fallback since these are complex geometries
-		playerDistance = 1.0; // 1km fallback distance
-	}
+	const playerDistance = getDistanceToFeature(playerLat, playerLng, featureGeometry);
 
 	// Create a buffer around the feature at the player's distance
-	const bufferDistance = playerDistance;
-	const buffered = buffer(featureGeometry, bufferDistance, { units: 'kilometers' });
+	const buffered = buffer(featureGeometry, playerDistance, { units: 'kilometers' });
+
+	if (!buffered) {
+		console.error('Buffer operation failed');
+		return cityBoundaryPolygon;
+	}
 
 	if (isCloser) {
 		// Target is closer to feature than player is
 		// Return the buffer area intersected with city boundary
-		const result = intersect(featureCollection([cityBoundaryPolygon, buffered!]));
+		const result = intersect(featureCollection([cityBoundaryPolygon, buffered]));
 		return result as Feature<Polygon | MultiPolygon>;
 	} else {
 		// Target is farther from feature than player is
 		// Return city boundary minus the buffer
-		const result = difference(featureCollection([cityBoundaryPolygon, buffered!]));
+		const result = difference(featureCollection([cityBoundaryPolygon, buffered]));
 		return result as Feature<Polygon | MultiPolygon>;
 	}
 }
 
 /**
- * Get boundary for same-airport question
- * Creates a Voronoi-like partition where all points closer to player's nearest airport
+ * Get boundary for same-airport question using proper Voronoi partitioning
+ * Creates regions where all points are closest to the same airport as the player
  */
 function getSameAirportBoundary(
 	playerLat: number,
@@ -230,28 +316,106 @@ function getSameAirportBoundary(
 	airportLocations: Array<{ lat: number, lng: number, name: string }>,
 	hasSameAirport: boolean
 ): Feature<Polygon | MultiPolygon> {
-	const playerPoint = point([playerLng, playerLat]);
+	if (airportLocations.length === 0) {
+		console.error('No airports provided');
+		return cityBoundaryPolygon;
+	}
 
 	// Find player's nearest airport
-	let nearestAirport = airportLocations[0];
-	let minDistance = distance(playerPoint, point([nearestAirport.lng, nearestAirport.lat]), { units: 'kilometers' });
+	let nearestAirportToPlayer = airportLocations[0];
+	let minDistanceToPlayer = calculateDistance(
+		playerLat,
+		playerLng,
+		nearestAirportToPlayer.lat,
+		nearestAirportToPlayer.lng
+	);
 
 	for (const airport of airportLocations) {
-		const dist = distance(playerPoint, point([airport.lng, airport.lat]), { units: 'kilometers' });
-		if (dist < minDistance) {
-			minDistance = dist;
-			nearestAirport = airport;
+		const dist = calculateDistance(playerLat, playerLng, airport.lat, airport.lng);
+		if (dist < minDistanceToPlayer) {
+			minDistanceToPlayer = dist;
+			nearestAirportToPlayer = airport;
 		}
 	}
 
-	if (hasSameAirport) {
-		// Return the Voronoi cell for this airport (simplified as a buffer midpoint approach)
-		// This is a simplified implementation - a proper Voronoi would be more complex
-		return cityBoundaryPolygon;
-	} else {
-		// Return all other Voronoi cells
-		return cityBoundaryPolygon;
+	// Create a grid of points and determine which belong to the same Voronoi cell
+	const gridResolution = 0.002; // ~200m resolution for accurate Voronoi
+	const matchingPoints: Array<[number, number]> = [];
+
+	for (let lng = VästeråsExtremities.left; lng <= VästeråsExtremities.right; lng += gridResolution) {
+		for (let lat = VästeråsExtremities.bottom; lat <= VästeråsExtremities.top; lat += gridResolution) {
+			const testPoint = point([lng, lat]);
+
+			// Skip if outside city boundary
+			if (!booleanPointInPolygon(testPoint, cityBoundaryPolygon)) {
+				continue;
+			}
+
+			// Find nearest airport to this grid point
+			let nearestToPoint = airportLocations[0];
+			let minDistToPoint = calculateDistance(lat, lng, nearestToPoint.lat, nearestToPoint.lng);
+
+			for (const airport of airportLocations) {
+				const dist = calculateDistance(lat, lng, airport.lat, airport.lng);
+				if (dist < minDistToPoint) {
+					minDistToPoint = dist;
+					nearestToPoint = airport;
+				}
+			}
+
+			// Check if this point has same nearest airport as player
+			const isSameAirport = nearestToPoint.name === nearestAirportToPlayer.name;
+
+			if ((hasSameAirport && isSameAirport) || (!hasSameAirport && !isSameAirport)) {
+				matchingPoints.push([lng, lat]);
+			}
+		}
 	}
+
+	// If no matching points found, return empty intersection
+	if (matchingPoints.length === 0) {
+		console.warn('No matching points found for airport boundary');
+		// Return a very small polygon that effectively excludes everything
+		const emptyResult = difference(featureCollection([
+			cityBoundaryPolygon,
+			cityBoundaryPolygon
+		]));
+		return emptyResult || cityBoundaryPolygon;
+	}
+
+	// Create small buffers around each matching point and union them
+	// This creates an approximate Voronoi region
+	const bufferRadius = gridResolution * 111; // Convert degrees to km (approx)
+	let resultBoundary: Feature<Polygon | MultiPolygon> | null = null;
+
+	// Sample points to avoid creating too many buffers (performance optimization)
+	const samplingRate = Math.max(1, Math.floor(matchingPoints.length / 500));
+
+	for (let i = 0; i < matchingPoints.length; i += samplingRate) {
+		const [lng, lat] = matchingPoints[i];
+		const pointFeature = point([lng, lat]);
+		const buffered = buffer(pointFeature, bufferRadius, { units: 'kilometers' });
+
+		if (!buffered) continue;
+
+		if (resultBoundary === null) {
+			resultBoundary = buffered as Feature<Polygon | MultiPolygon>;
+		} else {
+			// Union with existing boundary
+			const unioned = union(featureCollection([resultBoundary, buffered]));
+			if (unioned) {
+				resultBoundary = unioned as Feature<Polygon | MultiPolygon>;
+			}
+		}
+	}
+
+	// Intersect with city boundary
+	if (resultBoundary) {
+		const finalResult = intersect(featureCollection([cityBoundaryPolygon, resultBoundary]));
+		return finalResult as Feature<Polygon | MultiPolygon>;
+	}
+
+	return cityBoundaryPolygon;
 }
 
 /**
@@ -275,8 +439,8 @@ export function updateBoundary(
 			case 'relative-longitude':
 				return {
 					boundary: answer === 'higher'
-						? getAreaRightOfPlayer(playerLat, playerLng)
-						: getAreaLeftOfPlayer(playerLat, playerLng),
+						? getAreaRightOfPlayer(playerLng)
+						: getAreaLeftOfPlayer(playerLng),
 					description: `Målpunkten har ${answer === 'higher' ? 'högre' : 'lägre'} longitud (är ${answer === 'higher' ? 'öster' : 'väster'} om dig)`,
 					category,
 					questionKey: key
@@ -293,7 +457,7 @@ export function updateBoundary(
 				};
 
 			case 'same-airport':
-				if (!airportLocations) {
+				if (!airportLocations || airportLocations.length === 0) {
 					console.warn('Airport locations not provided, returning city boundary');
 					return {
 						boundary: cityBoundaryPolygon,
