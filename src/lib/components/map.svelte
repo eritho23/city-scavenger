@@ -38,8 +38,8 @@
 
 				userMarker = L.circleMarker(e.latlng, {
 					radius: 4,
-					fillColor: "lightBlue",
-					color: "blue",
+					fillColor: "lightGreen",
+					color: "green",
 					fillOpacity: 0.8,
 					weight: 2,
 				});
