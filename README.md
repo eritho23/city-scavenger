@@ -9,11 +9,11 @@ This game has been inspired by [Jet Lag: The Game](https://www.youtube.com/@jetl
 where they play geography-based "board games". Among the board games are "Hide and Seek",
 which is played in entire countries, such as Switzerland or Japan. In the game, seekers
 ask questions to the hider, such as "Are you north of me?" or "Are you closer to an airfield?".
-The hider is awarded advantages based on the number and type of questions asked. The goal 
+The hider is awarded advantages based on the number and type of questions asked. The goal
 for the seekers is to find the hider, and the goal for the hider is to have a long hiding time.
 
-We take this concept and bring it to Västerås, and to your phone. You can play on your own 
-and compete against yourself, or compare yourself to others. Upon game start, LLM models 
+We take this concept and bring it to Västerås, and to your phone. You can play on your own
+and compete against yourself, or compare yourself to others. Upon game start, LLM models
 will turn unstructured data into a structured _place profile_. Based on your current location,
 you can then ask questions, such as "Am i closer than 5 km?" and have the answer drawn
 on the map. You might then want to move physically using bikes, walking or public transit,
@@ -22,12 +22,17 @@ in order to have a more advantageous position for your next question.
 ### What currently works
 
 - [X] Creating games and viewing game history.
+
 - [X] Keeping track of game score and time spent.
+
 - [X] Initial _radar_ and _relative_ question categories.
+
 - [X] Map markings on the map for _radar_ and _relative_ questions.
+
 - [X] A basic place profile with some aspects, though not necessarily completly accurate.
 
 - [X] Advanced Continuous Integration pipeline, which lints, checks formatting and types, and ensures the project is buildable in a non-developer environment.
+
 - [X] NixOS module which configures a Linux system for deploying this app along with its dependencies to production. Any NixOS system flake may use this repo as an input in order to host.
 
 ### What we want to add, given more time
@@ -39,7 +44,6 @@ in order to have a more advantageous position for your next question.
 - [ ] Use a local YOLO model in the browser to add _curses_, which require a player to photograph a certain object.
 - [ ] User authentication to scope games to a person.
 
-
 ## Technology stack
 
 - [SvelteKit](https://svelte.dev/) - full-stack web application framework.
@@ -49,8 +53,8 @@ in order to have a more advantageous position for your next question.
 
 ### Slop status
 
-This repository has been started and initially built **without** the use of AI agents. 
-Later in the project, we **have started to use AI agents**. To ensure consistency and 
+This repository has been started and initially built **without** the use of AI agents.
+Later in the project, we **have started to use AI agents**. To ensure consistency and
 quality, we have written a detailed **Copilot instruction file** in .github/copilot-instructions.md,
 which is sourced by the agent.
 
