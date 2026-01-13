@@ -1,5 +1,5 @@
 import { VästeråsExtremities } from "$lib/constants/coords";
-import { calculateDistance } from "$lib/server/distance";
+import { calculateDistance } from "$lib/distance";
 import {
 	bboxPolygon,
 	booleanPointInPolygon,
