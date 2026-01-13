@@ -4,11 +4,14 @@
 	import { browser } from "$app/environment";
 
 	import { VästeråsBounds, VästeråsLatLng } from "$lib/constants/coords";
+	import { MapStyle, MaptilerLayer } from "@maptiler/leaflet-maptilersdk";
 
 	let mapEl: HTMLElement;
 	let map: L.Map | undefined;
 	let userMarker: L.CircleMarker | undefined;
-	let currentPosition = $state(L.latLng(VästeråsLatLng.lat, VästeråsLatLng.lng));
+	let currentPosition = $state(
+		L.latLng(VästeråsLatLng.lat, VästeråsLatLng.lng),
+	);
 
 	onMount(async () => {
 		if (browser && window) {
@@ -16,9 +19,9 @@
 				zoomControl: false,
 			}).setView(currentPosition, 12);
 
-			L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-				maxZoom: 19,
-				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+			const tileLayer = new MaptilerLayer({
+				apiKey: "TCMrUvyOBWQMOhVUBdg6",
+				style: MapStyle.STREETS,
 			}).addTo(map);
 
 			map.locate({ maxZoom: 16, watch: true, setView: false });
@@ -30,9 +33,9 @@
 				if (userMarker !== undefined) userMarker.remove();
 
 				userMarker = L.circleMarker(e.latlng, {
-					radius: 8,
-					fillColor: "green",
-					color: "darkgreen",
+					radius: 4,
+					fillColor: "lightBlue",
+					color: "blue",
 					fillOpacity: 0.8,
 					weight: 2,
 				});
